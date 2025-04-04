@@ -1,5 +1,5 @@
-// /backend/pages/api/users.js
-import supabase from "../../lib/supabase"; // Pastikan import sudah benar
+// /backend/pages/api/users/index.js
+import supabase from "../../../lib/supabase"; // Pastikan import sudah benar
 import { verifyToken } from "@/lib/middleware/auth";
 
 export default async function handler(req, res) {

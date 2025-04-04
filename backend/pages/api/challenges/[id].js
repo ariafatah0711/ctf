@@ -24,7 +24,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "ID tidak dalam format UUID yang valid." });
   }
 
-  if (req.method === "PUT" || req.method === "PATCH") {
+  if (req.method === "GET") {
+    verifyToken(req, res, async () => {
+      const { data, error } = await supabase
+        .from("challenges")
+        .select("id, title, description, difficulty, url")
+        .eq("id", id)
+        .single();
+
+      if (error) return res.status(500).json({ message: error.message });
+      if (!data) return res.status(404).json({ message: "Challenge tidak ditemukan." });
+
+      return res.status(200).json({ data });
+    });
+  } else if (req.method === "PUT" || req.method === "PATCH") {
     verifyToken(req, res, async () => {
       // requireRole("admin")(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
