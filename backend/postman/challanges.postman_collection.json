@@ -1,0 +1,1291 @@
+{
+	"info": {
+		"_postman_id": "ed57b790-c186-437a-8ca7-53fc9e2fc06b",
+		"name": "challanges",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32003345"
+	},
+	"item": [
+		{
+			"name": "/get challenges | without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add chalanges | without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan kesatu\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit ch | without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan satu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{aria}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete ch | wtihout token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag | without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges | with auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch1 | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Access denied\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan kesatu\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch1 | with maker",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Ambil response JSON\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Ambil data challenge dari array yang ada di dalam 'data'\r",
+							"let challenge = response.data[0];  // Mengambil objek pertama dari array\r",
+							"\r",
+							"// Jika challenge ditemukan, simpan ID-nya ke environment variable\r",
+							"if (challenge) {\r",
+							"    pm.environment.set(\"challenge_1\", challenge.id);  // Menyimpan ID ke environment variable\r",
+							"    console.log(\"ID challenge: \", challenge.id);\r",
+							"} else {\r",
+							"    console.log(\"Challenge tidak ditemukan.\");\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil ditambahkan!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"1\",\r\n  \"description\": \"1\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{1}\",\r\n  \"url\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit ch1 | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Access denied\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan satu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{aria}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit ch1 | with token maker",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil diperbarui!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan satu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{123}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Ambil response JSON\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Ambil data challenge dari array yang ada di dalam 'data'\r",
+							"let challenge = response.data[0];  // Mengambil objek pertama dari array\r",
+							"\r",
+							"// Jika challenge ditemukan, simpan ID-nya ke environment variable\r",
+							"if (challenge) {\r",
+							"    pm.environment.set(\"challenge_2\", challenge.id);  // Menyimpan ID ke environment variable\r",
+							"    console.log(\"ID challenge: \", challenge.id);\r",
+							"} else {\r",
+							"    console.log(\"Challenge tidak ditemukan.\");\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil ditambahkan!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan kedua\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch3 | with same title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(500); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"duplicate key value violates unique constraint \\\"unique_title\\\"\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan ketiga\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{999}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch4 | with same flag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(500); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"duplicate key value violates unique constraint \\\"challenges_flag_hash_key\\\"\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 4\",\r\n  \"description\": \"Deskripsi tantangan keempat\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag | failed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(404); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Flag salah.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flag\": \"flag{blabla}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag ch1 | user 1 (1)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil disubmit dan flag valid!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag ch1 | user 1 (2)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(400); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge ini sudah diselesaikan oleh pengguna ini.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag ch1 | user 2 (1)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil disubmit dan flag valid!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flag\": \"flag{123}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/submit flag ch2 | user 1 (1)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil disubmit dan flag valid!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"flag\": \"flag{456}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/submit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/add ch_tmp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Ambil response JSON\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// Ambil data challenge dari array yang ada di dalam 'data'\r",
+							"let challenge = response.data[0];  // Mengambil objek pertama dari array\r",
+							"\r",
+							"// Jika challenge ditemukan, simpan ID-nya ke environment variable\r",
+							"if (challenge) {\r",
+							"    pm.environment.set(\"challenge_tmp\", challenge.id);  // Menyimpan ID ke environment variable\r",
+							"    console.log(\"ID challenge: \", challenge.id);\r",
+							"} else {\r",
+							"    console.log(\"Challenge tidak ditemukan.\");\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil ditambahkan!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"tmp\",\r\n  \"description\": \"tmp\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{tmp}\",\r\n  \"url\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete ch1 | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Access denied\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete ch | not equal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(400); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"ID tidak dalam format UUID yang valid.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/a",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete ch_tmp | with token admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Challenge berhasil dihapus.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_tmp}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_tmp}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

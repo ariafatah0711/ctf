@@ -1,0 +1,1311 @@
+{
+	"info": {
+		"_postman_id": "7acba176-b6b9-4906-a76d-44adfef4d316",
+		"name": "users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32003345"
+	},
+	"item": [
+		{
+			"name": "/get users | without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete user_tmp | wihout token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users/{{user_tmp_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{user_tmp_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register | wiithout body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(400); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.deep.equal({\r",
+							"        \"message\": \"Username, email, dan password harus diisi.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register admin:admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(201); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"User root berhasil dibuat!\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\",\r\n  \"secret\": \"my-secret-key\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/setup",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"setup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register admin:admin | alredy setup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Setup sudah dilakukan. Tidak bisa membuat user root lagi.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\",\r\n  \"secret\": \"my-secret-key\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/setup",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"setup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register test:test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cek pesan respons\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.be.oneOf([\r",
+							"        \"User berhasil didaftarkan\",\r",
+							"        \"Email atau username sudah digunakan.\"\r",
+							"    ]);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"test\",\r\n  \"email\": \"test@gmail.com\",\r\n  \"password\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/login failed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(400); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Invalid credentials.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "test",
+						"type": "default"
+					},
+					{
+						"key": "password",
+						"value": "test",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"test\",\r\n  \"password\": \"test_salah\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/login test:test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    \r",
+							"    // Simpan token dan user_id ke environment\r",
+							"    pm.environment.set('token_user', jsonResponse.token); // Menyimpan token\r",
+							"\r",
+							"    console.log('Login berhasil. Token disimpan: ' + jsonResponse.token);\r",
+							"} else {\r",
+							"    console.log('Login gagal');\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Login successful\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "test",
+						"type": "default"
+					},
+					{
+						"key": "password",
+						"value": "test",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"test\",\r\n  \"password\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/login admin:admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    \r",
+							"    // Simpan token dan user_id ke environment\r",
+							"    pm.environment.set('token_admin', jsonResponse.token); // Menyimpan token\r",
+							"\r",
+							"    console.log('Login berhasil. Token disimpan: ' + jsonResponse.token);\r",
+							"} else {\r",
+							"    console.log('Login gagal');\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Login successful\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "test",
+						"type": "default"
+					},
+					{
+						"key": "password",
+						"value": "test",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register aria:aria",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cek pesan respons\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.be.oneOf([\r",
+							"        \"User berhasil didaftarkan\",\r",
+							"        \"Email atau username sudah digunakan.\"\r",
+							"    ]);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"aria\",\r\n  \"email\": \"aria@gmail.com\",\r\n  \"password\": \"aria\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get users | with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"[\"aria\", \"user_tmp\"].forEach(username => {\r",
+							"    let user = response.data.find(u => u.username === username);\r",
+							"    if (user) {\r",
+							"        pm.environment.set(`${username}_user_id`, user.id);\r",
+							"        console.log(`ID pengguna ${username}:`, user.id);\r",
+							"    } else {\r",
+							"        console.log(`Pengguna ${username} tidak ditemukan.`);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Data pengguna berhasil diambil.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit aria:aria to admin | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"No token provided\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"aria\",\r\n  \"password\": \"aria\",\r\n  \"role\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/users/{{aria_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{aria_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit aria:aria to admin | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"         \"message\": \"Access denied\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"aria\",\r\n  \"password\": \"aria\",\r\n  \"role\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/users/{{aria_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{aria_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit aria:aria to role: maker",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    // pm.response.to.have.status(404); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"         \"message\": \"User berhasil diperbarui.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"aria\",\r\n  \"password\": \"aria\",\r\n  \"role\": \"maker\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/users/{{aria_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{aria_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit aria:aria to user: admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    // pm.response.to.have.status(404); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Gagal mengupdate user.\",\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"aria\",\r\n  \"role\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/users/{{aria_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{aria_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/edit aria:aria to role: admintest",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    // pm.response.to.have.status(404); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Gagal mengupdate user.\",\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"aria\",\r\n  \"password\": \"aria\",\r\n  \"role\": \"admintest\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/users/{{aria_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{aria_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/login aria:aria",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    \r",
+							"    // Simpan token dan user_id ke environment\r",
+							"    pm.environment.set('token_maker', jsonResponse.token); // Menyimpan token\r",
+							"\r",
+							"    console.log('Login berhasil. Token disimpan: ' + jsonResponse.token);\r",
+							"} else {\r",
+							"    console.log('Login gagal');\r",
+							"}\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Login successful\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "test",
+						"type": "default"
+					},
+					{
+						"key": "password",
+						"value": "test",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register user_tmp:user_tmp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cek pesan respons\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.be.oneOf([\r",
+							"        \"User berhasil didaftarkan\",\r",
+							"        \"Email atau username sudah digunakan.\"\r",
+							"    ]);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"user_tmp\",\r\n  \"email\": \"user_tmp@gmail.com\",\r\n  \"password\": \"user_tmp\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/login user_tmp:user_tmp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Login successful\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "test",
+						"type": "default"
+					},
+					{
+						"key": "password",
+						"value": "test",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"user_tmp\",\r\n  \"password\": \"user_tmp\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"[\"aria\", \"user_tmp\"].forEach(username => {\r",
+							"    let user = response.data.find(u => u.username === username);\r",
+							"    if (user) {\r",
+							"        pm.environment.set(`${username}_user_id`, user.id);\r",
+							"        console.log(`ID pengguna ${username}:`, user.id);\r",
+							"    } else {\r",
+							"        console.log(`Pengguna ${username} tidak ditemukan.`);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Data pengguna berhasil diambil.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get users detail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Data user berhasil diambil.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users/{{user_tmp_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{user_tmp_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete user_tmp | with token user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(403); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"Access denied\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users/{{user_tmp_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{user_tmp_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/delete user_tmp | with token admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"    \r",
+							"    const jsonData = pm.response.json(); // Ambil response JSON\r",
+							"\r",
+							"    // Cek apakah JSON sesuai\r",
+							"    pm.expect(jsonData).to.include({\r",
+							"        \"message\": \"User berhasil dihapus.\"\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users/{{user_tmp_user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"{{user_tmp_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "footer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
