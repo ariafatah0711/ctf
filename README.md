@@ -26,6 +26,9 @@ export default defineConfig({
 
 ### style.css
 @import "tailwindcss";
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss-cli@latest init
 ```
 
 # be

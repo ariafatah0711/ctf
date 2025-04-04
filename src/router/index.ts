@@ -1,58 +1,10 @@
-// import { createRouter, createWebHistory } from 'vue-router';
-// import LoginPage from '../pages/LoginPage.vue';
-// import RegisterPage from '../pages/RegisterPage.vue';
-
-// const routes = [
-//   {
-//     path: '/login',
-//     name: 'Login',
-//     component: LoginPage,
-//   },
-//   {
-//     path: '/register',
-//     name: 'Register',
-//     component: RegisterPage,
-//   },
-//   {
-//     path: '/',
-//     name: 'Home',
-//     component: {
-//       template: '<div class="p-4">Home - Protected Route (contoh)</div>',
-//     },
-//     meta: { requiresAuth: true }, // bisa dipakai untuk proteksi nantinya
-//   },
-// ];
-
-// const router = createRouter({
-//   history: createWebHistory(),
-//   routes,
-// });
-
-// router.beforeEach((to, from, next) => {
-//   const auth = useAuthStore();
-
-//   const publicPages = ['/login', '/register'];
-//   const authRequired = !publicPages.includes(to.path);
-
-//   if (authRequired && !auth.isLoggedIn()) {
-//     return next('/login');
-//   }
-
-//   if ((to.path === '/login' || to.path === '/register') && auth.isLoggedIn()) {
-//     return next('/');
-//   }
-
-//   next();
-// });
-
-// export default router;
-
 // router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
 import HomePage from '../pages/HomePage.vue';
-import { useAuthStore } from '../stores/auth'; // ✅ ini perlu!
+import LeaderboardPage from '../pages/LeaderboardPage.vue';
+import { useAuthStore } from '../stores/auth';
 
 const routes = [
   {
@@ -71,6 +23,29 @@ const routes = [
     component: HomePage,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/leaderboard',
+    name: 'Leaderboard',
+    component: LeaderboardPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/:slug(.*)*', // catch-all
+    name: 'DynamicPage',
+    component: HomePage,
+    meta: { requiresAuth: true }, // bisa juga tanpa auth kalau mau
+  },
+  // {
+  //   path: '/dashboard',
+  //   name: 'Dashboard',
+  //   component: 
+  //   meta: { requiresAuth: true },
+  // },
+  // {
+  //   path: '/profile',
+  //   name: 'Profile',
+  //   meta: { requiresAuth: true },
+  // }
 ];
 
 const router = createRouter({
@@ -79,17 +54,20 @@ const router = createRouter({
 });
 
 // Middleware auth di route
-router.beforeEach((to, from, next) => {
-  const auth = useAuthStore(); // ✅ Panggil auth store
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore();
 
-  const publicPages = ['/login', '/register'];
-  const authRequired = !publicPages.includes(to.path);
+  // Cek apakah halaman butuh autentikasi
+  if (to.meta.requiresAuth) {
+    const isAuthenticated = auth.isAuthenticated || (await auth.checkAuth());
 
-  if (authRequired && !auth.isLoggedIn()) {
-    return next('/login');
+    if (!isAuthenticated) {
+      return next('/login');
+    }
   }
 
-  if ((to.path === '/login' || to.path === '/register') && auth.isLoggedIn()) {
+  // Kalau user udah login, jangan biarkan ke /login atau /register
+  if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
     return next('/');
   }
 
