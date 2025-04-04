@@ -32,8 +32,12 @@
         {{ loading ? "Logging in..." : "Login" }}
       </button>
       <!-- <button type="submit" :disabled="loading"class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"> -->
-        <router-link :to="`/register`" class="text-blue-500 hover:underline">register</router-link>
+        <!-- <router-link :to="`/register`" class="text-blue-500 hover:underline">register</router-link> -->
       <!-- </button> -->
+
+      <router-link to="/register" class="inline-block text-sm text-blue-500 hover:underline">
+        Belum punya akun? Register
+      </router-link>
   
       <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
     </form>
@@ -41,7 +45,8 @@
   
   <script lang="ts" setup>
   import { reactive, ref } from 'vue';
-  import { useLink, useRouter, RouterLink } from 'vue-router';
+  // import { useLink, useRouter, RouterLink } from 'vue-router';
+  import { useRouter, RouterLink } from 'vue-router';
   import { login } from '../../services/authService';
   import { useAuthStore } from '../../stores/auth';
   

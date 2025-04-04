@@ -66,7 +66,7 @@ const router = createRouter({
 });
 
 // Middleware auth di route
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
 
   // Cek apakah halaman butuh autentikasi

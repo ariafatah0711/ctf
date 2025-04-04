@@ -48,7 +48,20 @@ try {
   import config from "../config"
   
   const auth = useAuthStore();
-  const challenges = ref([]);
+
+  interface Challenge {
+    id: string;
+    title: string;
+    description: string;
+    difficulty: number;
+    tags: string[];
+    created_at: string;
+    solved?: boolean;
+    }
+
+   const challenges = ref<Challenge[]>([]);
+
+  // const challenges = ref([]);
   
   onMounted(async () => {
     try {
