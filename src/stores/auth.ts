@@ -1,5 +1,6 @@
 import GlobalSwal from '../utills/GlobalSwal';
 import { defineStore } from 'pinia';
+import config from "../config"
 import router from '../router';
 const Swal = GlobalSwal;
 
@@ -24,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async checkAuth() {
       try {
-        const res = await fetch('http://localhost:3000/api/users/me', {
+        const res = await fetch(`${config.BASE_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${this.token}` },
         });
     
