@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     verifyToken(req, res, async () => {
       const { tags, difficulty, title } = req.query;
 
-      let query = supabase.from("challenges").select("id, title, description, difficulty, created_at, url, tags");
-
+      // let query = supabase.from("challenges").select("id, title, description, difficulty, created_at, url, tags");
+      let query = supabase.from("challenges").select("id, title, difficulty, created_at, tags");
       // Filter untuk tags
       if (tags) {
         const tagArray = Array.isArray(tags) ? tags : [tags];

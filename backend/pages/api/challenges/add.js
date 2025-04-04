@@ -6,29 +6,7 @@ import { verifyToken, requireRole } from "../../../lib/middleware/auth";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     verifyToken(req, res, async () => {
-      // requireRole("admin")(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
-        // const { title, description, difficulty, flag, url } = req.body;
-
-        // // Validasi input
-        // if (!title || !description || !difficulty || !flag || !url) {
-        //   return res.status(400).json({ message: "Semua field harus diisi." });
-        // }
-
-        // if (typeof difficulty !== "number") {
-        //   return res.status(400).json({ message: "Difficulty harus berupa angka." });
-        // }
-
-        // const encryptedFlag = encrypt(flag);
-        // const flagHash = hashFlag(flag);
-
-        // // Insert challenge ke database Supabase
-        // const { data, error } = await supabase
-        //   .from("challenges")
-        //   // .insert([{ title, description, difficulty, flag: encryptedFlag, url }])
-        //   .insert([{ title, description, difficulty, flag: encryptedFlag, flag_hash: flagHash, url }])
-        //   .select("*"); // Select biar return data yang baru dibuat
-
         const { title, description, difficulty, flag, url, tags, hint } = req.body;
 
         // Validasi input

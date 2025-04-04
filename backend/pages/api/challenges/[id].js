@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     verifyToken(req, res, async () => {
       const { data, error } = await supabase
         .from("challenges")
-        .select("id, title, description, difficulty, url")
+        .select("id, title, description, difficulty, created_at, url, tags")
         .eq("id", id)
         .single();
 
@@ -41,15 +41,26 @@ export default async function handler(req, res) {
     verifyToken(req, res, async () => {
       // requireRole("admin")(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
-        const { title, description, difficulty, flag } = req.body;
+        // const { title, description, difficulty, flag } = req.body;
+        const { title, description, difficulty, flag, url, tags, hint } = req.body;
 
         // Validasi input
-        if (!title || !description || !difficulty || !flag) {
+        if (!title || !description || !difficulty || !flag || !url) {
           return res.status(400).json({ message: "Semua field harus diisi." });
         }
 
         if (typeof difficulty !== "number") {
           return res.status(400).json({ message: "Difficulty harus berupa angka." });
+        }
+
+        // Validasi tags (boleh kosong atau array of strings)
+        if (tags && !Array.isArray(tags)) {
+          return res.status(400).json({ message: "Tags harus berupa array." });
+        }
+
+        // Validasi hint (boleh kosong)
+        if (hint && typeof hint !== "string") {
+          return res.status(400).json({ message: "Hint harus berupa string." });
         }
 
         // Cek apakah challenge dengan ID ini ada
@@ -72,7 +83,7 @@ export default async function handler(req, res) {
         // Update challenge di database Supabase
         const { data, error } = await supabase
           .from("challenges")
-          .update({ title, description, difficulty, flag: encryptedFlag })
+          .update({ title, description, difficulty, flag: encryptedFlag, url, tags, hint })
           .eq("id", id)
           .select("*"); // Select agar return data yang baru diupdate
 

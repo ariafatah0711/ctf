@@ -19,6 +19,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "Username dan password harus diisi." });
   }
 
+  // if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Password harus mengandung setidaknya 8 karakter, satu huruf besar, satu angka, dan satu simbol." });
+  // }
+
   try {
     // Cek apakah sudah ada user
     const { data: existingUsers, error: fetchError } = await supabase.from("users").select("id").limit(1);

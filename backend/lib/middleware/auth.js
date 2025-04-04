@@ -17,15 +17,6 @@ export function verifyToken(req, res, next) {
   });
 }
 
-// export function requireRole(requiredRole) {
-//   return (req, res, next) => {
-//     if (!req.user || req.user.role !== requiredRole) {
-//       return res.status(403).json({ message: "Access denied" });
-//     }
-//     next();
-//   };
-// }
-
 export function requireRole(allowedRoles) {
   return (req, res, next) => {
     const userRole = req.user?.role;

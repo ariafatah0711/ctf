@@ -266,7 +266,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{token_user}}",
+							"value": "{{token_maker}}",
 							"type": "string"
 						}
 					]
@@ -324,7 +324,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan kesatu\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{123}\"\r\n}",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan kesatu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{123}\",\r\n  \"url\": \"1\",\r\n  \"tags\": [\"web\", \"crypto\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -397,7 +397,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"1\",\r\n  \"description\": \"1\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{1}\",\r\n  \"url\": \"1\"\r\n}",
+					"raw": "{\r\n  \"title\": \"1\",\r\n  \"description\": \"1\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{1}\",\r\n  \"url\": \"1\",\r\n  \"tags\": [\"web\", \"crypto\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -515,13 +515,56 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan satu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{123}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 1\",\r\n  \"description\": \"Deskripsi tantangan satu\",\r\n  \"difficulty\": 1,\r\n  \"flag\": \"flag{123}\",\r\n  \"url\": \"ariaf.my.id\",\r\n  \"tags\": [\"web\", \"crypto\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
+				"url": {
+					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"{{challenge_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges | with token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
 				"url": {
 					"raw": "{{base_url}}/api/challenges/{{challenge_1}}",
 					"host": [
@@ -588,7 +631,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan kedua\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan kedua\",\r\n  \"difficulty\": 2,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\",\r\n  \"tags\": [\"web\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -647,7 +690,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan ketiga\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{999}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 2\",\r\n  \"description\": \"Deskripsi tantangan ketiga\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{999}\",\r\n  \"url\": \"ariaf.my.id\",\r\n  \"tags\": [\"web\", \"crypto\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -706,7 +749,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"CTF Challenge 4\",\r\n  \"description\": \"Deskripsi tantangan keempat\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\"\r\n}",
+					"raw": "{\r\n  \"title\": \"CTF Challenge 4\",\r\n  \"description\": \"Deskripsi tantangan keempat\",\r\n  \"difficulty\": 3,\r\n  \"flag\": \"flag{456}\",\r\n  \"url\": \"ariaf.my.id\",\r\n  \"tags\": [\"web\", \"crypto\"],\r\n  \"hint\": \"Perhatikan source code halaman web\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1059,6 +1102,240 @@
 					"path": [
 						"api",
 						"challenges"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges with tags=crypto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges?tags=crypto",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "crypto"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges with difficulty=2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges?difficulty=2",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					],
+					"query": [
+						{
+							"key": "difficulty",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges with difficulty=2 and tags=web",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges?difficulty=2&tags=web",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges"
+					],
+					"query": [
+						{
+							"key": "difficulty",
+							"value": "2"
+						},
+						{
+							"key": "tags",
+							"value": "web"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges solved",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/solves",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"solves"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/get chalanges leardboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test status and response\", function () {\r",
+							"    pm.response.to.have.status(200); // Pastikan status 400\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_maker}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/challenges/leaderboard",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"challenges",
+						"leaderboard"
 					]
 				}
 			},
