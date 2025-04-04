@@ -4,6 +4,8 @@ import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
 import HomePage from '../pages/HomePage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
+import ChallengeDetailPage from '../pages/ChallengeDetailPage.vue';
+import ProfilePage from '../pages/ProfilePage.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
@@ -32,8 +34,18 @@ const routes = [
   {
     path: '/:slug(.*)*', // catch-all
     name: 'DynamicPage',
-    component: HomePage,
+    component: HomePage ,
     meta: { requiresAuth: true }, // bisa juga tanpa auth kalau mau
+  },
+  {
+    path: '/challenges/:id',
+    name: 'ChallengeDetail',
+    component: ChallengeDetailPage
+  },
+  {
+    path: '/profile/:username',
+    name: 'ProfilePage',
+    component: ProfilePage
   },
   // {
   //   path: '/dashboard',

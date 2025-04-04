@@ -1,5 +1,5 @@
 // src/services/authService.ts
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import config from '../config';  
 
 export interface LoginPayload {
   username: string;
@@ -13,7 +13,7 @@ export interface RegisterPayload {
 }
 
 export async function login(payload: LoginPayload) {
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  const res = await fetch(`${config.BASE_URL}/api/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export async function login(payload: LoginPayload) {
 }
 
 export async function register(payload: RegisterPayload) {
-  const res = await fetch(`${BASE_URL}/api/auth/register`, {
+  const res = await fetch(`${config.BASE_URL}/api/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

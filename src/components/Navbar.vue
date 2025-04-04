@@ -49,7 +49,9 @@
   
       <div v-if="auth.isAuthenticated" class="flex items-center space-x-4">
         <span class="text-sm sm:text-base">
-          👋 <span class="font-medium">{{ auth.username }}</span>
+          <RouterLink :to="`/profile/${auth.username}`" class="hover:text-blue-300 text-sm sm:text-base transition">
+            👋 <span class="font-medium">{{ auth.username }}</span>
+          </RouterLink>
         </span>
         <button
           @click="logout"
@@ -75,7 +77,7 @@
       </div>
     </nav>
 </template>
-  
+
 <script setup lang="ts">
   import { useAuthStore } from '../stores/auth';
   import { useRouter } from 'vue-router';
