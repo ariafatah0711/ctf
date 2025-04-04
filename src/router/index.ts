@@ -3,8 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
 import HomePage from '../pages/HomePage.vue';
-import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import ChallengeDetailPage from '../pages/ChallengeDetailPage.vue';
+import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import ProfilePage from '../pages/ProfilePage.vue';
 import { useAuthStore } from '../stores/auth';
 
