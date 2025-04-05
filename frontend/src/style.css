@@ -28,3 +28,8 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+button,
+a {
+  cursor: pointer;
+}

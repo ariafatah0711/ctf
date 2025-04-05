@@ -91,3 +91,34 @@ supabase db push
 supabase db diff --local --file test_update
 supabase db push
 ```
+
+# curently
+```bash
+mkdir my-project
+cd my-project
+mkdir frontend backend
+npm init -y
+
+npm install concurrently --save-dev
+
+###
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\"",
+    "start": "concurrently \"npm --prefix frontend start\" \"npm --prefix backend start\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
+
+# env
+npm install --save-dev cross-env-shell
+
+"scripts": {
+  "dev": "cross-env-shell concurrently \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\""
+}
+```

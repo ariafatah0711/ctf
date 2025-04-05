@@ -1,13 +1,13 @@
-<template class="min-h-screen">
+<template>
   <Navbar />
-  <div class="h-16"></div>
+  <!-- dont use padding -->
 
     <div class="flex items-center justify-center px-2">
-      <RegisterForm />
+      <LoginForm />
     </div>
 </template>
-
+  
 <script setup lang="ts">
   import Navbar from '../components/Navbar.vue';
-  import RegisterForm from '../components/Auth/RegisterForm.vue';
+  import LoginForm from '../components/Auth/LoginForm.vue';
 </script>

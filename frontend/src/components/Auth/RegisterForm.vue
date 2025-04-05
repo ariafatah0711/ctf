@@ -54,7 +54,7 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition pointer"
           >
             {{ loading ? "Registering..." : "Register" }}
           </button>
