@@ -1,4 +1,3 @@
-import { verifyToken } from "../../../lib/middleware/auth";
 import { verifySupabaseToken } from "../../../lib/middleware/auth";
 
 export default async function handler(req, res) {
