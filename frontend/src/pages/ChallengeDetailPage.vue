@@ -1,4 +1,4 @@
-<template class="min-h-screen">
+<template class="min-h-screen bg-gray-50">
   <Navbar />
   <div class="h-16"></div>
   
@@ -8,8 +8,8 @@
       <SubmitFlag class="w-full" />
     </div>
   
-      <!-- Display Challenge Data -->
-      <div v-if="challenge" class="bg-white shadow-lg rounded-lg p-6">
+    <!-- Display Challenge Data -->
+    <div v-if="challenge" class="bg-white shadow-lg rounded-lg p-6">
       <h1 class="text-3xl font-semibold text-gray-800 mb-3">{{ challenge.title }}</h1>
       <p class="text-sm text-gray-500 mb-6">{{ formattedDate(challenge.created_at) }}</p>
   
@@ -39,11 +39,38 @@
       </div>
   
       <!-- NEW: Button to go to challenge URL -->
-      <div v-if="challenge.url" class="mt-6">
-        <a :href="withHttp(challenge.url)" target="_blank" rel="noopener"
-           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200">
+      <!-- <div v-if="challenge.url" class="mt-6">
+        <a 
+          :href="isFile(challenge.url) ? undefined : withHttp(challenge.url)" 
+          :download="isFile(challenge.url) ? challenge.url : undefined" 
+          target="_blank" 
+          rel="noopener"
+          class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200">
           Buka Soal
         </a>
+      </div> -->
+      <div v-if="challenge.url" class="mt-6">
+        <div v-if="isFile(challenge.url)">
+          <a
+            :href="challenge.url"
+            download
+            class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
+          >
+            <i class="fas fa-download mr-2"></i>
+            Download {{ challenge.url.split('/').pop() }}
+          </a>
+        </div>
+        <div v-else>
+          <a
+            :href="challenge.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
+          >
+            <i class="fas fa-link mr-2"></i>
+            Open: {{ challenge.url }}
+          </a>
+        </div>
       </div>
     </div>
   
@@ -57,9 +84,9 @@
         </li>
       </ul>
     </div>
-  
-    <div v-else>
-      <p class="text-gray-500">Loading challenge...</p>
+
+    <div v-else class="mt-8">
+      <p class="text-gray-500 italic">Belum ada yang menyelesaikan challenge ini.</p>
     </div>
   </div>
 </template>
@@ -138,10 +165,15 @@ const formattedDate = (raw: string) => {
         });
 };
 
-const withHttp = (url: string): string => {
-  if (!url) return '#';
-  return url.startsWith('http://') || url.startsWith('https://')
-    ? url
-    : `http://${url}`;
+// const withHttp = (url: string): string => {
+//   if (!url) return '#';
+//   return url.startsWith('http://') || url.startsWith('https://')
+//     ? url
+//     : `http://${url}`;
+// };
+
+// Function to check if the URL points to a file
+const isFile = (url: string): boolean => {
+  return /\.(pdf|zip|txt|png|jpg|jpeg|mp4|mp3|docx)$/i.test(url);
 };
 </script>

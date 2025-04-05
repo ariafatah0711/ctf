@@ -60,7 +60,7 @@
                     Dashboard Challenges
                   </RouterLink>
                 </MenuItem>
-                <MenuItem v-slot="{ active }">
+                <MenuItem>
                   <button
                     @click="logout"
                     class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
@@ -89,7 +89,7 @@
           <RouterLink to="/challenges" class="hover:text-gray-300 transition">Challenges</RouterLink>
           <RouterLink to="/leaderboard" class="hover:text-gray-300 transition">Leaderboard</RouterLink>
           <RouterLink to="/about" class="hover:text-gray-300 transition">About</RouterLink>
-          <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)"  v-slot="{ active }" to="/Dashboard" class="hover:text-gray-300 transition">Dashboard</RouterLink>
+          <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)" to="/Dashboard" class="hover:text-gray-300 transition">Dashboard</RouterLink>
 
           <div v-if="auth.isAuthenticated" class="flex items-center space-x-4">
             <!-- Dropdown User -->
@@ -142,7 +142,7 @@
                       Dashboard Challenges
                     </RouterLink>
                   </MenuItem>
-                  <MenuItem v-slot="{ active }">
+                  <MenuItem>
                     <button
                       @click="logout"
                       class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
@@ -170,7 +170,7 @@
       <RouterLink to="/about" class="block hover:text-gray-300">About</RouterLink>
 
       <div v-if="auth.isAuthenticated" class="space-y-2">
-        <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)"  v-slot="{ active }" to="/dashboard" class="block hover:text-blue-300">Dashboard</RouterLink>
+        <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)" to="/dashboard" class="block hover:text-blue-300">Dashboard</RouterLink>
       </div>
       <div v-else class="space-y-2">
         <RouterLink to="/login" class="block hover:text-blue-300">Login</RouterLink>
