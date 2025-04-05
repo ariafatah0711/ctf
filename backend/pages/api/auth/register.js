@@ -24,6 +24,7 @@ export default async function handler(req, res) {
             display_name: username, // atau bisa pakai display_name kalau dari frontend
             role: "user",
           },
+          // emailRedirectTo: "my-ctf-platform.vercel.app/login",
         },
       });
 

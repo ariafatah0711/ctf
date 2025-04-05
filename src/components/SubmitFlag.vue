@@ -17,7 +17,7 @@
       </form>
     </div>
 </template>
-  
+
 <script setup lang="ts">
   import { ref } from 'vue';
   import Swal from 'sweetalert2';
@@ -63,6 +63,8 @@
         icon: 'success',
         timer: 1500,
         showConfirmButton: false,
+      }).then(() => {
+        location.reload(); // Refresh halaman setelah alert selesai
       });
   
       flag.value = '';

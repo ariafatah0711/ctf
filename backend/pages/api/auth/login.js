@@ -1,4 +1,5 @@
-import supabase from "@/lib/supabase";
+// import supabase from "@/lib/supabase";
+import supabaseAdmin from "@/lib/supabaseAdmin";
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabaseAdmin.auth.signInWithPassword({
         email,
         password,
       });

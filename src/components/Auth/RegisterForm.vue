@@ -96,12 +96,14 @@
     success.value = '';
   
     try {
-      const res = await register(form);
-      success.value = res.message || 'Registrasi berhasil';
+      await register(form);
+      // success.value = res.message || 'Registrasi berhasil';
+      success.value = 'Registrasi berhasil. Silakan cek email kamu untuk verifikasi.';
       form.username = '';
       form.email = '';
       form.password = '';
-      router.push('/login');
+      // router.push('/login');
+      router.push('/Verify');
     } catch (err: any) {
       error.value = err.message;
     } finally {
