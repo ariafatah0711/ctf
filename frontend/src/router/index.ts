@@ -10,6 +10,7 @@ import Setup from '../pages/Setup.vue';
 import About from '../pages/About.vue';
 import ChallengePage from '../pages/ChallengePage.vue';
 import Verify from '../pages/Verify.vue';
+import AdminDashboard from '../pages/AdminDashboard.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
@@ -55,12 +56,12 @@ const routes = [
     name: 'Verify',
     component: Verify,
   },
-  // {
-  //   path: '/dashboard',
-  //   name: 'Dashboard',
-  //   component: Dashboard,
-  //   meta: { requiresAuth: true },
-  // },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true },
+  },
   {
     path: '/:slug(.*)*', // catch-all
     name: 'DynamicPage',
