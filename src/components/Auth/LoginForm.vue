@@ -87,20 +87,6 @@
   const loading = ref(false);
   const error = ref('');
   
-  // async function handleLogin() {
-  //   loading.value = true;
-  //   error.value = '';
-  
-  //   try {
-  //     const res = await login(form); // call API
-  //     authStore.login(res.token);    // simpan token ke Pinia
-  //     router.push('/');              // redirect ke home
-  //   } catch (err: any) {
-  //     error.value = err.message;
-  //   } finally {
-  //     loading.value = false;
-  //   }
-  // }
   async function handleLogin() {
     try {
       // const { session, user } = await loginRequest({ email, password });

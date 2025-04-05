@@ -1,44 +1,5 @@
-<!-- <template>
-  <RouterLink :to="`/challenges/${slugify(challenge.id)}`" class="block group">
-    <div
-      class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm group-hover:shadow-md transition-all duration-200 ease-in-out h-full flex flex-col justify-between cursor-pointer"
-    >
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="text-base font-semibold text-gray-800 group-hover:text-blue-700 transition">
-            {{ challenge.title }}
-          </h2>
-          <span
-            class="text-xs px-2 py-1 rounded-full font-medium"
-            :class="badgeColor(challenge.difficulty)"
-          >
-            {{ difficultyLabel(challenge.difficulty) }}
-          </span>
-        </div>
-
-        <div class="text-xs text-gray-400 mb-2">
-          {{ formattedDate(challenge.created_at) }}
-        </div>
-
-        <div class="flex flex-wrap gap-2 text-xs">
-          <span
-            v-for="tag in challenge.tags"
-            :key="tag"
-            class="bg-gray-800 text-white px-2 py-0.5 rounded-full"
-          >
-            #{{ tag }}
-          </span>
-        </div>
-      </div>
-    </div>
-  </RouterLink>
-</template> -->
-
 <template>
   <RouterLink :to="`/challenges/${slugify(challenge.id)}`" class="block group">
-    <!-- <div
-      class="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800 dark:text-white transition duration-200 ease-in-out h-full flex flex-col justify-between"
-    > -->
     <div :class="['rounded-lg p-6 shadow-md transition duration-200 ease-in-out h-full flex flex-col justify-between',
       challenge.solved ? 'bg-green-100 dark:bg-green-700' : 'bg-white dark:bg-gray-800'
     ]">
@@ -87,19 +48,9 @@
   </RouterLink>
 </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   import { RouterLink } from 'vue-router';
-  
-  // defineProps<{
-  //   challenge: {
-  //     id: string;
-  //     title: string;
-  //     description?: string;
-  //     difficulty: number;
-  //     tags: string[];
-  //     created_at: string;
-  //   };
-  // }>();
+
   defineProps<{
   challenge: {
     id: string;

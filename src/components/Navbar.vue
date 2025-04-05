@@ -66,22 +66,22 @@
 </template>
 
 <script setup lang="ts">
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
+  import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+  import { useAuthStore } from '../stores/auth';
+  import { useRouter } from 'vue-router';
+  import { onMounted } from 'vue';
 
-const auth = useAuthStore();
-const router = useRouter();
+  const auth = useAuthStore();
+  const router = useRouter();
 
-onMounted(async () => {
-  if (auth.token && !auth.isAuthChecked) {
-    await auth.checkAuth();
-  }
-});
+  onMounted(async () => {
+    if (auth.token && !auth.isAuthChecked) {
+      await auth.checkAuth();
+    }
+  });
 
-const logout = () => {
-  auth.logout();
-  router.push('/login');
-};
+  const logout = () => {
+    auth.logout();
+    router.push('/login');
+  };
 </script>

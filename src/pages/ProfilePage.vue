@@ -46,38 +46,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute, RouterLink } from 'vue-router';
-import Navbar from '../components/Navbar.vue';
-import { useAuthStore } from '../stores/auth';
-import config from '../config';
+  import { ref, onMounted } from 'vue';
+  import { useRoute, RouterLink } from 'vue-router';
+  import Navbar from '../components/Navbar.vue';
+  import { useAuthStore } from '../stores/auth';
+  import config from '../config';
 
-const route = useRoute();
-const username = route.params.username as string;
+  const route = useRoute();
+  const username = route.params.username as string;
 
-const user = ref<any>(null);
-const loading = ref(true);
-const error = ref<string | null>(null);
+  const user = ref<any>(null);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
 
-const auth = useAuthStore();
-const token = auth.token;
+  const auth = useAuthStore();
+  const token = auth.token;
 
-onMounted(async () => {
-  try {
-    const res = await fetch(`${config.BASE_URL}/api/users/username?username=${username}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  onMounted(async () => {
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/users/username?username=${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const result = await res.json();
-    if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
 
-    user.value = result.data;
-  } catch (err: any) {
-    error.value = err.message;
-  } finally {
-    loading.value = false;
-  }
-});
+      user.value = result.data;
+    } catch (err: any) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  });
 </script>

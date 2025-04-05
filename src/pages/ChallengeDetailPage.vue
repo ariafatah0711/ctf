@@ -102,26 +102,26 @@
   };
   
   const difficultyLabel = (difficulty: number) => {
-  if (!difficulty || difficulty < 1 || difficulty > 3) return 'Unknown';
-  return ['Easy', 'Medium', 'Hard'][difficulty - 1];
-};
+    if (!difficulty || difficulty < 1 || difficulty > 3) return 'Unknown';
+    return ['Easy', 'Medium', 'Hard'][difficulty - 1];
+  };
   
   const formattedDate = (raw: string) => {
   if (!raw) return 'Unknown date';
   const date = new Date(raw);
   return isNaN(date.getTime()) 
-    ? 'Invalid date' 
-    : date.toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-};
+      ? 'Invalid date' 
+      : date.toLocaleDateString('id-ID', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+  };
 
-const withHttp = (url: string): string => {
-  if (!url) return '#';
-  return url.startsWith('http://') || url.startsWith('https://')
-    ? url
-    : `http://${url}`;
-};
+  const withHttp = (url: string): string => {
+    if (!url) return '#';
+    return url.startsWith('http://') || url.startsWith('https://')
+      ? url
+      : `http://${url}`;
+  };
   </script>

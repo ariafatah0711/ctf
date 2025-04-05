@@ -84,65 +84,65 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from '../components/Navbar.vue';
-import { ref, onMounted, watch } from 'vue';
-import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
-import config from "../config"
+  import Navbar from '../components/Navbar.vue';
+  import { ref, onMounted, watch } from 'vue';
+  import { useAuthStore } from '../stores/auth';
+  import { useRouter } from 'vue-router';
+  import config from "../config"
 
-const router = useRouter();
-const auth = useAuthStore();
+  const router = useRouter();
+  const auth = useAuthStore();
 
-interface LeaderboardUser {
-  user_id: string;
-  username: string;
-  solved: number;
-  rank: number;
-}
-
-const leaderboard = ref<LeaderboardUser[]>([]);
-const loading = ref(true);
-const page = ref(1);
-const totalPages = ref(1);
-
-const fetchLeaderboard = async () => {
-  loading.value = true;
-  try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=9`, {
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
-      },
-    });
-
-    const raw = await res.json();
-    console.log(raw)
-    leaderboard.value = Array.isArray(raw.leaderboard) ? raw.leaderboard : [];
-    totalPages.value = raw.totalPages || 1;
-  } catch (err) {
-    console.error('Failed to fetch leaderboard:', err);
-    leaderboard.value = [];
-    totalPages.value = 1;
-  } finally {
-    loading.value = false;
+  interface LeaderboardUser {
+    user_id: string;
+    username: string;
+    solved: number;
+    rank: number;
   }
-};
 
-const goToUser = (username: string) => {
-  router.push(`/profile/${username}`);
-};
+  const leaderboard = ref<LeaderboardUser[]>([]);
+  const loading = ref(true);
+  const page = ref(1);
+  const totalPages = ref(1);
 
-const nextPage = () => {
-  if (page.value < totalPages.value) page.value++;
-};
-const prevPage = () => {
-  if (page.value > 1) page.value--;
-};
-const setPage = (n: number) => {
-  if (n !== page.value) {
-    page.value = n;
-  }
-};
+  const fetchLeaderboard = async () => {
+    loading.value = true;
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=9`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
 
-onMounted(fetchLeaderboard);
-watch(page, fetchLeaderboard);
+      const raw = await res.json();
+      console.log(raw)
+      leaderboard.value = Array.isArray(raw.leaderboard) ? raw.leaderboard : [];
+      totalPages.value = raw.totalPages || 1;
+    } catch (err) {
+      console.error('Failed to fetch leaderboard:', err);
+      leaderboard.value = [];
+      totalPages.value = 1;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const goToUser = (username: string) => {
+    router.push(`/profile/${username}`);
+  };
+
+  const nextPage = () => {
+    if (page.value < totalPages.value) page.value++;
+  };
+  const prevPage = () => {
+    if (page.value > 1) page.value--;
+  };
+  const setPage = (n: number) => {
+    if (n !== page.value) {
+      page.value = n;
+    }
+  };
+
+  onMounted(fetchLeaderboard);
+  watch(page, fetchLeaderboard);
 </script>

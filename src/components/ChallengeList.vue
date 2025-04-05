@@ -133,73 +133,73 @@ try {
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import ChallengeCard from './ChallengeCard.vue';
-import { useAuthStore } from '../stores/auth';
-import config from '../config';
+  import { ref, onMounted, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import ChallengeCard from './ChallengeCard.vue';
+  import { useAuthStore } from '../stores/auth';
+  import config from '../config';
 
-const route = useRoute();
-const router = useRouter();
+  const route = useRoute();
+  const router = useRouter();
 
-const auth = useAuthStore();
+  const auth = useAuthStore();
 
-interface Challenge {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: number;
-  tags: string[];
-  created_at: string;
-  solved?: boolean;
-}
-
-const challenges = ref<Challenge[]>([]);
-const page = ref(1);
-const totalPages = ref(1);
-
-const fetchChallenges = async () => {
-  try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}`, {
-      headers: {
-        Authorization: `Bearer ${auth.token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error('Gagal ambil challenge');
-    const json = await res.json();
-    challenges.value = json.data;
-    totalPages.value = json.totalPages;
-  } catch (err) {
-    console.error(err);
+  interface Challenge {
+    id: string;
+    title: string;
+    description: string;
+    difficulty: number;
+    tags: string[];
+    created_at: string;
+    solved?: boolean;
   }
-};
 
-// onMounted(fetchChallenges);
-onMounted(() => {
-  const queryPage = parseInt(route.query.page as string);
-  if (!isNaN(queryPage) && queryPage > 0) {
-    page.value = queryPage;
-  }
-  fetchChallenges()
-});
-// watch(page, fetchChallenges);
-watch(page, (newPage) => {
-  router.replace({ query: { ...route.query, page: newPage.toString() } });
-  fetchChallenges(); // fetch data tiap kali page berubah
-});
+  const challenges = ref<Challenge[]>([]);
+  const page = ref(1);
+  const totalPages = ref(1);
 
-const nextPage = () => {
-  if (page.value < totalPages.value) page.value++;
-};
+  const fetchChallenges = async () => {
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
 
-const prevPage = () => {
-  if (page.value > 1) page.value--;
-};
+      if (!res.ok) throw new Error('Gagal ambil challenge');
+      const json = await res.json();
+      challenges.value = json.data;
+      totalPages.value = json.totalPages;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-const setPage = (n: number) => {
-  if (n !== page.value) {
-    page.value = n;
-  }
-};
+  // onMounted(fetchChallenges);
+  onMounted(() => {
+    const queryPage = parseInt(route.query.page as string);
+    if (!isNaN(queryPage) && queryPage > 0) {
+      page.value = queryPage;
+    }
+    fetchChallenges()
+  });
+  // watch(page, fetchChallenges);
+  watch(page, (newPage) => {
+    router.replace({ query: { ...route.query, page: newPage.toString() } });
+    fetchChallenges(); // fetch data tiap kali page berubah
+  });
+
+  const nextPage = () => {
+    if (page.value < totalPages.value) page.value++;
+  };
+
+  const prevPage = () => {
+    if (page.value > 1) page.value--;
+  };
+
+  const setPage = (n: number) => {
+    if (n !== page.value) {
+      page.value = n;
+    }
+  };
 </script>
