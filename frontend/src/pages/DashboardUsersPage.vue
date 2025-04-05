@@ -1,6 +1,7 @@
 <template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
+  <Breadcrumbs />
 
   <div class="p-4">
 
@@ -78,6 +79,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
 import Navbar from '../components/Navbar.vue'
+import Breadcrumbs from "../components/Breadcrumbs.vue"
 import MembersTable from '../components/MembersTable.vue'
 import GlobalSwal from '../utills/GlobalSwal'
 

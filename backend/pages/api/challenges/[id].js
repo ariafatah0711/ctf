@@ -175,7 +175,7 @@ export default async function handler(req, res) {
     verifyToken(req, res, async () => {
       const { data, error } = await supabase
         .from("challenges")
-        .select("id, title, description, difficulty, created_at, url, tags")
+        .select("id, title, description, difficulty, created_at, url, tags, hint")
         .eq("id", id)
         .single();
 

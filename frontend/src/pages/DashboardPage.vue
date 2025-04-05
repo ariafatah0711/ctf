@@ -1,6 +1,7 @@
 <template class="min-h-screen">
     <Navbar />
     <div class="h-16"></div>
+    <Breadcrumbs />
   
     <div class="p-4">
       <h1 class="text-2xl font-bold mb-6 text-blue-600">🛠️ Admin Dashboard</h1>
@@ -38,6 +39,7 @@
     import { useAuthStore } from '../stores/auth'
     import config from '../config'
     import Navbar from '../components/Navbar.vue'
+    import Breadcrumbs from "../components/Breadcrumbs.vue"
   
     const auth = useAuthStore()
   
