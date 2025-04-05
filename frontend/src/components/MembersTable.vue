@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 
 const props = defineProps<{
   members: Array<{
+    id: string
     name: string
     email: string
     role: string

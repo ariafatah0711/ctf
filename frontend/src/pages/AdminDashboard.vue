@@ -64,6 +64,7 @@ const goToProfile = (username: string) => {
 // 🔁 Transform users -> members format
 const members = computed(() =>
   users.value.map((user) => ({
+    id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
@@ -74,16 +75,60 @@ const members = computed(() =>
 
 onMounted(fetchUsers)
 
-const handleEdit = (index: number) => {
+const handleEdit = async (index: number) => {
   const user = members.value[index]
-  console.log('Edit:', user)
-  // Bisa buka modal, navigasi ke edit page, dll
+
+  const newName = prompt("Nama baru:", user.name)
+  const newRole = prompt("Role baru:", user.role)
+
+  if (!newName || !newRole) return alert("Edit dibatalkan.")
+
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/users/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        name: newName,
+        role: newRole,
+      }),
+    })
+
+    const result = await res.json()
+
+    if (!res.ok) throw new Error(result.message || "Gagal update")
+
+    // Update lokal
+    members.value[index].name = newName
+    members.value[index].role = newRole
+    alert("User berhasil diperbarui.")
+  } catch (err) {
+    alert(`Gagal update user: ${err}`)
+  }
 }
 
-const handleDelete = (index: number) => {
-  const user = members.value[index] 
-  if (confirm(`Hapus ${user.name}?`)) {
+const handleDelete = async (index: number) => {
+  const user = members.value[index]
+  if (!confirm(`Hapus ${user.id}?`)) return
+
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/users/${user.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+
+    const result = await res.json()
+
+    if (!res.ok) throw new Error(result.message || "Gagal hapus")
+
     members.value.splice(index, 1)
+    alert("User berhasil dihapus.")
+  } catch (err) {
+    alert(`Gagal hapus user: ${err}`)
   }
 }
 </script>

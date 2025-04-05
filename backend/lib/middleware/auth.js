@@ -17,3 +17,16 @@ export async function verifyToken(req, res, next) {
   req.user = data.user;
   next();
 }
+
+export function requireRole(requiredRole) {
+  return async function (req, res, next) {
+    const user = req.user;
+    const role = user?.user_metadata?.role;
+
+    if (!role || role !== requiredRole) {
+      return res.status(403).json({ message: "Akses ditolak. Role tidak sesuai." });
+    }
+
+    await next();
+  };
+}
