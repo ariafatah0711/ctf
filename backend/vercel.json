@@ -1,9 +1,9 @@
 {
-    "regions": ["sfo1"],
-    "functions": {
-      "api/**.[jt]s": {
-        "memory": 1024,
-        "maxDuration": 10
-      }
+  "regions": ["sfo1"],
+  "functions": {
+    "pages/api/**.[jt]s": {
+      "memory": 1024,
+      "maxDuration": 10
     }
+  }
 }

@@ -4,7 +4,7 @@
   import ChallengeList from '../components/ChallengeList.vue';
 </script>
 
-<template>
+<template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
 

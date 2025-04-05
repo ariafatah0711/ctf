@@ -1,8 +1,8 @@
-<template>
-    <Navbar class="w-full" />
-    <div class="h-16"></div>
+<template class="min-h-screen">
+  <Navbar />
+  <div class="h-16"></div>
 
-    <div class="min-h-screen flex items-center justify-center px-2">
+    <div class="flex items-center justify-center px-2">
       <LoginForm />
     </div>
 </template>

@@ -1,4 +1,4 @@
-<template>
+<template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
 

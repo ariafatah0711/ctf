@@ -1,8 +1,8 @@
-<template>
+<template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
 
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
+  <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
     <div class="max-w-5xl mx-auto text-center">
       <h1 class="text-5xl font-extrabold mb-6">Selamat Datang di CTF Platform!</h1>
       <p class="text-lg mb-8 leading-relaxed">

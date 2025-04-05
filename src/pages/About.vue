@@ -1,8 +1,8 @@
-<template>
+<template class="min-h-screen">
     <Navbar />
     <div class="h-16"></div>
 
-    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
+    <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
       <div class="max-w-4xl mx-auto">
         <h1 class="text-4xl font-bold mb-6 text-center">Tentang Aplikasi</h1>
         <p class="text-lg mb-4 leading-relaxed">
