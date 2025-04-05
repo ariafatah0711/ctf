@@ -1,4 +1,56 @@
 @import "tailwindcss";
+
+
+/* * { */
+/* user-select: none; */
+/* user-drag: none; */
+/* Safari */
+/* -webkit-user-drag: none; */
+/* Chrome, Edge */
+/* } */
+
+input,
+textarea,
+[draggable="true"] {
+  user-select: text;
+}
+
+#preview-teks,
+pre {
+  user-select: text;
+}
+
+html,
+body {
+  padding-right: 0 !important;
+  scrollbar-gutter: stable !important;
+}
+
+#app,
+main,
+.container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* tambahan */
+/* table,
+img,
+pre,
+code,
+iframe {
+  max-width: 100%;
+  overflow-x: auto;
+} */
+
+pre {
+  white-space: pre-wrap;
+  /* Bungkus teks */
+  word-wrap: break-word;
+}
+
+
+
 /* @tailwind base; */
 /* @tailwind components; */
 /* @tailwind utilities; */

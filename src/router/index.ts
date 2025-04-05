@@ -67,21 +67,33 @@ const router = createRouter({
 });
 
 // Middleware auth di route
+// router.beforeEach(async (to, _from, next) => {
+//   const auth = useAuthStore();
+
+//   // Cek apakah halaman butuh autentikasi
+//   if (to.meta.requiresAuth) {
+//     const isAuthenticated = auth.isAuthenticated || (await auth.checkAuth());
+
+//     if (!isAuthenticated) {
+//       return next('/login');
+//     }
+//   }
+
+//   // Kalau user udah login, jangan biarkan ke /login atau /register
+//   if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
+//     return next('/');
+//   }
+
+//   next();
+// });
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
-
-  // Cek apakah halaman butuh autentikasi
-  if (to.meta.requiresAuth) {
-    const isAuthenticated = auth.isAuthenticated || (await auth.checkAuth());
-
-    if (!isAuthenticated) {
-      return next('/login');
-    }
+  if (!auth.isAuthChecked) {
+    // await auth.checkAuth();
   }
 
-  // Kalau user udah login, jangan biarkan ke /login atau /register
-  if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
-    return next('/');
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return next('/login');
   }
 
   next();
