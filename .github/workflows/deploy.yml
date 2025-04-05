@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Set Environment Variables
+        run: |
+          echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" >> .env
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Generate .nojekyll
+        run: echo > dist/.nojekyll
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Deploy to GitHub Pages
+        run: |
+          git checkout --orphan gh-pages
+          git --work-tree dist add --all
+          git --work-tree dist commit -m "Deploy to GitHub Pages"
+          git push --no-verify https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages --force
