@@ -25,19 +25,20 @@
       </p>
 
       <div class="flex justify-center gap-6">
-        <!-- Menggunakan RouterLink untuk navigasi internal -->
-        <RouterLink
-          to="/github"
+        <a
+          href="https://github.com/ariafatah0711/ctf"
+          target="_blank"
           class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded transition"
         >
           Lihat di GitHub
-        </RouterLink>
-        <RouterLink
-          to="/website"
+        </a>
+        <a
+          href="https://ariaf.my.id"
+          target="_blank"
           class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded transition dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
         >
           Kunjungi Website
-        </RouterLink>
+        </a>
       </div>
     </div>
   </div>
