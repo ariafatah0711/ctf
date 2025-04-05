@@ -27,8 +27,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await fetch(`${config.BASE_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${this.token}` },
-        });
-    
+        });    
         if (res.status === 401 || res.status === 403) {
           Swal.fire({
             icon: 'warning',
@@ -46,6 +45,7 @@ export const useAuthStore = defineStore('auth', {
         }
     
         const data = await res.json();
+        console.log(data)
         this.username = data.user.username;
         this.isAuthenticated = true;
         return true;
