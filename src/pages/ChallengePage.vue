@@ -6,6 +6,7 @@
 
 <template>
   <Navbar />
+  <div class="h-16"></div>
 
   <div class="p-4 space-y-8">
     <SubmitFlag />

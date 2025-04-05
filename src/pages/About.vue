@@ -1,5 +1,6 @@
 <template>
     <Navbar />
+    <div class="h-16"></div>
 
     <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
       <div class="max-w-4xl mx-auto">

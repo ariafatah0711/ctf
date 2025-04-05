@@ -1,5 +1,6 @@
 <template>
   <Navbar />
+  <div class="h-16"></div>
 
   <!-- <div class="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow"> -->
   <div class="p-4 space-y-8">

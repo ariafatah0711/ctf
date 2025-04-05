@@ -1,5 +1,6 @@
 <template>
     <Navbar class="w-full" />
+    <div class="h-16"></div>
 
     <div class="min-h-screen flex items-center justify-center px-2">
       <RegisterForm />

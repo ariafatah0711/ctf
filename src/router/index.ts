@@ -9,7 +9,7 @@ import ProfilePage from '../pages/ProfilePage.vue';
 import Setup from '../pages/Setup.vue';
 import About from '../pages/About.vue';
 import ChallengePage from '../pages/ChallengePage.vue';
-import Verify from '../components/Auth/Verify.vue';
+import Verify from '../pages/Verify.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [

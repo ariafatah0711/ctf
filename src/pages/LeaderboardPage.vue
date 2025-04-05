@@ -1,5 +1,6 @@
 <template>
   <Navbar />
+  <div class="h-16"></div>
 
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-6 text-blue-600">🏆 Leaderboard</h1>

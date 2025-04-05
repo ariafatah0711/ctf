@@ -1,5 +1,7 @@
 <template>
   <Navbar />
+  <div class="h-16"></div>
+
   <div class="p-6 max-w-4xl mx-auto">
     <div v-if="loading" class="text-gray-500">Memuat profil...</div>
     <div v-else-if="error" class="text-red-500">Gagal memuat profil: {{ error }}</div>
