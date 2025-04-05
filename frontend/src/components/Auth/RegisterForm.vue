@@ -4,7 +4,7 @@
       <!-- Kolom Gambar -->
       <div class="hidden md:block">
         <img
-          src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw1.webp"
+          src="../../assets/2.png"
           alt="Register Illustration"
           class="w-full h-auto"
         />

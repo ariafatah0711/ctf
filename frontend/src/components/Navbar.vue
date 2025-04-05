@@ -54,12 +54,28 @@
                       Profile
                     </RouterLink>
                   </MenuItem>
-                  <MenuItem v-if="auth.role == 'admin'" v-slot="{ active }">
+                  <MenuItem v-if="auth.role === 'admin' || auth.role === 'maker'" v-slot="{ active }">
                     <RouterLink
                       to="/dashboard"
                       :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
                     >
                       Dashboard
+                    </RouterLink>
+                  </MenuItem>
+                  <MenuItem v-if="auth.role === 'admin'" v-slot="{ active }">
+                    <RouterLink
+                      to="/dashboard/users"
+                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
+                    >
+                      Dashboard Users
+                    </RouterLink>
+                  </MenuItem>
+                  <MenuItem v-if="auth.role === 'admin' || auth.role === 'maker'" v-slot="{ active }">
+                    <RouterLink
+                      to="/dashboard/challenges"
+                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
+                    >
+                      Dashboard Chall
                     </RouterLink>
                   </MenuItem>
                 </MenuItems>

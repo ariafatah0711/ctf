@@ -10,7 +10,9 @@ import Setup from '../pages/Setup.vue';
 import About from '../pages/About.vue';
 import ChallengePage from '../pages/ChallengePage.vue';
 import Verify from '../pages/Verify.vue';
-import AdminDashboard from '../pages/AdminDashboard.vue';
+import DashboardPage from '../pages/DashboardPage.vue';
+import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
+import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
 const Swal = GlobalSwal
@@ -60,10 +62,28 @@ const routes = [
     name: 'Verify',
     component: Verify,
   },
+  // {
+  //   path: '/dashboard',
+  //   name: 'Dashboard',
+  //   component: AdminDashboard,
+  //   meta: { requiresAuth: true, requiresAdmin: true },
+  // },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: AdminDashboard,
+    path: '/dashboard', 
+    name: 'Dashboard', 
+    component: DashboardPage, // Halaman dashboard utama
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/dashboard/challenges', // Halaman challenges
+    name: 'DashboardChallenges',
+    component: DashboardChallengesPage,
+    meta: { requiresAuth: true, requiresMaker: true },
+  },
+  {
+    path: '/dashboard/users', // Halaman untuk manajemen user, hanya admin
+    name: 'DashboardUsers',
+    component: DashboardUsersPage,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
@@ -127,6 +147,17 @@ router.beforeEach(async (to, _from, next) => {
       });
       // next('/');
       return;
+  }
+
+  if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.role)) {
+    Swal.fire({
+      title: 'Akses Dibatasi',
+      text: 'Halaman ini hanya bisa diakses oleh pengguna dengan role maker atau admin.',
+      icon: 'warning',
+      confirmButtonText: 'OK',
+    })
+    next('/dashboard/challenges');
+    return;
   }
 
   next();
