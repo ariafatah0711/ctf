@@ -4,9 +4,9 @@
 
   <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-16 px-6">
     <div class="max-w-5xl mx-auto text-center">
-      <h1 class="text-5xl font-extrabold mb-6">Selamat Datang di CTF Platform!</h1>
+      <h1 class="text-5xl font-extrabold mb-6">Selamat Datang di CTF_WEB ARIA!</h1>
       <p class="text-lg mb-8 leading-relaxed">
-        Platform latihan dan kompetisi CTF (Capture The Flag) berbasis web. Tantang dirimu, pecahkan soal, dan naik ke puncak leaderboard!
+        Merupakan Platform latihan dan kompetisi CTF (Capture The Flag) berbasis web. Tantang dirimu, pecahkan soal, dan naik ke puncak leaderboard!
       </p>
       <div class="flex justify-center gap-4">
         <router-link

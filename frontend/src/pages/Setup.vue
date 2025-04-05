@@ -63,7 +63,7 @@
       </div>
     </div>
 </template>
-  
+
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
@@ -114,7 +114,7 @@
       }
   
       success.value = true
-      setTimeout(() => router.push('/login'), 2000)
+      setTimeout(() => router.push('/verify'), 2000)
     } catch (err: any) {
       error.value = err.message || 'Gagal melakukan setup'
     } finally {

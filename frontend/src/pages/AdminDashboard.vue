@@ -3,10 +3,26 @@
   <div class="h-16"></div>
 
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-6 text-blue-600">👤 User Management</h1>
+
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold mb-6 text-blue-600">👤 User Management</h1>
+        <div v-if="!loading" div class="space-x-2">
+          <button
+            @click="handleAddUser"
+            class="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-blue-700"
+          >
+            ➕ Add User
+          </button>
+          <button
+            @click="handleBatchAddUsers"
+            class="bg-green-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-green-700"
+          >
+            📦 Batch Add
+          </button>
+        </div>
+      </div>
 
     <div v-if="loading" class="text-gray-500">Loading users...</div>
-
     <div v-else>
       <div v-if="members.length > 0" class="overflow-x-auto">
         <MembersTable
@@ -85,8 +101,14 @@ const fetchUsers = async () => {
       },
     })
     const data = await res.json()
+    console.log(data)
+    console.log('Total pages:', totalPages.value)
+    console.log('Current page:', page.value)
     users.value = Array.isArray(data.data) ? data.data : []
     totalPages.value = data.totalPages || 1
+
+    users.value = Array.isArray(data.data) ? data.data : []
+    totalPages.value = data.totalPages || Math.ceil((data.total || users.value.length) / limit) || 1
   } catch (error) {
     console.error('Gagal mengambil data pengguna:', error)
   } finally {
@@ -102,9 +124,10 @@ onMounted(() => {
   fetchUsers()
 })
 
-watch(page, (newPage) => {
+watch(page, async (newPage) => {
+  console.log('Page changed to', newPage)
   router.replace({ query: { ...route.query, page: newPage.toString() } })
-  fetchUsers()
+  await fetchUsers()
 })
 
 // 🔁 Transform users -> members format
@@ -236,6 +259,96 @@ const handleDelete = async (index: number) => {
     await fetchUsers()
   } catch (err: any) {
     Swal.fire('Error', `Gagal hapus user: ${err.message}`, 'error')
+  }
+}
+
+// add user
+const submitUserPayload = async (payload: object) => {
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth.token}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    const result = await res.json()
+    if (!res.ok) throw new Error(result.message || 'Gagal tambah user')
+
+    Swal.fire('Berhasil!', 'User berhasil ditambahkan.', 'success')
+    await fetchUsers()
+  } catch (err: any) {
+    Swal.fire('Error', `Gagal tambah user: ${err.message}`, 'error')
+  }
+}
+const handleAddUser = async () => {
+  const { value: formValues } = await Swal.fire({
+    title: 'Tambah User Baru',
+    html: `
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" />
+      <input id="swal-email" type="email" class="swal2-input" placeholder="Email" />
+      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 8 karakter)" />
+      <select id="swal-role" class="swal2-select">
+        <option value="user">👤 User</option>
+        <option value="maker">🛠️ Maker</option>
+        <option value="admin">👑 Admin</option>
+      </select>
+    </div>
+    `,
+    focusConfirm: false,
+    showCancelButton: true,
+    preConfirm: () => {
+      const name = (document.getElementById('swal-name') as HTMLInputElement)?.value.trim()
+      const email = (document.getElementById('swal-email') as HTMLInputElement)?.value.trim()
+      const password = (document.getElementById('swal-password') as HTMLInputElement)?.value
+      const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value
+
+      if (!name || !email || !password || password.length < 8 || !role) {
+        Swal.showValidationMessage('Semua field wajib diisi dan password minimal 8 karakter')
+        return
+      }
+
+      return { name, email, password, role }
+    }
+  })
+
+  if (formValues) {
+    await submitUserPayload(formValues)
+  }
+}
+
+const handleBatchAddUsers = async () => {
+  const { value: csv } = await Swal.fire({
+    title: 'Batch Tambah User',
+    input: 'textarea',
+    inputLabel: 'Masukkan daftar user (CSV: name,email,password,role)',
+    inputPlaceholder: 'Contoh:\nJohn Doe,john@example.com,secret123,user\nJane Smith,jane@example.com,secret456,maker',
+    inputAttributes: {
+      rows: '8',
+    },
+    showCancelButton: true,
+    preConfirm: (value) => {
+      const lines = value.split('\n').map(l => l.trim()).filter(Boolean)
+      const data: any[] = []
+
+      for (const line of lines) {
+        const [name, email, password, role] = line.split(',').map(v => v.trim())
+        if (!name || !email || !password || !role) {
+          Swal.showValidationMessage(`Baris tidak valid: "${line}"`)
+          return
+        }
+        data.push({ name, email, password, role })
+      }
+
+      return data
+    }
+  })
+
+  if (csv && Array.isArray(csv)) {
+    await submitUserPayload({ users: csv })
   }
 }
 </script>

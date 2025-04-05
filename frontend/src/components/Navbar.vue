@@ -5,7 +5,7 @@
         <!-- Logo -->
         <div class="flex items-center space-x-4">
           <RouterLink to="/" class="text-xl font-bold tracking-tight hover:text-gray-300 transition">
-            CTF Platform
+            {{ app_name }}
           </RouterLink>
         </div>
 
@@ -107,10 +107,12 @@
   import { useRouter } from 'vue-router';
   import { onMounted, ref } from 'vue';
   import GlobalSwal from '../utills/GlobalSwal';
+  import packageInfo from "../../package.json";
 
   const Swal = GlobalSwal;
   const auth = useAuthStore();
   const router = useRouter();
+  const app_name = packageInfo.name;
 
   onMounted(async () => {
     if (auth.token && !auth.isAuthChecked) {

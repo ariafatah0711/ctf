@@ -40,17 +40,99 @@ export default async function handler(req, res) {
             };
           });
 
+          // Calculate totalPages manually
+          const totalPages = Math.ceil(data.total / pageLimit) || 1;
+
           return res.status(200).json({
             message: "Data pengguna berhasil diambil.",
             data: members,
             page: pageNum,
-            totalPages: data.total_pages ?? 1, // total_pages ada kalau pakai paginasi
+            totalPages: totalPages, // Manually calculated total pages
             total: data.total ?? members.length,
           });
         });
       });
     } catch (error) {
       return res.status(500).json({ message: "Terjadi kesalahan.", error: error.message });
+    }
+  } else if (req.method === "POST") {
+    try {
+      verifyToken(req, res, async () => {
+        await requireRole("admin")(req, res, async () => {
+          const body = req.body;
+
+          // Untuk batch (array of users)
+          if (Array.isArray(body.users)) {
+            const createdUsers = [];
+            const errors = [];
+
+            for (const u of body.users) {
+              const { name, email, password, role } = u;
+              if (!email || !password || !role || !name) {
+                errors.push({ email, message: "Missing required fields." });
+                continue;
+              }
+
+              const { data, error } = await supabaseAdmin.auth.admin.createUser({
+                email,
+                password,
+                user_metadata: {
+                  display_name: name,
+                  role,
+                },
+                email_confirm: true,
+              });
+
+              if (error) {
+                errors.push({ email, message: error.message });
+              } else {
+                createdUsers.push({
+                  id: data.user.id,
+                  email: data.user.email,
+                });
+              }
+            }
+
+            return res.status(200).json({
+              message: "Batch create finished.",
+              success: createdUsers.length,
+              failed: errors.length,
+              errors,
+              data: createdUsers,
+            });
+          }
+
+          // Untuk single user
+          const { name, email, password, role } = body;
+          if (!email || !password || !role || !name) {
+            return res.status(400).json({ message: "Nama, email, password, dan role wajib diisi." });
+          }
+
+          const { data, error } = await supabaseAdmin.auth.admin.createUser({
+            email,
+            password,
+            user_metadata: {
+              display_name: name,
+              role,
+            },
+            email_confirm: true,
+          });
+
+          if (error) {
+            return res.status(500).json({ message: "Gagal menambahkan user.", error: error.message });
+          }
+
+          return res.status(201).json({
+            message: "User berhasil ditambahkan.",
+            data: {
+              id: data.user.id,
+              email: data.user.email,
+            },
+          });
+        });
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Terjadi kesalahan saat menambahkan user.", error: error.message });
     }
   } else {
     return res.status(405).json({ message: "Method Not Allowed" });

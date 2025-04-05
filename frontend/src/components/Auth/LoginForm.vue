@@ -93,6 +93,7 @@
       const { session, user } = await login(form);
       const auth = useAuthStore();
       auth.login(session, user);
+      await auth.checkAuth();
       router.push('/challenges'); // redirect ke dashboard/home
     } catch (err: any) {
       Swal.fire({ icon: 'error', title: 'Login gagal', text: err.message });

@@ -9,55 +9,51 @@
 
     <div v-else>
       <div v-if="leaderboard.length > 0" class="flex flex-col">
-        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-            <div class="overflow-hidden">
-              <table class="min-w-full text-left text-sm font-light text-surface dark:text-white">
-                <thead class="border-b border-neutral-200 bg-white font-medium dark:border-white/10 dark:bg-body-dark">
-                  <tr>
-                    <th scope="col" class="px-6 py-4">#</th>
-                    <th scope="col" class="px-6 py-4">Username</th>
-                    <th scope="col" class="px-6 py-4">Solved</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="user in leaderboard"
-                    :key="user.user_id"
-                    @click="goToUser(user.username)"
-                    class="border-b border-neutral-200 bg-black/[0.02] dark:border-white/10 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition"
-                  >
-                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ user.rank }}</td>
-                    <td class="whitespace-nowrap px-6 py-4">{{ user.username }}</td>
-                    <td class="whitespace-nowrap px-6 py-4 font-semibold">{{ user.solved }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div class="mt-4 w-full overflow-hidden rounded-lg border border-slate-200">
+          <table class="w-full">
+            <thead class="border-b border-slate-200 bg-slate-100 text-sm font-medium text-slate-600">
+              <tr>
+                <th class="px-2.5 py-2 text-start">#</th>
+                <th class="px-2.5 py-2 text-start">Username</th>
+                <th class="px-2.5 py-2 text-start">Solved</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(user, i) in leaderboard"
+                :key="user.user_id"
+                class="border-b border-slate-200 last:border-0"
+                @click="goToUser(user.username)"
+              >
+                <td class="p-3 font-medium">{{ user.rank }}</td>
+                <td class="p-3">{{ user.username }}</td>
+                <td class="p-3 font-semibold">{{ user.solved }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- Pagination -->
         <nav aria-label="Leaderboard pagination" class="flex justify-center mt-6">
-          <ul class="list-style-none flex gap-1">
+          <ul class="flex gap-2">
             <li>
               <button
                 @click="prevPage"
                 :disabled="page === 1"
-                class="relative block rounded px-3 py-1.5 text-sm transition duration-300 dark:text-neutral-400 text-surface/50 disabled:pointer-events-none"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
               >
-                Previous
+                Prev
               </button>
             </li>
 
             <li v-for="n in totalPages" :key="n">
               <button
                 @click="setPage(n)"
-                :class="[
-                  'relative block rounded px-3 py-1.5 text-sm transition duration-300',
+                :class="[ 
+                  'px-3 py-1.5 rounded',
                   page === n
-                    ? 'bg-primary-100 text-primary-700 font-medium dark:bg-slate-900 dark:text-primary-500'
-                    : 'bg-transparent text-surface hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700'
+                    ? 'bg-blue-600 text-white font-semibold'
+                    : 'bg-gray-100 hover:bg-gray-200'
                 ]"
               >
                 {{ n }}
@@ -68,7 +64,7 @@
               <button
                 @click="nextPage"
                 :disabled="page === totalPages"
-                class="relative block rounded px-3 py-1.5 text-sm transition duration-300 dark:text-neutral-400 text-surface/50 disabled:pointer-events-none"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
               >
                 Next
               </button>
@@ -116,7 +112,7 @@
       });
 
       const raw = await res.json();
-      console.log(raw)
+      // console.log(raw)
       leaderboard.value = Array.isArray(raw.leaderboard) ? raw.leaderboard : [];
       totalPages.value = raw.totalPages || 1;
     } catch (err) {

@@ -12,6 +12,8 @@ import ChallengePage from '../pages/ChallengePage.vue';
 import Verify from '../pages/Verify.vue';
 import AdminDashboard from '../pages/AdminDashboard.vue';
 import { useAuthStore } from '../stores/auth';
+import GlobalSwal from '../utills/GlobalSwal';
+const Swal = GlobalSwal
 
 const routes = [
   {
@@ -23,11 +25,13 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginPage,
+    meta: { requiresGuest: true },
   },
   {
     path: '/register',
     name: 'Register',
     component: RegisterPage,
+    meta: { requiresGuest: true },
   },
   {
     path: '/setup',
@@ -60,13 +64,12 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: AdminDashboard,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/:slug(.*)*', // catch-all
     name: 'DynamicPage',
-    component: HomePage ,
-    meta: { requiresAuth: true }, // bisa juga tanpa auth kalau mau
+    component: HomePage,
   },
   {
     path: '/challenges/:id',
@@ -90,12 +93,40 @@ const router = createRouter({
 
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
-  if (!auth.isAuthChecked) {
-    // await auth.checkAuth();
-  }
+  // console.log(auth.username, auth.role)
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    return next('/login');
+    await Swal.fire({
+      title: 'Akses Dibatasi',
+      text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.',
+      icon: 'warning',
+      confirmButtonText: 'Login',
+    });
+    // next('/login');
+    return; 
+  }
+
+  // Untuk halaman yang membutuhkan guest dan pengguna sudah login
+  if (to.meta.requiresGuest && auth.isAuthenticated) {
+    Swal.fire({
+      title: 'Anda sudah login!',
+      text: 'Anda sudah login. Silakan keluar terlebih dahulu jika ingin mendaftar ulang.',
+      icon: 'info',
+      confirmButtonText: 'OK'
+    })
+    // next('/');
+    return;
+  }
+
+  if (to.meta.requiresAdmin && auth.role !== 'admin') {
+      await Swal.fire({
+        title: 'Akses Dibatasi',
+        text: 'Hanya admin yang dapat mengakses halaman ini.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      // next('/');
+      return;
   }
 
   next();
