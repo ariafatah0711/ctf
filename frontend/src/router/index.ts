@@ -122,7 +122,7 @@ router.beforeEach(async (to, _from, next) => {
       icon: 'warning',
       confirmButtonText: 'Login',
     });
-    // next('/login');
+    next('/login');
     return; 
   }
 
@@ -134,7 +134,7 @@ router.beforeEach(async (to, _from, next) => {
       icon: 'info',
       confirmButtonText: 'OK'
     })
-    // next('/');
+    next('/');
     return;
   }
 
@@ -145,7 +145,7 @@ router.beforeEach(async (to, _from, next) => {
         icon: 'error',
         confirmButtonText: 'OK'
       });
-      // next('/');
+      next('/');
       return;
   }
 

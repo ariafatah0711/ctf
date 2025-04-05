@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', {
     token: localStorage.getItem('token') || '',
     username: sessionStorage.getItem('username') || '',
     role: sessionStorage.getItem('role') || '',
+    avatar: sessionStorage.getItem('avatar') || '',
     isAuthenticated: !!localStorage.getItem('token'),
     isAuthChecked: false,
   }),
@@ -18,11 +19,13 @@ export const useAuthStore = defineStore('auth', {
       this.token = session.access_token;
       this.username = user.username || '';
       this.role = user.role || '';
+      this.avatar = user.avatar || '';
       this.isAuthenticated = true;
 
       localStorage.setItem('token', session.access_token);
       sessionStorage.setItem('username', user.username);
       sessionStorage.setItem('role', user.role || '');
+      sessionStorage.setItem('avatar', user.avatar || ''); 
     },
 
     logout() {
@@ -34,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('token');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('role');
+      sessionStorage.removeItem('avatar'); 
 
       router.push('/login');
     },
@@ -65,10 +69,12 @@ export const useAuthStore = defineStore('auth', {
 
         this.username = data.user.username;
         this.role = data.user.role;
+        this.avatar = data.user.avatar || '';
         this.isAuthenticated = true;
 
         sessionStorage.setItem('username', data.user.username);
         sessionStorage.setItem('role', data.user.role);
+        sessionStorage.setItem('avatar', data.user.avatar || '');
 
         return true;
 

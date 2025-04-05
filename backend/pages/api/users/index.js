@@ -28,15 +28,32 @@ export default async function handler(req, res) {
             return res.status(500).json({ message: "Gagal mengambil data pengguna.", error: error.message });
           }
 
+          // const members = data.users.map((user) => {
+          //   const meta = user.user_metadata || {};
+          //   return {
+          //     id: user.id,
+          //     name: meta.display_name || "Unknown",
+          //     email: user.email,
+          //     role: meta.role || "user",
+          //     lastSignIn: user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : "Never",
+          //     avatar: `https://i.pravatar.cc/150?u=${user.id}`,
+          //   };
+          // });
+
           const members = data.users.map((user) => {
             const meta = user.user_metadata || {};
+            const name = meta.display_name || "Unknown";
+            const initials = name
+              .split(" ")
+              .map((word) => word[0].toUpperCase())
+              .join(""); // Ambil inisial nama
             return {
               id: user.id,
-              name: meta.display_name || "Unknown",
+              name,
               email: user.email,
               role: meta.role || "user",
               lastSignIn: user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : "Never",
-              avatar: `https://i.pravatar.cc/150?u=${user.id}`,
+              avatar: `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&size=150`, // Menggunakan UI Avatars API
             };
           });
 
