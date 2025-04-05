@@ -160,12 +160,12 @@
   
   const router = useRouter();
   // const authStore = useAuthStore();
-
+  
   const form = reactive({
     email: '',
     password: '',
   });
-  
+ 
   const loading = ref(false);
   const error = ref('');
   

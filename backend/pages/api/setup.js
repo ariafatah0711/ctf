@@ -1,63 +1,51 @@
-// /backend/pages/api/auth/setup.js
-import { hash } from "bcryptjs";
-import supabase from "../../lib/supabase";
-
-const setupSecret = process.env.SETUP_SECRET;
+// import supabaseAdmin from "../../lib/supabase";
+import supabaseAdmin from "@/lib/supabaseAdmin";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ message: "Method Not Allowed" });
+
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email dan password harus diisi." });
   }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method Not Allowed" });
-  }
-
-  const { username, password, secret } = req.body;
-
-  if (secret !== setupSecret) {
-    return res.status(401).json({ message: "Unauthorized: secret key salah." });
-  }
-
-  if (!username || !password) {
-    return res.status(400).json({ message: "Username dan password harus diisi." });
-  }
-
-  // if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "Password harus mengandung setidaknya 8 karakter, satu huruf besar, satu angka, dan satu simbol." });
-  // }
 
   try {
-    // Cek apakah sudah ada user
-    const { data: existingUsers, error: fetchError } = await supabase.from("users").select("id").limit(1);
+    // Cek apakah sudah ada user dengan role "admin" di Supabase Auth
+    const {
+      data: { users },
+      error: authError,
+    } = await supabaseAdmin.auth.admin.listUsers();
+    if (authError) throw authError;
 
-    if (fetchError) throw new Error(fetchError.message);
+    // Cek apakah ada user dengan role admin
+    const adminExists = users.some((user) => user.user_metadata.role === "admin");
 
-    if (existingUsers.length > 0) {
-      return res.status(403).json({ message: "Setup sudah dilakukan. Tidak bisa membuat user root lagi." });
+    if (adminExists) {
+      return res.status(403).json({ message: "Setup sudah dilakukan. Tidak bisa membuat user admin lagi." });
     }
 
-    const hashedPassword = await hash(password, 10);
-
-    const { data, error: insertError } = await supabase.from("users").insert([
-      {
-        username,
-        email: `${username}@root.local`,
-        password: hashedPassword,
-        role: "admin",
+    // Membuat user admin dengan email dan password
+    const { data: signupData, error: signupError } = await supabaseAdmin.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: "admin",
+          role: "admin",
+        },
       },
-    ]);
+    });
 
-    if (insertError) throw new Error(insertError.message);
+    if (signupError) throw signupError;
 
-    return res.status(201).json({ message: "User root berhasil dibuat!", data });
-  } catch (error) {
-    return res.status(500).json({ message: "Terjadi kesalahan.", error: error.message });
+    return res.status(201).json({ message: "User admin berhasil dibuat!", user: signupData.user });
+  } catch (err) {
+    return res.status(500).json({ message: "Terjadi kesalahan.", error: err.message });
   }
 }

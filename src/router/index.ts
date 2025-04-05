@@ -6,6 +6,7 @@ import HomePage from '../pages/HomePage.vue';
 import ChallengeDetailPage from '../pages/ChallengeDetailPage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import ProfilePage from '../pages/ProfilePage.vue';
+import Setup from '../pages/Setup.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
@@ -18,6 +19,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterPage,
+  },
+  {
+    path: '/setup',
+    name: 'Setup',
+    component: Setup
   },
   {
     path: '/',

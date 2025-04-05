@@ -72,7 +72,7 @@
 // // GET /api/challenges?difficulty=2&tags=web
 
 import supabase from "@/lib/supabase";
-import { verifySupabaseToken } from "../../../lib/middleware/auth";
+import { verifyToken } from "../../../lib/middleware/auth";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    verifySupabaseToken(req, res, async () => {
+    verifyToken(req, res, async () => {
       const userId = req.user.id;
       const { tags, difficulty, title, page = 1, limit = 9 } = req.query;
 

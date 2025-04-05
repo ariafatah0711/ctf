@@ -31,7 +31,7 @@
 
 import supabaseAdmin from "../supabaseAdmin";
 
-export async function verifySupabaseToken(req, res, next) {
+export async function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ message: "Token tidak ditemukan" });

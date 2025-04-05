@@ -10,31 +10,6 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-
-  // if (req.method === "GET") {
-  //   try {
-  //     verifyToken(req, res, async () => {
-  //       const { data, error } = await supabase.rpc("get_leaderboard");
-
-  //       if (error) {
-  //         return res.status(500).json({ message: error.message });
-  //       }
-
-  //       if (!Array.isArray(data)) {
-  //         return res.status(500).json({ message: "Leaderboard response is not an array" });
-  //       }
-
-  //       // Tambahkan rank berdasarkan urutan
-  //       const leaderboard = data.map((item, index) => ({
-  //         ...item,
-  //         rank: index + 1,
-  //       }));
-
-  //       return res.status(200).json({ leaderboard });
-  //     });
-  //   } catch (error) {
-  //     return res.status(500).json({ message: "Terjadi kesalahan.", error: error.message });
-  //   }
   if (req.method === "GET") {
     try {
       verifyToken(req, res, async () => {
@@ -70,6 +45,7 @@ export default async function handler(req, res) {
         });
       });
     } catch (error) {
+      console.error("RPC get_leaderboard error:", error);
       return res.status(500).json({ message: "Terjadi kesalahan.", error: error.message });
     }
   } else {

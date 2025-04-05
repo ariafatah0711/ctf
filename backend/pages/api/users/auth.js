@@ -1,4 +1,4 @@
-import { verifySupabaseToken } from "../../../lib/middleware/auth";
+import { verifyToken } from "../../../lib/middleware/auth";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -9,8 +9,11 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  verifySupabaseToken(req, res, () => {
-    const { username, role } = req.user;
+  verifyToken(req, res, () => {
+    const { user_metadata } = req.user;
+    const username = user_metadata?.username || req.user.email;
+    const role = user_metadata?.role || "authenticated";
+
     return res.status(200).json({ user: { username, role } });
   });
 }
