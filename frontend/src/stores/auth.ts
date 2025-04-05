@@ -16,12 +16,12 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     login(session: any, user: any) {
       this.token = session.access_token;
-      this.username = user.email;
+      this.username = user.username || '';
       this.role = user.role || '';
       this.isAuthenticated = true;
 
       localStorage.setItem('token', session.access_token);
-      sessionStorage.setItem('username', user.email);
+      sessionStorage.setItem('username', user.username);
       sessionStorage.setItem('role', user.role || '');
     },
 

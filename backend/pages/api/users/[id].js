@@ -47,6 +47,8 @@ export default async function handler(req, res) {
   } else if (req.method === "PUT") {
     verifyToken(req, res, async () => {
       await requireRole("admin")(req, res, async () => {
+        const { id } = req.query; // <-- penting!
+
         const { email, password, name, role } = req.body;
 
         if (role && !["user", "admin", "maker"].includes(role)) {

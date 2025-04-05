@@ -1,9 +1,3 @@
-<script setup lang="ts">
-  import Navbar from '../components/Navbar.vue';
-  import SubmitFlag from '../components/SubmitFlag.vue';
-  import ChallengeList from '../components/ChallengeList.vue';
-</script>
-
 <template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
@@ -16,3 +10,9 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+  import Navbar from '../components/Navbar.vue';
+  import SubmitFlag from '../components/SubmitFlag.vue';
+  import ChallengeList from '../components/ChallengeList.vue';
+</script>
