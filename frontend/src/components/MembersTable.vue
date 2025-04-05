@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-
 const props = defineProps<{
   members: Array<{
     id: string
@@ -16,26 +14,6 @@ const emit = defineEmits<{
   (e: 'edit', index: number): void
   (e: 'delete', index: number): void
 }>()
-
-const currentPage = ref(1)
-const pageSize = 5
-
-const totalPages = computed(() =>
-  Math.ceil(props.members.length / pageSize)
-)
-
-const paginatedMembers = computed(() =>
-  props.members.slice(
-    (currentPage.value - 1) * pageSize,
-    currentPage.value * pageSize
-  )
-)
-
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-}
 </script>
 
 <template>
@@ -51,8 +29,8 @@ const goToPage = (page: number) => {
       </thead>
       <tbody>
         <tr
-          v-for="(member, i) in paginatedMembers"
-          :key="i"
+          v-for="(member, i) in props.members"
+          :key="member.id"
           class="border-b border-slate-200 last:border-0"
         >
           <td class="p-3 flex items-center gap-3">
@@ -75,13 +53,13 @@ const goToPage = (page: number) => {
           <td class="p-3 text-right space-x-2">
             <button
               class="text-blue-600 hover:underline text-sm"
-              @click="$emit('edit', i + (currentPage - 1) * pageSize)"
+              @click="$emit('edit', i)"
             >
               Edit
             </button>
             <button
               class="text-red-600 hover:underline text-sm"
-              @click="$emit('delete', i + (currentPage - 1) * pageSize)"
+              @click="$emit('delete', i)"
             >
               Delete
             </button>
@@ -89,26 +67,5 @@ const goToPage = (page: number) => {
         </tr>
       </tbody>
     </table>
-
-    <!-- Pagination -->
-    <div class="flex justify-between items-center p-3 text-sm text-slate-600">
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <div class="space-x-2">
-        <button
-          class="px-3 py-1 rounded border text-sm"
-          :disabled="currentPage === 1"
-          @click="goToPage(currentPage - 1)"
-        >
-          Prev
-        </button>
-        <button
-          class="px-3 py-1 rounded border text-sm"
-          :disabled="currentPage === totalPages"
-          @click="goToPage(currentPage + 1)"
-        >
-          Next
-        </button>
-      </div>
-    </div>
   </div>
 </template>

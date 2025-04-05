@@ -1,14 +1,14 @@
-<template>
-  <div class="min-h-screen">
-    <Navbar />
-    <div class="h-16"></div>
+<template class="min-h-screen">
+  <Navbar />
+  <div class="h-16"></div>
 
-    <h1 class="text-2xl font-bold text-blue-600 mb-6">👤 User Management</h1>
+  <div class="p-4">
+    <h1 class="text-2xl font-bold mb-6 text-blue-600">👤 User Management</h1>
 
     <div v-if="loading" class="text-gray-500">Loading users...</div>
 
     <div v-else>
-      <div v-if="members.length > 0" class="overflow-x-auto p-6">
+      <div v-if="members.length > 0" class="overflow-x-auto">
         <MembersTable
           :members="members"
           @edit="handleEdit"
@@ -140,14 +140,19 @@ const handleEdit = async (index: number) => {
   const { value: formValues } = await Swal.fire({
     title: 'Edit User',
     html: `
-      <input id="swal-name" class="swal2-input" placeholder="Nama" value="${user.name}">
-      <input id="swal-email" type="email" class="swal2-input" placeholder="Email" value="${user.email}">
-      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (kosongkan jika tidak diubah)">
-      <select id="swal-role" class="swal2-input">
-        <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
-        <option value="maker" ${user.role === 'maker' ? 'selected' : ''}>Maker</option>
-        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" value="${user.name}" />
+
+      <input id="swal-email" type="email" class="swal2-input" placeholder="Email" value="${user.email}" />
+
+      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (biarkan kosong jika tidak diubah)" />
+
+      <select id="swal-role" class="swal2-select">
+        <option value="user" ${user.role === 'user' ? 'selected' : ''}>👤 User</option>
+        <option value="maker" ${user.role === 'maker' ? 'selected' : ''}>🛠️ Maker</option>
+        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
       </select>
+    </div>
     `,
     focusConfirm: false,
     showCancelButton: true,
