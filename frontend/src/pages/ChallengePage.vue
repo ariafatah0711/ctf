@@ -3,9 +3,9 @@
   <div class="h-16"></div>
 
   <div class="p-4 space-y-8">
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
       <Breadcrumbs />
-      <SubmitFlag class="w-full" />
+      <SubmitFlag class="w-full md:w-auto flex-1" />
     </div>
     <div>
       <h1 class="text-2xl font-bold mb-4 text-amber-700">🧠 Daftar Tantangan</h1>

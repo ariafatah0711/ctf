@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-md mx-auto">
+    <div class="max-w-full mx-auto">
       <form @submit.prevent="handleSubmit" class="flex gap-2">
         <input
           v-model="flag"

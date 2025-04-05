@@ -3,9 +3,9 @@
   <div class="h-16"></div>
   
   <div class="p-4 space-y-8">
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
       <Breadcrumbs />
-      <SubmitFlag class="w-full" />
+      <SubmitFlag class="w-full md:w-auto flex-1" />
     </div>
   
     <!-- Display Challenge Data -->
