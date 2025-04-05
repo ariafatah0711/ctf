@@ -38,10 +38,8 @@
     import { useAuthStore } from '../stores/auth'
     import config from '../config'
     import Navbar from '../components/Navbar.vue'
-    import { useRouter } from 'vue-router'
   
     const auth = useAuthStore()
-    const router = useRouter()
   
     const totalUsers = ref(0)
     const activeUsers = ref(0)

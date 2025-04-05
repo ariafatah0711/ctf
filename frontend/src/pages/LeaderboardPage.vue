@@ -19,12 +19,18 @@
               </tr>
             </thead>
             <tbody>
-              <tr
+              <!-- <tr
                 v-for="(user, i) in leaderboard"
                 :key="user.user_id"
                 class="border-b border-slate-200 last:border-0"
                 @click="goToUser(user.username)"
-              >
+              > -->
+                <tr
+                  v-for="user in leaderboard"
+                  :key="user.user_id"
+                  class="border-b border-slate-200 last:border-0"
+                  @click="goToUser(user.username)"
+                >
                 <td class="p-3 font-medium">{{ user.rank }}</td>
                 <td class="p-3">{{ user.username }}</td>
                 <td class="p-3 font-semibold">{{ user.solved }}</td>

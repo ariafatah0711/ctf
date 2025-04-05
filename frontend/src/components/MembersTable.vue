@@ -10,10 +10,10 @@ const props = defineProps<{
   }>
 }>()
 
-const emit = defineEmits<{
-  (e: 'edit', index: number): void
-  (e: 'delete', index: number): void
-}>()
+// const emit = defineEmits<{
+//   (e: 'edit', index: number): void
+//   (e: 'delete', index: number): void
+// }>()
 </script>
 
 <template>

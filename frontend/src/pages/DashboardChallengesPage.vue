@@ -17,11 +17,11 @@
       <div v-if="loading" class="text-gray-500">Loading challenges...</div>
       <div v-else>
         <div v-if="challenges.length > 0" class="overflow-x-auto">
-          <ChallengesTable
+          <!-- <ChallengesTable
             :challenges="challenges"
             @edit="handleEditChallenge"
             @delete="handleDeleteChallenge"
-          />
+          /> -->
           <!-- Pagination -->
           <nav aria-label="Challenges pagination" class="flex justify-center mt-6">
             <ul class="flex gap-2">
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed, watch } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import { useAuthStore } from '../stores/auth'
   import config from '../config'
   import Navbar from '../components/Navbar.vue'
@@ -120,15 +120,17 @@
     // Logic to add a new challenge
   }
   
-  // Edit Challenge
-  const handleEditChallenge = async (index: number) => {
-    const challenge = challenges.value[index]
-    // Logic to edit challenge
-  }
+  // // Edit Challenge
+  // const handleEditChallenge = async (index: number) => {
+  //   // const challenge = challenges.value[index]
+  //   // Logic to edit challenge
+  //   return
+  // }
   
-  // Delete Challenge
-  const handleDeleteChallenge = async (index: number) => {
-    const challenge = challenges.value[index]
-    // Logic to delete challenge
-  }
+  // // Delete Challenge
+  // const handleDeleteChallenge = async (index: number) => {
+  //   // const challenge = challenges.value[index]
+  //   // Logic to delete challenge
+  //   return
+  // }
 </script>  

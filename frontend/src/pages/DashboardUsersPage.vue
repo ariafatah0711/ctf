@@ -331,7 +331,8 @@ const handleBatchAddUsers = async () => {
     },
     showCancelButton: true,
     preConfirm: (value) => {
-      const lines = value.split('\n').map(l => l.trim()).filter(Boolean)
+      // const lines = value.split('\n').map(l => l.trim()).filter(Boolean)
+      const lines: string[] = value.split('\n').map((l: string) => l.trim()).filter(Boolean);
       const data: any[] = []
 
       for (const line of lines) {
