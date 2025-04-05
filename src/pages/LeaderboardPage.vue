@@ -28,7 +28,7 @@
                   >
                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ user.rank }}</td>
                     <td class="whitespace-nowrap px-6 py-4">{{ user.username }}</td>
-                    <td class="whitespace-nowrap px-6 py-4 font-semibold">{{ user.total_solve_count }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 font-semibold">{{ user.solved }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -96,7 +96,7 @@ const auth = useAuthStore();
 interface LeaderboardUser {
   user_id: string;
   username: string;
-  total_solve_count: number;
+  solved: number;
   rank: number;
 }
 
@@ -115,6 +115,7 @@ const fetchLeaderboard = async () => {
     });
 
     const raw = await res.json();
+    console.log(raw)
     leaderboard.value = Array.isArray(raw.leaderboard) ? raw.leaderboard : [];
     totalPages.value = raw.totalPages || 1;
   } catch (err) {

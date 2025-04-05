@@ -1,24 +1,25 @@
 <template>
-  <div class="container mx-auto px-4">
-    <div class="flex flex-wrap items-center justify-center lg:justify-between min-h-screen">
-      <!-- Optional image -->
-      <div class="hidden md:block md:w-6/12 lg:w-5/12 xl:w-6/12">
+  <div class="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <!-- Kolom Gambar -->
+      <div class="hidden md:block">
         <img
           src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw1.webp"
-          class="w-full"
-          alt="Register image"
+          alt="Register Illustration"
+          class="w-full h-auto"
         />
       </div>
 
-      <!-- Register form -->
-      <div class="w-full md:w-6/12 lg:w-5/12 xl:w-4/12">
-        <form @submit.prevent="handleRegister" class="bg-white dark:bg-gray-800 p-8 rounded shadow-md space-y-6">
+      <!-- Kolom Form -->
+      <div class="w-full">
+        <form
+          @submit.prevent="handleRegister"
+          class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow space-y-6"
+        >
           <h2 class="text-2xl font-bold text-center dark:text-white">Register</h2>
 
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Username
-            </label>
+            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
             <input
               v-model="form.username"
               type="text"
@@ -29,9 +30,7 @@
           </div>
 
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email
-            </label>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
               v-model="form.email"
               type="email"
@@ -42,9 +41,7 @@
           </div>
 
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Password
-            </label>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
             <input
               v-model="form.password"
               type="password"

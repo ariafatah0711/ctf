@@ -1,5 +1,6 @@
 // backend/pages/api/challenges/leaderboard.js
-import supabase from "../../../lib/supabase";
+// import supabase from "../../../lib/supabase";
+import supabaseAdmin from "@/lib/supabaseAdmin";
 import { verifyToken } from "../../../lib/middleware/auth";
 
 export default async function handler(req, res) {
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        const { data, error } = await supabase.rpc("get_leaderboard");
+        const { data, error } = await supabaseAdmin.rpc("get_leaderboard");
 
         if (error) {
           return res.status(500).json({ message: error.message });

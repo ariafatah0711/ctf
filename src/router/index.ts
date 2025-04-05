@@ -7,9 +7,16 @@ import ChallengeDetailPage from '../pages/ChallengeDetailPage.vue';
 import LeaderboardPage from '../pages/LeaderboardPage.vue';
 import ProfilePage from '../pages/ProfilePage.vue';
 import Setup from '../pages/Setup.vue';
+import About from '../pages/About.vue';
+import ChallengePage from '../pages/ChallengePage.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: HomePage,
+  },
   {
     path: '/login',
     name: 'Login',
@@ -26,9 +33,9 @@ const routes = [
     component: Setup
   },
   {
-    path: '/',
-    name: 'Home',
-    component: HomePage,
+    path: '/challenges',
+    name: 'ChallengePage',
+    component: ChallengePage,
     meta: { requiresAuth: true },
   },
   {
@@ -38,6 +45,17 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/about',
+    name: 'About',
+    component: About,
+  },
+  // {
+  //   path: '/dashboard',
+  //   name: 'Dashboard',
+  //   component: Dashboard,
+  //   meta: { requiresAuth: true },
+  // },
+  {
     path: '/:slug(.*)*', // catch-all
     name: 'DynamicPage',
     component: HomePage ,
@@ -46,24 +64,15 @@ const routes = [
   {
     path: '/challenges/:id',
     name: 'ChallengeDetail',
-    component: ChallengeDetailPage
+    component: ChallengeDetailPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/profile/:username',
     name: 'ProfilePage',
-    component: ProfilePage
+    component: ProfilePage,
+    meta: { requiresAuth: true },
   },
-  // {
-  //   path: '/dashboard',
-  //   name: 'Dashboard',
-  //   component: 
-  //   meta: { requiresAuth: true },
-  // },
-  // {
-  //   path: '/profile',
-  //   name: 'Profile',
-  //   meta: { requiresAuth: true },
-  // }
 ];
 
 const router = createRouter({
@@ -72,26 +81,6 @@ const router = createRouter({
   routes,
 });
 
-// Middleware auth di route
-// router.beforeEach(async (to, _from, next) => {
-//   const auth = useAuthStore();
-
-//   // Cek apakah halaman butuh autentikasi
-//   if (to.meta.requiresAuth) {
-//     const isAuthenticated = auth.isAuthenticated || (await auth.checkAuth());
-
-//     if (!isAuthenticated) {
-//       return next('/login');
-//     }
-//   }
-
-//   // Kalau user udah login, jangan biarkan ke /login atau /register
-//   if ((to.path === '/login' || to.path === '/register') && auth.isAuthenticated) {
-//     return next('/');
-//   }
-
-//   next();
-// });
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
   if (!auth.isAuthChecked) {
