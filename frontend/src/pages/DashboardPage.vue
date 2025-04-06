@@ -2,8 +2,6 @@
   <Navbar />
   <div class="h-16"></div>
 
-  <div v-if="loading" class="text-gray-500">Loading...</div>
-
   <div class="p-4 max-w-screen-xl mx-auto">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
       <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🖥️ Dashboard</h1>
@@ -12,6 +10,8 @@
         <router-link to="/dashboard/challenges" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2">Challenges</router-link>
       </div>
     </div>
+
+    <div v-if="loading" class="text-gray-500">Loading...</div>
 
     <!-- Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch" v-if="!loading">
