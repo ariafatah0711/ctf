@@ -14,9 +14,9 @@ import DashboardPage from '../pages/DashboardPage.vue';
 import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
 import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
 import ForgotPassword from '../pages/ForgotPassword.vue';
+import ResetPassword from '../pages/ResetPassword.vue';
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
-import { forgotPassword } from '../services/authService';
 const Swal = GlobalSwal
 
 const routes = [
@@ -66,8 +66,13 @@ const routes = [
   },
   {
     path: '/forgot-password',
-    name: 'forgot-password',
+    name: 'forgot password',
     component: ForgotPassword,
+  },
+  {
+    path: '/reset-password',
+    name: 'reset password',
+    component: ResetPassword,
   },
   // {
   //   path: '/dashboard',
