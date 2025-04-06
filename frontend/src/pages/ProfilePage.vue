@@ -66,7 +66,7 @@
 
   onMounted(async () => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/users/username?username=${username}`, {
+      const res = await fetch(`${config.BASE_URL}/api/users?username=${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

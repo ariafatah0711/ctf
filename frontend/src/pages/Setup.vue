@@ -81,7 +81,7 @@
   // Cek apakah setup sudah dilakukan ketika komponen di-mount
   onMounted(async () => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/checkSetup`)
+      const res = await fetch(`${config.BASE_URL}/api/setup`)
       if (res.ok) {
         const data = await res.json()
         if (data.message === "Setup sudah dilakukan.") {

@@ -30,3 +30,5 @@ dist-ssr
 supabase/*
 !supabase/migrations
 !supabase/migrations/**
+
+_draft
