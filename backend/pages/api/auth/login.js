@@ -1,11 +1,8 @@
 // import supabase from "@/lib/supabase";
+import { withCors } from "@/lib/utils/withCors";
 import supabaseAdmin from "@/lib/supabaseAdmin";
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") return res.status(200).end();
+  if (withCors(req, res)) return;
 
   if (req.method === "POST") {
     const { email, password } = req.body;

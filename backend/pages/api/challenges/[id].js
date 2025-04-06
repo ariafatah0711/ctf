@@ -1,6 +1,7 @@
 // backend/pages/api/challenges/[id].js
 import supabase from "../../../lib/supabase";
 import supabaseAdmin from "@/lib/supabaseAdmin";
+import { withCors } from "@/lib/utils/withCors";
 import { verifyToken, requireRole } from "../../../lib/middleware/auth";
 import { encrypt } from "../../../lib/encrypt";
 import { validate as validateUUID } from "uuid"; // Import validate dari uuid package
@@ -11,13 +12,7 @@ const isUUID = (str) => {
 };
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (withCors(req, res)) return;
 
   const { id } = req.query; // Ambil ID dari parameter URL
 

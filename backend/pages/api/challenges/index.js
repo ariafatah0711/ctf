@@ -1,8 +1,3 @@
-// // GET /api/challenges?difficulty=2
-// // GET /api/challenges?tags=web
-// // GET /api/challenges?title=security
-// // GET /api/challenges?difficulty=2&tags=web
-
 import supabase from "@/lib/supabase";
 import { verifyToken } from "../../../lib/middleware/auth";
 
