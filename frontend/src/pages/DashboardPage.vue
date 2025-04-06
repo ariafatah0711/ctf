@@ -12,7 +12,7 @@
     </div>
 
     <!-- Cards Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch" v-if="!loading">
       <!-- User Stats -->
       <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full flex flex-col">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">👥 User Stats</h2>
@@ -89,6 +89,7 @@ import Navbar from '../components/Navbar.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 
 const auth = useAuthStore()
+const loading = ref(true)
 
 const totalUsers = ref(0)
 const totalRoles = ref(0)
@@ -131,8 +132,11 @@ const fetchDashboardStats = async () => {
     completedChallengesUniq.value = data.uniqueChallengesSolved || 0
     topUsers.value = data.leaderboard || []
     tagsDistribution.value = data.tagsDistribution || []
+
+    loading.value = false
   } catch (error) {
     console.error('Error fetching dashboard stats:', error)
+    loading.value = false
   }
 }
 
