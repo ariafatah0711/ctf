@@ -18,12 +18,28 @@ export async function verifyToken(req, res, next) {
   next();
 }
 
-export function requireRole(requiredRole) {
+// export function requireRole(requiredRole) {
+//   return async function (req, res, next) {
+//     const user = req.user;
+//     const role = user?.user_metadata?.role;
+
+//     if (!role || role !== requiredRole) {
+//       return res.status(403).json({ message: "Akses ditolak. Role tidak sesuai." });
+//     }
+
+//     await next();
+//   };
+// }
+
+export function requireRole(requiredRoles) {
   return async function (req, res, next) {
     const user = req.user;
     const role = user?.user_metadata?.role;
 
-    if (!role || role !== requiredRole) {
+    // Biar fleksibel: bisa string atau array
+    const allowedRoles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+
+    if (!role || !allowedRoles.includes(role)) {
       return res.status(403).json({ message: "Akses ditolak. Role tidak sesuai." });
     }
 

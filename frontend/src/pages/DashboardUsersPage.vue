@@ -21,11 +21,26 @@
   <div v-if="loading" class="text-gray-500">Loading users...</div>
     <div v-else>
       <div v-if="members.length > 0" class="overflow-x-auto">
-        <MembersTable
-          :members="members"
-          @edit="handleEdit"
-          @delete="handleDelete"
-        />
+        <BaseTable
+            :columns="[
+            { label: 'Member', key: 'member', grow: true },
+            { label: 'Role', key: 'role', width: 'w-25' },
+            { label: 'Last Sign In', key: 'lastSignIn', width: 'w-45' }
+            ]"
+            :rows="users"
+            @edit="handleEdit"
+            @delete="handleDelete"
+          >
+          <template #member="{ row }">
+            <div class="flex items-center gap-3">
+              <img :src="row.avatar" class="w-8 h-8 rounded object-cover" :alt="row.name" />
+              <div class="flex flex-col">
+                <small class="font-medium">{{ row.name }}</small>
+                <small class="text-slate-500">{{ row.email }}</small>
+              </div>
+            </div>
+          </template>
+        </BaseTable>
         <!-- Pagination -->
         <nav aria-label="User pagination" class="flex justify-center mt-6">
           <ul class="flex gap-2">
@@ -76,7 +91,8 @@ import config from '../config'
 import Navbar from '../components/Navbar.vue'
 import IconButton from "../components/IconButton.vue"
 import Breadcrumbs from "../components/Breadcrumbs.vue"
-import MembersTable from '../components/MembersTable.vue'
+// import MembersTable from '../components/MembersTable.vue'
+import BaseTable  from "../components/BaseTable.vue"
 import { UserPlusIcon, UsersIcon } from '@heroicons/vue/24/solid'
 import GlobalSwal from '../utills/GlobalSwal'
 
