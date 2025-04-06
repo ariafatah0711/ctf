@@ -10,21 +10,21 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
+      const { username, page = 1, limit = 25 } = req.query;
+
       verifyToken(req, res, async () => {
+        // query by username?
+        if (username) {
+          const result = await getUserWithSolves(username);
+          if (result.error)
+            return res.status(404).json({ message: "User tidak ditemukan atau terjadi kesalahan.", error: result.error });
+          return res.status(200).json({
+            message: "Data user berhasil diambil.",
+            data: result.data,
+          });
+        }
+
         await requireRole("admin")(req, res, async () => {
-          const { username, page = 1, limit = 25 } = req.query;
-
-          // query by username?
-          if (username) {
-            const result = await getUserWithSolves(username);
-            if (result.error)
-              return res.status(404).json({ message: "User tidak ditemukan atau terjadi kesalahan.", error: result.error });
-            return res.status(200).json({
-              message: "Data user berhasil diambil.",
-              data: result.data,
-            });
-          }
-
           const result = await listFormattedUsers(page, limit);
 
           if (result.error) {

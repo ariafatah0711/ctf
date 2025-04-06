@@ -1,5 +1,5 @@
 import supabaseAdmin from "@/lib/supabaseAdmin";
-import { isDisplayNameTaken } from "@/lib/utils/check";
+import { isDisplayNameTaken } from "@/lib/supabase/helpers/isDisplayNameTaken";
 
 export async function createNewUser({ name, email, password, role }) {
   if (!email || !password || !role || !name) return { error: "Nama, email, password, dan role wajib diisi." };
@@ -47,6 +47,11 @@ export async function updateUserById(id, { email, password, name, role }) {
   const updateFields = {};
   const metaUpdate = {};
 
+  // Ambil data user lama dulu
+  const { data: existingUserData, error: getUserError } = await supabaseAdmin.auth.admin.getUserById(id);
+  if (getUserError || !existingUserData?.user) return { error: "User tidak ditemukan." };
+  const currentName = existingUserData.user.user_metadata?.display_name;
+
   if (email) updateFields.email = email;
   if (password) updateFields.password = password;
   if (name) metaUpdate.display_name = name;
@@ -54,6 +59,12 @@ export async function updateUserById(id, { email, password, name, role }) {
 
   if (Object.keys(updateFields).length === 0 && Object.keys(metaUpdate).length === 0) {
     throw new Error("Tidak ada data yang diperbarui.");
+  }
+
+  if (name && name !== currentName) {
+    const taken = await isDisplayNameTaken(name, id);
+    if (taken) return { error: "Username sudah digunakan." };
+    metaUpdate.display_name = name;
   }
 
   const { data, error } = await supabaseAdmin.auth.admin.updateUserById(id, {

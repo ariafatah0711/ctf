@@ -4,11 +4,11 @@
   
   <div class="p-4 max-w-screen-xl mx-auto">
     <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🚩 Challenges</h1> 
-    <div class="flex flex-col md:flex-row">
-      <Breadcrumbs />
-      <SubmitFlag class="w-full md:w-auto flex-1" />
+    <div class="flex flex-col md:flex-row m-0 pb-6">
+        <Breadcrumbs />
+        <SubmitFlag class="w-full md:w-auto flex-1" />
     </div>
-  
+
     <!-- Display Challenge Data -->
     <div v-if="challenge" class="bg-white shadow-lg rounded-lg p-6">
       <h1 class="text-3xl font-semibold text-gray-800 mb-3">{{ challenge.title }}</h1>
@@ -39,17 +39,6 @@
         </span>
       </div>
   
-      <!-- NEW: Button to go to challenge URL -->
-      <!-- <div v-if="challenge.url" class="mt-6">
-        <a 
-          :href="isFile(challenge.url) ? undefined : withHttp(challenge.url)" 
-          :download="isFile(challenge.url) ? challenge.url : undefined" 
-          target="_blank" 
-          rel="noopener"
-          class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200">
-          Buka Soal
-        </a>
-      </div> -->
       <div v-if="challenge.url" class="mt-6">
         <div v-if="isFile(challenge.url)">
           <a

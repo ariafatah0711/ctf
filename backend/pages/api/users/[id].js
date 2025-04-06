@@ -35,13 +35,13 @@ export default async function handler(req, res) {
       await requireRole("admin")(req, res, async () => {
         const { email, password, name, role } = req.body;
 
-        if (role && !["user", "admin", "maker"].includes(role)) {
-          return res.status(400).json({ message: "Role tidak valid. Hanya boleh: user, admin, maker." });
-        }
-
         try {
-          const updated = await updateUserById(id, { email, password, name, role });
-          return res.status(200).json({ message: "User berhasil diperbarui.", data: updated });
+          const result = await updateUserById(id, { email, password, name, role });
+          if (result.error) {
+            return res.status(400).json({ message: "Gagal update user.", error: result.error });
+          }
+
+          return res.status(200).json({ message: "User berhasil diperbarui.", data: result });
         } catch (error) {
           return res.status(500).json({ message: "Gagal mengupdate user.", error: error.message });
         }

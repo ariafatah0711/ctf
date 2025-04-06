@@ -1,4 +1,4 @@
-import supabase from "../supabase";
+import supabase from "../../supabase";
 
 export async function checkIfChallengeExists(id) {
   const { data, error } = await supabase.from("challenges").select("id").eq("id", id).single();

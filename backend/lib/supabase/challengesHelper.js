@@ -1,7 +1,8 @@
 import supabase from "@/lib/supabase";
+import supabaseAdmin from "../supabaseAdmin";
 import { encrypt, decrypt, hashFlag } from "@/lib/encrypt";
-import { validateChallengeFields } from "../utils/validatorChallenges";
-import { checkIfChallengeExists } from "../utils/challexit";
+import { validateChallengeFields } from "./helpers/validateChallengeFields";
+import { checkIfChallengeExists } from "./helpers/checkIfChallengeExists";
 
 export async function submitChallenge(userId, flag) {
   if (!flag) return { error: "Flag harus diisi." };
