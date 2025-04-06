@@ -302,7 +302,7 @@ const handleAddUser = async () => {
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" />
       <input id="swal-email" type="email" class="swal2-input" placeholder="Email" />
-      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 8 karakter)" />
+      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 6 karakter)" />
       <select id="swal-role" class="swal2-select">
         <option value="user">👤 User</option>
         <option value="maker">🛠️ Maker</option>
@@ -318,8 +318,8 @@ const handleAddUser = async () => {
       const password = (document.getElementById('swal-password') as HTMLInputElement)?.value
       const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value
 
-      if (!name || !email || !password || password.length < 8 || !role) {
-        Swal.showValidationMessage('Semua field wajib diisi dan password minimal 8 karakter')
+      if (!name || !email || !password || password.length < 6 || !role) {
+        Swal.showValidationMessage('Semua field wajib diisi dan password minimal 6 karakter')
         return
       }
 
