@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   if (!email) return res.status(400).json({ message: "Email wajib diisi" });
 
   const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-    // redirectTo: `${process.env.BASE_URL}/#/reset-password`,
     redirectTo: `${process.env.BASE_URL}/#/`,
   });
 
