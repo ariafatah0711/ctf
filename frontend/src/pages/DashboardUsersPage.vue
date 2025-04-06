@@ -91,7 +91,6 @@ import config from '../config'
 import Navbar from '../components/Navbar.vue'
 import IconButton from "../components/IconButton.vue"
 import Breadcrumbs from "../components/Breadcrumbs.vue"
-// import MembersTable from '../components/MembersTable.vue'
 import BaseTable  from "../components/BaseTable.vue"
 import { UserPlusIcon, UsersIcon } from '@heroicons/vue/24/solid'
 import GlobalSwal from '../utills/GlobalSwal'

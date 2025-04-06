@@ -26,7 +26,7 @@
             { label: 'Difficulty', key: 'difficulty', width: 'w-20' }
           ]"
           :rows="challenges"
-          @edit="editChallenge"
+          @edit="showEditChallengeModal"
           @delete="deleteChallenge"
         >
         <!-- Slot untuk kolom Challenge Name -->
@@ -84,6 +84,7 @@
   import { PlusIcon } from "@heroicons/vue/24/solid"
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
+  import { swalSuccess, swalError, swalAlert } from '@/utills/swalAlert'
 
   const Swal = GlobalSwal
   const auth = useAuthStore()
@@ -140,58 +141,6 @@
     }
   }
 
-  const showAddChallengeModal = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: 'Tambah Challenge Baru',
-      html: `
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <input id="swal-title" class="swal2-input" placeholder="Judul Challenge" />
-          <textarea id="swal-description" class="swal2-textarea" placeholder="Deskripsi"></textarea>
-          <input id="swal-flag" class="swal2-input" placeholder="Flag (ctf{...})" />
-          <input id="swal-url" class="swal2-input" placeholder="URL Challenge" />
-          <input id="swal-tags" class="swal2-input" placeholder="Tags (pisahkan dengan koma)" />
-          <input id="swal-hint" class="swal2-input" placeholder="Hint (opsional)" />
-          <select id="swal-difficulty" class="swal2-select">
-            <option value="" disabled selected>Pilih Tingkat Kesulitan</option>
-            <option value="1">🟢 Mudah</option>
-            <option value="2">🟡 Sedang</option>
-            <option value="3">🔴 Sulit</option>
-          </select>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      preConfirm: () => {
-        const title = document.getElementById('swal-title')?.value.trim();
-        const description = document.getElementById('swal-description')?.value.trim();
-        const flag = document.getElementById('swal-flag')?.value.trim();
-        const url = document.getElementById('swal-url')?.value.trim();
-        const tags = document.getElementById('swal-tags')?.value.trim();
-        const hint = document.getElementById('swal-hint')?.value.trim();
-        const difficulty = Number(document.getElementById('swal-difficulty')?.value);
-
-        if (!title || !description || !flag || !url || !difficulty) {
-          Swal.showValidationMessage("Semua field wajib diisi (kecuali hint dan tags)");
-          return;
-        }
-
-        return {
-          title,
-          description,
-          flag,
-          url,
-          difficulty,
-          tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-          hint: hint || ""
-        };
-      }
-    });
-
-    if (formValues) {
-      await handleAddChallenge(formValues);
-    }
-  };
-  
   // Add Challenge
   const handleAddChallenge = async (challengeData) => {
     try {
@@ -207,29 +156,31 @@
       const result = await res.json();
       if (!res.ok) throw new Error(result.message);
 
-      alert("Challenge berhasil ditambahkan!");
-      await fetchChallenges(); // misal kamu ingin refresh data
+      await swalSuccess("Challenge berhasil ditambahkan!");
+      await fetchChallenges(); // refresh data
     } catch (err) {
       console.error(err);
-      alert("Gagal menambahkan challenge.");
+      swalError("Gagal menambahkan challenge.", err.message || '');
     }
   };
 
-  // // Edit Challenge
-  // const handleEditChallenge = async (index: number) => {
-  //   // const challenge = challenges.value[index]
-  //   // Logic to edit challenge
-  //   return
-  // }
-  
-  // // Delete Challenge
-  // const handleDeleteChallenge = async (index: number) => {
-  //   // const challenge = challenges.value[index]
-  //   // Logic to delete challenge
-  //   return
-  // }
+  const deleteChallenge = async (index: number) => {
+    const challenge = challenges.value[index];
+    const id = challenge?.id;
 
-  const deleteChallenge = async (id: string) => {
+    if (!id) return swalError("ID challenge tidak ditemukan");
+
+    const confirm = await Swal.fire({
+      title: 'Yakin?',
+      text: `Hapus challenge "${challenge.title}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
         method: 'DELETE',
@@ -237,17 +188,19 @@
           Authorization: `Bearer ${auth.token}`,
         },
       });
+
       const result = await res.json();
       if (!res.ok) throw new Error(result.message);
-      alert("Challenge berhasil dihapus!");
+
+      await swalSuccess("Challenge berhasil dihapus.");
       await fetchChallenges(); // Refresh list
     } catch (err) {
       console.error(err);
-      alert("Gagal menghapus challenge.");
+      swalError("Gagal menghapus challenge.", err.message || '');
     }
   };
 
-  const editChallenge = async (id: string, updatedData: any) => {
+  const handleEditChallenge = async (id: string, updatedData: any) => {
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
         method: 'PUT',
@@ -257,13 +210,119 @@
         },
         body: JSON.stringify(updatedData),
       });
+
       const result = await res.json();
       if (!res.ok) throw new Error(result.message);
-      alert("Challenge berhasil diperbarui!");
-      await fetchChallenges(); // Refresh list
+
+      await swalSuccess("Challenge berhasil diperbarui!");
+      await fetchChallenges();
     } catch (err) {
       console.error(err);
-      alert("Gagal memperbarui challenge.");
+      swalError("Gagal memperbarui challenge.", err.message || '');
     }
   };
-</script>  
+
+  const showChallengeModal = async (
+    type: 'add' | 'edit',
+    initialData: any = {}
+    ) => {
+      const {
+        title = '',
+        description = '',
+        flag = '',
+        url = '',
+        tags = [],
+        hint = '',
+        difficulty = ''
+      } = initialData;
+
+    const { value: formValues } = await Swal.fire({
+      title: type === 'add' ? 'Tambah Challenge Baru' : 'Edit Challenge',
+      html: `
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <input id="swal-title" class="swal2-input" placeholder="Judul Challenge" value="${title}" />
+          <textarea id="swal-description" class="swal2-textarea" placeholder="Deskripsi">${description}</textarea>
+          <input id="swal-flag" class="swal2-input" placeholder="Flag (ctf{...})" value="${flag}" />
+          <input id="swal-url" class="swal2-input" placeholder="URL Challenge" value="${url}" />
+          <input id="swal-tags" class="swal2-input" placeholder="Tags (pisahkan dengan koma)" value="${tags}" />
+          <input id="swal-hint" class="swal2-input" placeholder="Hint (opsional)" value="${hint}" />
+          <select id="swal-difficulty" class="swal2-select">
+            <option value="" disabled ${!difficulty ? 'selected' : ''}>Pilih Tingkat Kesulitan</option>
+            <option value="1" ${difficulty == 1 ? 'selected' : ''}>🟢 Mudah</option>
+            <option value="2" ${difficulty == 2 ? 'selected' : ''}>🟡 Sedang</option>
+            <option value="3" ${difficulty == 3 ? 'selected' : ''}>🔴 Sulit</option>
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      preConfirm: () => {
+        const title = (document.getElementById('swal-title') as HTMLInputElement)?.value.trim();
+        const description = (document.getElementById('swal-description') as HTMLTextAreaElement)?.value.trim();
+        const flag = (document.getElementById('swal-flag') as HTMLInputElement)?.value.trim();
+        const url = (document.getElementById('swal-url') as HTMLInputElement)?.value.trim();
+        const tags = (document.getElementById('swal-tags') as HTMLInputElement)?.value.trim();
+        const hint = (document.getElementById('swal-hint') as HTMLInputElement)?.value.trim();
+        const difficulty = Number((document.getElementById('swal-difficulty') as HTMLSelectElement)?.value);
+
+        if (!title || !description || !flag || !url || !difficulty) {
+          Swal.showValidationMessage("Semua field wajib diisi (kecuali hint dan tags)");
+          return;
+        }
+
+        return {
+          title,
+          description,
+          flag,
+          url,
+          difficulty,
+          tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+          hint: hint || ''
+        };
+      }
+    });
+
+    if (formValues) {
+      if (type === 'add') {
+        await handleAddChallenge(formValues);
+      } else if (type === 'edit' && initialData?.id) {
+        await handleEditChallenge(initialData.id, formValues);
+      }
+    }
+  };
+
+  const showAddChallengeModal = () => showChallengeModal('add');
+
+  const showEditChallengeModal = async (index: number) => {
+    if (!Array.isArray(challenges.value) || index < 0 || index >= challenges.value.length) {
+      return swalError("Challenge tidak ditemukan di index tersebut.");
+    }
+
+    const challenge = challenges.value[index];
+
+    if (!challenge?.id) {
+      return swalError("ID challenge tidak ditemukan.");
+    }
+
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/detail/${challenge.id}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const { message } = await res.json();
+        throw new Error(message || "Gagal mengambil detail challenge.");
+      }
+
+      const { data } = await res.json();
+      console.log("Detail challenge (admin):", data);
+
+      showChallengeModal('edit', data); // tampilkan modal dengan data lengkap
+    } catch (err: any) {
+      console.error(err);
+      swalError("Terjadi kesalahan saat mengambil data challenge.", err.message || '');
+    }
+  };
+</script>
