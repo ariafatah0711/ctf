@@ -1,10 +1,12 @@
 <template class="min-h-screen">
     <Navbar />
     <div class="h-16"></div>
-    <Breadcrumbs />
   
     <div class="p-4">
-      <h1 class="text-2xl font-bold mb-6 text-blue-600">🛠️ Admin Dashboard</h1>
+      <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🖥️ Dashboard</h1>
+      <div class="flex flex-col md:flex-row m-0">
+        <Breadcrumbs />
+      </div>
   
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- User Stats -->
@@ -18,7 +20,7 @@
         <!-- Challenge Stats -->
         <div class="bg-white shadow-lg rounded-lg p-6">
           <h2 class="text-xl font-bold mb-4">Challenge Stats</h2>
-          <p>Total Challenges: {{ totalChallenges }}</p>
+          <p>Tota🖥️ Dashboard: {{ totalChallenges }}</p>
           <p>Completed Challenges: {{ completedChallenges }}</p>
           <router-link to="/admin/challenges" class="text-blue-500 hover:underline mt-4 inline-block">View All Challenges</router-link>
         </div>

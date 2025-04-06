@@ -1,29 +1,24 @@
 <template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
-  <Breadcrumbs />
+  <!-- <Breadcrumbs /> -->
 
   <div class="p-4">
 
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold mb-6 text-blue-600">👤 User Management</h1>
-        <div v-if="!loading" div class="space-x-2">
-          <button
-            @click="handleAddUser"
-            class="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-blue-700"
-          >
-            ➕ Add User
-          </button>
-          <button
-            @click="handleBatchAddUsers"
-            class="bg-green-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-green-700"
-          >
-            📦 Batch Add
-          </button>
-        </div>
-      </div>
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+    <!-- <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1">👤 User Management</h1> -->
+    <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">👤 User Management</h1>
 
-    <div v-if="loading" class="text-gray-500">Loading users...</div>
+    <div v-if="!loading" class="flex justify-center sm:justify-end space-x-2">
+      <IconButton @click="handleAddUser" :icon="UserPlusIcon" label="Add User" color="blue" />
+      <IconButton @click="handleBatchAddUsers" :icon="UsersIcon" label="Batch Add" color="green" />
+    </div>
+  </div>
+  <div class="flex flex-col md:flex-row m-0">
+      <Breadcrumbs />
+  </div>
+
+  <div v-if="loading" class="text-gray-500">Loading users...</div>
     <div v-else>
       <div v-if="members.length > 0" class="overflow-x-auto">
         <MembersTable
@@ -79,8 +74,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
 import Navbar from '../components/Navbar.vue'
+import IconButton from "../components/IconButton.vue"
 import Breadcrumbs from "../components/Breadcrumbs.vue"
 import MembersTable from '../components/MembersTable.vue'
+import { UserPlusIcon, UsersIcon } from '@heroicons/vue/24/solid'
 import GlobalSwal from '../utills/GlobalSwal'
 
 const Swal = GlobalSwal
