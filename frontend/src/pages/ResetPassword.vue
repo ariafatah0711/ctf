@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import config from "../config"
 import GlobalSwal from '../utills/GlobalSwal';
 const Swal = GlobalSwal;
 const router = useRouter();
@@ -12,19 +13,21 @@ const loading = ref(false);
 onMounted(() => {
   const hash = window.location.hash;
   const params = new URLSearchParams(hash.slice(1));
+  console.log(hash)
+  console.log(params)
   const t = params.get('access_token');
-  if (!t) {
-    Swal.fire({ icon: 'error', title: 'Token tidak ditemukan', text: 'Klik ulang link di email.' });
-    router.push('/forgot-password');
-    return;
-  }
+  // if (!t) {
+    // Swal.fire({ icon: 'error', title: 'Token tidak ditemukan', text: 'Klik ulang link di email.' });
+    // router.push('/forgot-password');
+    // return;
+  // }
   token.value = t;
 });
 
 async function handleResetPassword() {
   loading.value = true;
   try {
-    const res = await fetch('/api/reset-password', {
+    const res = await fetch(`${config.BASE_URL}/api/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: token.value, newPassword: password.value }),
