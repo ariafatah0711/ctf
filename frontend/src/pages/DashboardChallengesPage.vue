@@ -315,7 +315,7 @@
     }
 
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges/detail/${challenge.id}`, {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.id}?detail=true`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },

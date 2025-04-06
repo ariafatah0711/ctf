@@ -1,3 +1,4 @@
+// backend\pages\api\challenges\index.js
 import { verifyToken, requireRole } from "../../../lib/middleware/auth";
 import { withCors } from "@/lib/utils/withCors";
 import { fetchChallengesWithFilters, createChallenge } from "@/lib/supabase/challengesHelper";

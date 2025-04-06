@@ -1,41 +1,7 @@
 import supabase from "@/lib/supabase";
 import { encrypt, decrypt, hashFlag } from "@/lib/encrypt";
-
-export async function fetchChallengesWithFilters(userId, { tags, difficulty, title, page = 1, limit = 9 }) {
-  let query = supabase
-    .from("challenges")
-    .select(
-      `
-      id, title, difficulty, created_at, tags,
-      user_challenges(challenge_id, user_id)
-    `,
-      { count: "exact" }
-    )
-    .range((page - 1) * limit, page * limit - 1);
-
-  if (tags) {
-    const tagArray = Array.isArray(tags) ? tags : [tags];
-    query = query.contains("tags", tagArray);
-  }
-
-  if (difficulty) query = query.eq("difficulty", parseInt(difficulty));
-  if (title) query = query.ilike("title", `%${title}%`);
-
-  const { data, error, count } = await query;
-  if (error) return { error: error.message };
-
-  const result = data.map((challenge) => ({
-    ...challenge,
-    solved: challenge.user_challenges?.some((uc) => uc.user_id === userId) ?? false,
-  }));
-
-  return {
-    data: result,
-    total: count,
-    page: parseInt(page),
-    totalPages: Math.ceil(count / limit),
-  };
-}
+import { validateChallengeFields } from "../utils/validatorChallenges";
+import { checkIfChallengeExists } from "../utils/challexit";
 
 export async function submitChallenge(userId, flag) {
   if (!flag) return { error: "Flag harus diisi." };
@@ -81,7 +47,6 @@ export async function getLeaderboard(page = 1, limit = 10) {
   const { data, error } = await supabase.rpc("get_leaderboard");
 
   if (error) return { error: error.message };
-
   if (!Array.isArray(data)) return { error: "Leaderboard response is not an array" };
 
   // Sort & paginate
@@ -99,11 +64,46 @@ export async function getLeaderboard(page = 1, limit = 10) {
   };
 }
 
+// index.js
+export async function fetchChallengesWithFilters(userId, { tags, difficulty, title, page = 1, limit = 9 }) {
+  let query = supabase
+    .from("challenges")
+    .select(
+      `
+      id, title, difficulty, created_at, tags,
+      user_challenges(challenge_id, user_id)
+    `,
+      { count: "exact" }
+    )
+    .range((page - 1) * limit, page * limit - 1);
+
+  if (tags) {
+    const tagArray = Array.isArray(tags) ? tags : [tags];
+    query = query.contains("tags", tagArray);
+  }
+
+  if (difficulty) query = query.eq("difficulty", parseInt(difficulty));
+  if (title) query = query.ilike("title", `%${title}%`);
+
+  const { data, error, count } = await query;
+  if (error) return { error: error.message };
+
+  const result = data.map((challenge) => ({
+    ...challenge,
+    solved: challenge.user_challenges?.some((uc) => uc.user_id === userId) ?? false,
+  }));
+
+  return {
+    data: result,
+    total: count,
+    page: parseInt(page),
+    totalPages: Math.ceil(count / limit),
+  };
+}
+
 export async function createChallenge({ title, description, difficulty, flag, url, tags = [], hint = null }) {
-  if (!title || !description || !difficulty || !flag || !url) return { error: "Semua field harus diisi." };
-  if (typeof difficulty !== "number") return { error: "Difficulty harus berupa angka." };
-  if (tags && !Array.isArray(tags)) return { error: "Tags harus berupa array." };
-  if (hint && typeof hint !== "string") return { error: "Hint harus berupa string." };
+  const errorMessage = validateChallengeFields({ title, description, difficulty, flag, url, tags, hint });
+  if (errorMessage) return { error: errorMessage };
 
   const encryptedFlag = encrypt(flag);
   const flagHash = hashFlag(flag);
@@ -123,6 +123,89 @@ export async function createChallenge({ title, description, difficulty, flag, ur
       },
     ])
     .select("*");
+
+  if (error) return { error: error.message };
+  return { data };
+}
+
+// id.js
+export async function getChallengeDetailWithSolvers(id) {
+  const { data, error } = await supabase
+    .from("challenges")
+    .select("id, title, description, difficulty, created_at, url, tags, hint")
+    .eq("id", id)
+    .single();
+
+  if (error) return { error: error.message };
+  if (!data) return { notFound: true, error: "Challenge tidak ditemukan." };
+
+  const { data: solversData, error: solversError } = await supabase
+    .from("user_challenges")
+    .select("user_id, completed_at")
+    .eq("challenge_id", id);
+
+  if (solversError) return { error: solversError.message };
+
+  const userIds = solversData.map((solver) => solver.user_id);
+  const solvers = [];
+
+  for (const userId of userIds) {
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+
+    solvers.push({
+      user_id: userId,
+      username: userError ? "Unknown User" : userData.user.user_metadata?.display_name || "Unknown User",
+      completed_at: solversData.find((s) => s.user_id === userId).completed_at,
+    });
+  }
+
+  return {
+    data: {
+      challenge: data,
+      solvers,
+    },
+  };
+}
+
+export async function getChallengeWithFlagById(id) {
+  // const { data, error } = await supabase.from("challenges").select("*").eq("id", id).single();
+  const { data, error } = await supabase.from("challenges").select("*").eq("id", id).single();
+  if (error) return { error: error.message };
+  if (!data) return { notFound: true, error: "Challenge tidak ditemukan." };
+
+  // 🔓 Decrypt flag sebelum dikirim
+  data.flag = decrypt(data.flag);
+  return { data };
+}
+
+export async function updateChallenge(id, { title, description, difficulty, flag, url, tags = [], hint = null }) {
+  // Validasi
+  const errorMessage = validateChallengeFields({ title, description, difficulty, flag, url, tags, hint });
+  if (errorMessage) return { error: errorMessage };
+
+  const { exists, error: findError } = await checkIfChallengeExists(id);
+  if (findError) return { error: findError.message };
+  if (!exists) return { error: "Challenge tidak ditemukan.", notFound: true };
+
+  const encryptedFlag = encrypt(flag);
+
+  const { data, error } = await supabase
+    .from("challenges")
+    .update({ title, description, difficulty, flag: encryptedFlag, url, tags, hint })
+    .eq("id", id)
+    .select("*");
+
+  if (error) return { error: error.message };
+  return { data };
+}
+
+export async function deleteChallengeById(id) {
+  const { exists, error: findError } = await checkIfChallengeExists(id);
+  if (findError) return { error: findError.message };
+  if (!exists) return { error: "Challenge tidak ditemukan.", notFound: true };
+
+  // Hapus challenge
+  const { data, error } = await supabase.from("challenges").delete().eq("id", id);
 
   if (error) return { error: error.message };
   return { data };
