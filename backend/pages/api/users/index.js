@@ -45,8 +45,9 @@ export default async function handler(req, res) {
             const name = meta.display_name || "Unknown";
             const initials = name
               .split(" ")
-              .map((word) => word[0].toUpperCase())
-              .join(""); // Ambil inisial nama
+              .filter((word) => word.length > 0) // filter kata kosong
+              .map((word) => word[0]?.toUpperCase() || "") // aman dari undefined
+              .join("");
             return {
               id: user.id,
               name,
