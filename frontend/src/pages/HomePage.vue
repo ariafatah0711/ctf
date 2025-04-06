@@ -123,6 +123,7 @@ const router = useRouter()
 
 onMounted(() => {
   const hash = window.location.hash
+  console.log(hash)
   const tokenMatch = hash.match(/access_token=([^&]+)/)
   if (tokenMatch) {
     token.value = tokenMatch[1]
@@ -138,6 +139,8 @@ async function handleReset() {
 
   loading.value = true
   try {
+    console.log(token.value)
+    console.log(newPassword.value)
     const res = await fetch(`${config.BASE_URL}/api/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
