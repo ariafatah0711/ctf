@@ -52,6 +52,7 @@ ENCRYPTION_KEY=<hasil-dari-crypto-randomBytes>
 ### 📁 Frontend (`/frontend/.env`)
 ```
 VITE_API_BASE_URL=http://localhost:3000
+VITE_FLAG_FORMAT=CWA{FLAG}
 ```
 
 ---

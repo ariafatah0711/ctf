@@ -1,6 +1,7 @@
 // import supabase from "@/lib/supabase";
 import { withCors } from "@/lib/utils/withCors";
 import supabaseAdmin from "@/lib/supabaseAdmin";
+
 export default async function handler(req, res) {
   if (withCors(req, res)) return;
 

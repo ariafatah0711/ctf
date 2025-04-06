@@ -13,8 +13,10 @@ import Verify from '../pages/Verify.vue';
 import DashboardPage from '../pages/DashboardPage.vue';
 import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
 import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
+import ForgotPassword from '../pages/ForgotPassword.vue';
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
+import { forgotPassword } from '../services/authService';
 const Swal = GlobalSwal
 
 const routes = [
@@ -61,6 +63,11 @@ const routes = [
     path: '/verify',
     name: 'Verify',
     component: Verify,
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: ForgotPassword,
   },
   // {
   //   path: '/dashboard',

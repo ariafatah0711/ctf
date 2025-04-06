@@ -45,3 +45,18 @@ export async function register(payload: RegisterPayload) {
 
   return res.json(); // { message }
 }
+
+export async function forgotPassword(email: string) {
+  const res = await fetch(`${config.BASE_URL}/api/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Gagal mengirim email reset password');
+  }
+
+  return res.json(); // { message }
+}

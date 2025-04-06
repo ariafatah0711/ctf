@@ -40,13 +40,13 @@
             />
           </div>
 
-          <!-- <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center justify-between text-sm">
             <label class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
               <input type="checkbox" class="form-checkbox text-blue-600" />
               Remember me
             </label>
-            <a href="#" class="text-blue-600 hover:underline dark:text-blue-400">Forgot password?</a>
-          </div> -->
+            <router-link to="/forgot-password" class="text-blue-600 hover:underline dark:text-blue-400">Forgot password?</router-link>
+          </div>
 
           <button
             type="submit"
@@ -67,7 +67,7 @@
     </div>
   </div>
 </template>
-  
+
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
   import { useRouter } from 'vue-router';
