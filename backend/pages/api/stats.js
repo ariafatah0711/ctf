@@ -1,3 +1,4 @@
+// backend\pages\api\stats.js
 import supabaseAdmin from "@/lib/supabaseAdmin";
 import supabase from "@/lib/supabase";
 import { withCors } from "@/lib/utils/withCors";

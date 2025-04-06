@@ -1,3 +1,4 @@
+// backend\pages\api\setup.js
 import supabaseAdmin from "@/lib/supabaseAdmin";
 import { withCors } from "@/lib/utils/withCors";
 import { createNewUser } from "@/lib/supabase/userHelpers";

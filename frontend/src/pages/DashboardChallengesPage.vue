@@ -154,7 +154,7 @@
   // Add Challenge
   const handleAddChallenge = async (challengeData) => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges/add`, {
+      const res = await fetch(`${config.BASE_URL}/api/challenges`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

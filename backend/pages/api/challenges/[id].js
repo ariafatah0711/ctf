@@ -1,14 +1,14 @@
 // backend/pages/api/challenges/[id].js
 import supabase from "../../../lib/supabase";
 import supabaseAdmin from "@/lib/supabaseAdmin";
+import { verifyToken, requireRole } from "@lib/middleware/auth";
 import { withCors } from "@/lib/utils/withCors";
-import { verifyToken, requireRole } from "../../../lib/middleware/auth";
 import { encrypt } from "../../../lib/encrypt";
-import { validate as validateUUID } from "uuid"; // Import validate dari uuid package
+import { validate as validateUUID } from "uuid";
 
 // Fungsi untuk memvalidasi UUID
 const isUUID = (str) => {
-  return validateUUID(str); // Gunakan validate dari uuid package
+  return validateUUID(str);
 };
 
 export default async function handler(req, res) {

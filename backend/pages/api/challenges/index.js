@@ -1,64 +1,34 @@
-import supabase from "@/lib/supabase";
-import { verifyToken } from "../../../lib/middleware/auth";
+import { verifyToken, requireRole } from "../../../lib/middleware/auth";
+import { withCors } from "@/lib/utils/withCors";
+import { fetchChallengesWithFilters, createChallenge } from "@/lib/supabase/challengesHelper";
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (withCors(req, res)) return;
 
   if (req.method === "GET") {
     verifyToken(req, res, async () => {
       const userId = req.user.id;
-      const { tags, difficulty, title, page = 1, limit = 9 } = req.query;
+      const filters = req.query;
 
-      // if (!userId) {
-      //   return res.status(401).json({ message: "Unauthorized" });
-      // }
+      const result = await fetchChallengesWithFilters(userId, filters);
 
-      let query = supabase
-        .from("challenges")
-        .select(
-          `
-          id, title, difficulty, created_at, tags,
-          user_challenges(challenge_id, user_id)
-        `,
-          { count: "exact" }
-        )
-        .range((page - 1) * limit, page * limit - 1);
-
-      if (tags) {
-        const tagArray = Array.isArray(tags) ? tags : [tags];
-        query = query.contains("tags", tagArray);
+      if (result.error) {
+        return res.status(500).json({ message: result.error });
       }
 
-      if (difficulty) {
-        query = query.eq("difficulty", parseInt(difficulty));
-      }
+      return res.status(200).json(result);
+    });
+  } else if (req.method === "POST") {
+    verifyToken(req, res, async () => {
+      requireRole(["admin", "maker"])(req, res, async () => {
+        const challenge = req.body;
+        const result = await createChallenge(challenge);
 
-      if (title) {
-        query = query.ilike("title", `%${title}%`);
-      }
+        if (result.error) {
+          return res.status(400).json({ message: result.error });
+        }
 
-      const { data, error, count } = await query;
-
-      if (error) {
-        return res.status(500).json({ message: error.message });
-      }
-
-      const result = data.map((challenge) => ({
-        ...challenge,
-        solved: challenge.user_challenges?.some((uc) => uc.user_id === userId) ?? false,
-      }));
-
-      return res.status(200).json({
-        data: result,
-        total: count,
-        page: parseInt(page),
-        totalPages: Math.ceil(count / limit),
+        return res.status(201).json({ message: "Challenge berhasil ditambahkan!", data: result.data });
       });
     });
   } else {
