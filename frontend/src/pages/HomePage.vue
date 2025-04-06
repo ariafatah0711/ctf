@@ -141,7 +141,7 @@ async function handleReset() {
   try {
     console.log(token.value)
     console.log(newPassword.value)
-    const res = await fetch(`${config.BASE_URL}/api/reset-password`, {
+    const res = await fetch(`${config.BASE_URL}/api/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
