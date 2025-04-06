@@ -9,26 +9,28 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    // 1. Total users
-    const { data: userCountRaw, error: userCountErr } = await supabaseAdmin.rpc("get_user_count");
-    if (userCountErr) throw userCountErr;
-    const totalUsers = userCountRaw?.[0]?.count ?? 0;
+    const { data: userRaw, error: userRawErr } = await supabaseAdmin.auth.admin.listUsers();
+    if (userRawErr) throw userRawErr;
+    const totalUsers = userRaw.total;
 
-    // 2. Users by role
-    const { data: rolesRaw } = await supabaseAdmin.from("users").select("");
-    const usersByRole = rolesRaw;
+    const usersByRole = userRaw.users.reduce(
+      (acc, user) => {
+        const role = user.user_metadata?.role ?? "Unknown"; // Mengambil role dari user_metadata
 
-    // const usersByRoleArr =
-    //   rolesRaw?.reduce((acc, user) => {
-    //     const role = user.raw_user_meta_data?.role || "unknown";
-    //     acc[role] = (acc[role] || 0) + 1;
-    //     return acc;
-    //   }, {}) || {};
+        // Hitung jumlah role per jenis
+        if (!acc.user_role[role]) {
+          acc.user_role[role] = 1; // Jika role belum ada, mulai hitung dari 1
+        } else {
+          acc.user_role[role] += 1; // Jika role sudah ada, tambah 1
+        }
 
-    // const usersByRole = Object.entries(usersByRoleArr).map(([role, count]) => ({
-    //   role,
-    //   count,
-    // }));
+        // Hitung total unique roles
+        acc.total_role = Object.keys(acc.user_role).length;
+
+        return acc;
+      },
+      { total_role: 0, user_role: {} }
+    );
 
     // 3. Total challenges
     const { count: totalChallenges } = await supabase.from("challenges").select("*", { count: "exact", head: true });
@@ -58,13 +60,6 @@ export default async function handler(req, res) {
     const topUsers = (topUsersRaw || []).map(({ username, solved }) => ({
       username,
       solved,
-    }));
-
-    // 8. Most solved challenges
-    const { data: topChallsRaw } = await supabase.rpc("get_most_solved_challenges");
-    const mostSolvedChallenges = (topChallsRaw || []).map(({ title, times_solved }) => ({
-      title,
-      solved: times_solved,
     }));
 
     // 9. Tags distribution
@@ -99,9 +94,21 @@ export default async function handler(req, res) {
       count: solve_count,
     }));
 
+    const mostSolvedChallengeA = challengeSolves.reduce((prev, current) => (prev.count > current.count ? prev : current));
+
+    // Langkah ketiga: Mengambil nama challenge berdasarkan challengeId
+    const { data: challenges } = await supabase
+      .from("challenges") // ganti dengan nama tabel yang menyimpan data challenge
+      .select("title") // pastikan ada kolom 'title' pada tabel challenges
+      .eq("id", mostSolvedChallengeA.challengeId);
+
+    const mostSolvedChallenges = {
+      ...mostSolvedChallengeA, // Memastikan untuk menggunakan mostSolvedChallengeA
+      title: challenges[0]?.title, // Menambahkan nama challenge
+    };
+
     return res.status(200).json({
       ...(typeof totalUsers === "number" && { totalUsers }),
-      //   ...(usersByRole.length > 0 && { usersByRole }),
       usersByRole,
       ...(typeof totalChallenges === "number" && { totalChallenges }),
       ...(challengesByDifficulty.length > 0 && { challengesByDifficulty }),
@@ -112,7 +119,8 @@ export default async function handler(req, res) {
         uniqueChallengesSolved,
       }),
       ...(topUsers.length > 0 && { topUsers }),
-      ...(mostSolvedChallenges.length > 0 && { mostSolvedChallenges }),
+      //   ...(mostSolvedChallenges.length > 0 && { mostSolvedChallenges }),
+      mostSolvedChallenges,
       ...(tagsDistribution.length > 0 && { tagsDistribution }),
       ...(leaderboard.length > 0 && { leaderboard }),
       ...(challengeSolves.length > 0 && { challengeSolves }),

@@ -4,7 +4,7 @@
         <input
           v-model="flag"
           type="text"
-          placeholder="Submit flag..."
+          :placeholder="'Submit ' + format_flag"
           class="flex-1 border border-gray-300 px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
         />
         <button
@@ -28,6 +28,7 @@
   const loading = ref(false);
   const auth = useAuthStore();
   const token = auth.token;
+  const format_flag = ref(config.FLAG_FORMAT);
   
   const handleSubmit = async () => {
     if (!flag.value.trim()) {

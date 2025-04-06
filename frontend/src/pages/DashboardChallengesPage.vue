@@ -2,7 +2,7 @@
   <Navbar />
   <div class="h-16"></div>
 
-  <div class="p-4">
+  <div class="p-4 max-w-screen-xl mx-auto">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
       <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">
         🛠️ Manage Challenges
@@ -35,6 +35,10 @@
             <span class="font-medium">{{ row.title }}</span>
             <!-- <small class="text-sm text-gray-500">ID: {{ row.id }}</small> -->
           </div>
+        </template>
+
+        <template #difficulty="{ row }">
+          <span>{{ levelMap[row.difficulty] || 'Tidak Diketahui' }}</span>
         </template>
       </BaseTable>
         
@@ -95,6 +99,12 @@
   const page = ref(1)
   const limit = 25
   const totalPages = ref(1)
+
+  const levelMap = {
+    1: 'Easy 🟢',
+    2: 'Medium 🟡',
+    3: 'Hard 🔴'
+  }
   
   const fetchChallenges = async () => {
     loading.value = true
@@ -242,15 +252,15 @@
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <input id="swal-title" class="swal2-input" placeholder="Judul Challenge" value="${title}" />
           <textarea id="swal-description" class="swal2-textarea" placeholder="Deskripsi">${description}</textarea>
-          <input id="swal-flag" class="swal2-input" placeholder="Flag (ctf{...})" value="${flag}" />
+          <input id="swal-flag" class="swal2-input" placeholder="${config.FLAG_FORMAT}" value="${flag}" />
           <input id="swal-url" class="swal2-input" placeholder="URL Challenge" value="${url}" />
           <input id="swal-tags" class="swal2-input" placeholder="Tags (pisahkan dengan koma)" value="${tags}" />
           <input id="swal-hint" class="swal2-input" placeholder="Hint (opsional)" value="${hint}" />
           <select id="swal-difficulty" class="swal2-select">
             <option value="" disabled ${!difficulty ? 'selected' : ''}>Pilih Tingkat Kesulitan</option>
-            <option value="1" ${difficulty == 1 ? 'selected' : ''}>🟢 Mudah</option>
-            <option value="2" ${difficulty == 2 ? 'selected' : ''}>🟡 Sedang</option>
-            <option value="3" ${difficulty == 3 ? 'selected' : ''}>🔴 Sulit</option>
+            <option value="1" ${difficulty == 1 ? 'selected' : ''}>🟢 Easy</option>
+            <option value="2" ${difficulty == 2 ? 'selected' : ''}>🟡 Medium</option>
+            <option value="3" ${difficulty == 3 ? 'selected' : ''}>🔴 Hard</option>
           </select>
         </div>
       `,

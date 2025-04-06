@@ -1,11 +1,12 @@
 {
-  "name": "CTF_WEB ARIA",
+  "name": "ctf_web_aria",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
+    "build_ts": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
