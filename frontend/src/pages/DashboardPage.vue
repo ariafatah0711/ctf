@@ -69,7 +69,7 @@
     </div>
 
     <!-- Tags Distribution -->
-    <div class="mt-8 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+    <div class="mt-8 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm" v-if="!loading">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">🏷️ Tags Distribution</h2>
       <ul class="flex flex-wrap gap-2">
         <li v-for="item in tagsDistribution" :key="item.tag"
