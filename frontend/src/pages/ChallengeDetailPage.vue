@@ -68,10 +68,17 @@
     <div v-if="solvers.length" class="mt-8">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">Solvers</h2>
       <ul>
-        <li v-for="solver in solvers" :key="solver.user_id" class="flex justify-between py-3 px-6 border-b border-gray-200">
-          <span class="font-medium text-gray-800">{{ solver.username }}</span>
-          <span class="text-sm text-gray-500">{{ formattedDate(solver.completed_at) }}</span>
-        </li>
+        <router-link
+          v-for="solver in solvers"
+          :key="solver.user_id"
+          :to="`/profile/${solver.username}`"
+          class="block"
+        >
+          <li class="flex justify-between py-3 px-6 border-b border-gray-200 hover:bg-gray-50 transition">
+            <span class="font-medium text-gray-800">{{ solver.username }}</span>
+            <span class="text-sm text-gray-500">{{ formattedDate(solver.completed_at) }}</span>
+          </li>
+        </router-link>
       </ul>
     </div>
 
