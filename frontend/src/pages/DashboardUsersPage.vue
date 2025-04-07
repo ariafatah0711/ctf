@@ -1,19 +1,17 @@
 <template class="min-h-screen">
   <Navbar />
   <div class="h-16"></div>
-  <!-- <Breadcrumbs /> -->
 
   <div class="p-4 max-w-screen-xl mx-auto">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">👤 User Management</h1>
-
-      <div v-if="!loading" class="flex justify-center sm:justify-end space-x-2">
+    </div>
+    <div class="flex flex-row items-center justify-between gap-4">
+      <Breadcrumbs class="w-full sm:w-auto flex-1" />
+      <div v-if="!loading" class="flex gap-2">
         <IconButton @click="handleAddUser" :icon="UserPlusIcon" label="Add User" color="blue" />
         <IconButton @click="handleBatchAddUsers" :icon="UsersIcon" label="Batch Add" color="green" />
       </div>
-    </div>
-    <div class="flex flex-col md:flex-row m-0">
-        <Breadcrumbs />
     </div>
 
     <div v-if="loading" class="text-gray-500">Loading users...</div>

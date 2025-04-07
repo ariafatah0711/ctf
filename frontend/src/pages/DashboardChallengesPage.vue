@@ -3,17 +3,17 @@
   <div class="h-16"></div>
 
   <div class="p-4 max-w-screen-xl mx-auto">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">
         🛠️ Manage Challenges
       </h1>
-      <div v-if="!loading" class="flex justify-center sm:justify-end space-x-2">
-        <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add Challenge" color="blue" />
-      </div>
     </div>
 
-    <div class="flex flex-col md:flex-row m-0 mb-4">
-      <Breadcrumbs />
+    <div class="flex flex-row items-center justify-between gap-4">
+      <Breadcrumbs class="w-full sm:w-auto flex-1" />
+      <div v-if="!loading" class="flex gap-2">
+        <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add Challenge" color="blue" />
+      </div>
     </div>
 
     <div v-if="loading" class="text-gray-500">Loading challenges...</div>
@@ -23,7 +23,7 @@
           :columns="[
             { label: 'Challenge Name', key: 'challenge', grow: true },
             { label: 'Category', key: 'tags', width: 'w-40' },
-            { label: 'Difficulty', key: 'difficulty', width: 'w-20' }
+            { label: 'Difficulty', key: 'difficulty', width: 'w-35' }
           ]"
           :rows="challenges"
           @edit="showEditChallengeModal"

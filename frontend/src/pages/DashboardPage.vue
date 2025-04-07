@@ -3,11 +3,11 @@
   <div class="h-16"></div>
 
   <div class="p-4 max-w-screen-xl mx-auto">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
       <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🖥️ Dashboard</h1>
       <div>
-        <router-link to="/dashboard/users" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2">User Dashboard</router-link>
-        <router-link to="/dashboard/challenges" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2">Challenges</router-link>
+        <router-link to="/dashboard/users" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2 truncate">Users</router-link>
+        <router-link to="/dashboard/challenges" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2 truncate">Challenges</router-link>
       </div>
     </div>
 
@@ -16,7 +16,7 @@
     <!-- Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch" v-if="!loading">
       <!-- User Stats -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full flex flex-col">
+      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full flex flex-col mt-4">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">👥 User Stats</h2>
         <p class="text-gray-700 mb-1">Total Users: <strong>{{ totalUsers }}</strong></p>
         <p class="text-gray-700 mb-1">Total Role: <strong>{{ totalRoles }}</strong></p>
@@ -51,7 +51,7 @@
         <!-- Most Solved Challenges -->
         <div class="mb-3">
           <p class="text-gray-700">Most Solved Challenges:</p>
-          <p class="text-gray-700">
+          <p class="text-gray-700 truncate">
             <strong>{{ mostSolvedChallenges.title }}</strong> - <strong>{{ mostSolvedChallenges.count }}</strong> solved
           </p>
         </div>
@@ -73,9 +73,9 @@
     <!-- Tags Distribution -->
     <div class="mt-8 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm" v-if="!loading">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">🏷️ Tags Distribution</h2>
-      <ul class="flex flex-wrap gap-2">
+      <ul class="flex flex-wrap gap-2 truncate">
         <li v-for="item in tagsDistribution" :key="item.tag"
-            class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+            class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm truncate">
           {{ item.tag }} ({{ item.count }})
         </li>
       </ul>

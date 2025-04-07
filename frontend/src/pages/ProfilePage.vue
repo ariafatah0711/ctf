@@ -15,7 +15,7 @@
           class="w-24 h-24 rounded-full shadow-lg ring-2 ring-blue-500"
         />
         <div class="text-center">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.username }}</h3>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ user.username }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
         </div>
       </div>
@@ -25,7 +25,7 @@
         <dl class="divide-y divide-gray-100 dark:divide-white/10">
           <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium text-gray-900 dark:text-white">User ID</dt>
-            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.id }}</dd>
+            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0 truncate">{{ user.id }}</dd>
           </div>
 
           <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -42,9 +42,9 @@
             <dt class="text-sm font-medium text-gray-900 dark:text-white">Solved Challenges</dt>
             <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
               <div v-if="user.solves && user.solves.length">
-                <ul class="list-disc list-inside space-y-1">
+                <ul class="list-disc list-inside space-y-1 truncate">
                   <li v-for="challenge in user.solves" :key="challenge.id">
-                    <RouterLink :to="`/challenges/${challenge.id}`" class="text-blue-600 hover:underline dark:text-blue-400">
+                    <RouterLink :to="`/challenges/${challenge.id}`" class="text-blue-600 hover:underline dark:text-blue-400 truncate">
                       {{ challenge.title }}
                     </RouterLink>
                   </li>

@@ -139,7 +139,7 @@ export async function createChallenge({ title, description, difficulty, flag, ur
 }
 
 // id.js
-export async function getChallengeDetailWithSolvers(id) {
+export async function getChallengeDetailWithSolvers(id, userId) {
   const { data, error } = await supabase
     .from("challenges")
     .select("id, title, description, difficulty, created_at, url, tags, hint")
@@ -159,20 +159,23 @@ export async function getChallengeDetailWithSolvers(id) {
   const userIds = solversData.map((solver) => solver.user_id);
   const solvers = [];
 
-  for (const userId of userIds) {
-    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+  for (const uid of userIds) {
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(uid);
 
     solvers.push({
-      user_id: userId,
+      user_id: uid,
       username: userError ? "Unknown User" : userData.user.user_metadata?.display_name || "Unknown User",
-      completed_at: solversData.find((s) => s.user_id === userId).completed_at,
+      completed_at: solversData.find((s) => s.user_id === uid).completed_at,
     });
   }
+
+  const solved = userId ? solversData.some((solver) => solver.user_id === userId) : false;
 
   return {
     data: {
       challenge: data,
       solvers,
+      solved,
     },
   };
 }

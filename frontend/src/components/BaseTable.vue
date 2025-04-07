@@ -39,7 +39,7 @@ const emit = defineEmits<{
           <tr
             v-for="(row, i) in rows"
             :key="row.id"
-            class="border-b border-slate-200 last:border-0"
+            class="border-b border-slate-200 last:border-0 truncate"
           >
           <td
             v-for="(col, index) in columns"

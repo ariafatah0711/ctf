@@ -4,19 +4,22 @@
       challenge.solved ? 'bg-green-100 dark:bg-green-700' : 'bg-white dark:bg-gray-800'
     ]">
 
-      <div>
+      <div class="relative truncate">
+        <span class="absolute top-0 right-0 text-sm px-1.5 py-0.5 rounded-full font-medium" :class="badgeColor(challenge.difficulty)">
+            {{ difficultyLabel(challenge.difficulty) }}
+        </span>
         <!-- Title -->
-        <h5 class="mb-2 text-xl font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition">
+        <h5 class="mb-2 text-xl font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition truncate">
           {{ challenge.title }}
         </h5>
 
         <!-- Description (optional) -->
-        <p v-if="challenge.description" class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+        <p v-if="challenge.description" class="mb-4 text-sm text-gray-600 dark:text-gray-300 truncate">
           {{ challenge.description }}
         </p>
 
         <!-- Tags -->
-        <div class="flex flex-wrap gap-2 text-xs mb-4">
+        <div class="flex flex-wrap gap-2 text-xs mb-4 truncate">
           <span
             v-for="tag in challenge.tags"
             :key="tag"
@@ -27,11 +30,8 @@
         </div>
 
         <!-- Date & Difficulty -->
-        <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-400">
+        <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-400 truncate">
           <span>{{ formattedDate(challenge.created_at) }}</span>
-          <span :class="badgeColor(challenge.difficulty)">
-            {{ difficultyLabel(challenge.difficulty) }}
-          </span>
         </div>
       </div>
 

@@ -23,6 +23,7 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     verifyToken(req, res, async () => {
+      const userId = req.user.id;
       if (detail === "true") {
         requireRole(["admin", "maker"])(req, res, async () => {
           const result = await getChallengeWithFlagById(id);
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
           return res.status(200).json(result);
         });
       } else {
-        const result = await getChallengeDetailWithSolvers(id);
+        const result = await getChallengeDetailWithSolvers(id, userId);
         if (result?.notFound) return res.status(404).json({ message: result.error });
         if (result?.error) return res.status(500).json({ message: result.error });
 

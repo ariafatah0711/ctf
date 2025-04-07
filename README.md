@@ -112,6 +112,12 @@ vercel --prod -t <token>
 
 ---
 
+## Cara Push Db lokal ke supabase cloud
+```bash
+supabase db diff --local --file v1.5
+supabase db push
+```
+
 ## 🔐 Catatan Penting
 - Tambahkan `.env` ke Vercel Environment Variables secara manual via Dashboard.
 - `ENCRYPTION_KEY` harus unik dan aman.

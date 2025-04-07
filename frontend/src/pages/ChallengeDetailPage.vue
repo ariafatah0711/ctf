@@ -10,8 +10,9 @@
     </div>
 
     <!-- Display Challenge Data -->
-    <div v-if="challenge" class="bg-white shadow-lg rounded-lg p-6">
-      <h1 class="text-3xl font-semibold text-gray-800 mb-3">{{ challenge.title }}</h1>
+    <div v-if="challenge" :class="['shadow-lg rounded-lg p-6 transition truncate',
+      solved ? 'bg-green-100 dark:bg-green-700' : 'bg-white dark:bg-gray-800']">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-3 truncate">{{ challenge.title }}</h1>
       <p class="text-sm text-gray-500 mb-6">{{ formattedDate(challenge.created_at) }}</p>
   
       <div class="mb-6">
@@ -20,26 +21,26 @@
         </span>
       </div>
   
-      <div class="text-sm text-gray-700 mb-6">
+      <div class="text-sm text-gray-700 mb-6 truncate">
         {{ challenge.description || 'No description available.' }}
       </div>
   
       <!-- New: Display Hint -->
-      <div v-if="challenge.hint" class="bg-yellow-50 p-4 rounded-md mb-6 border-l-4 border-yellow-400">
+      <div v-if="challenge.hint" class="bg-yellow-50 p-4 rounded-md mb-6 border-l-4 border-yellow-400 truncate">
         <h3 class="font-semibold text-yellow-700">Hint</h3>
-        <p class="text-sm text-yellow-700">{{ challenge.hint }}</p>
+        <p class="text-sm text-yellow-700 truncate">{{ challenge.hint }}</p>
       </div>
       <div v-else>
         <p class="text-sm text-gray-500">No hint available for this challenge.</p>
       </div>
   
-      <div class="flex flex-wrap gap-2 text-xs text-white mb-6">
+      <div class="flex flex-wrap gap-2 text-xs text-white mb-6 truncate">
         <span v-for="tag in challenge.tags" :key="tag" class="bg-gray-700 px-3 py-1 rounded-full">
           #{{ tag }}
         </span>
       </div>
   
-      <div v-if="challenge.url" class="mt-6">
+      <div v-if="challenge.url" class="mt-6 truncate">
         <div v-if="isFile(challenge.url)">
           <a
             :href="challenge.url"
@@ -102,6 +103,7 @@ const auth = useAuthStore();
 const route = useRoute();
 const challenge = ref<any>(null);
 const solvers = ref<any[]>([]);
+const solved = ref(false);
 
 const fetchChallenge = async (id: string) => {
   try {
@@ -113,6 +115,7 @@ const fetchChallenge = async (id: string) => {
     const data = await res.json();
     challenge.value = data.data.challenge;
     solvers.value = data.data.solvers; // Menyimpan data solvers
+    solved.value = data.data.solved;
     console.log('Fetched:', data);
   } catch (error) {
     console.error('Error loading challenge:', error);
@@ -124,7 +127,6 @@ watch(
   () => route.params.id,
   (id) => {
     if (id && typeof id === 'string') {
-      console.log('Route ID:', id);
       fetchChallenge(id);
     }
   },
@@ -161,13 +163,6 @@ const formattedDate = (raw: string) => {
           year: 'numeric'
         });
 };
-
-// const withHttp = (url: string): string => {
-//   if (!url) return '#';
-//   return url.startsWith('http://') || url.startsWith('https://')
-//     ? url
-//     : `http://${url}`;
-// };
 
 // Function to check if the URL points to a file
 const isFile = (url: string): boolean => {
