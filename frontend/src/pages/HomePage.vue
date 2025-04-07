@@ -1,8 +1,5 @@
-<template class="min-h-screen">
-  <Navbar />
-  <div class="h-16"></div>
-
-  <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-12 px-6">
+<template>
+  <div class="py-12 px-6">
     <div class="max-w-5xl mx-auto text-center">
 
       <!-- Kalau ada access_token di hash, tampilkan form reset password -->
@@ -24,7 +21,6 @@
 
       <!-- Kalau tidak ada token, tampilkan welcome screen -->
       <div v-else>
-        <!-- Gambar tambahan di atas judul -->
         <div class="mb-8">
           <img 
             src="../assets/icon.png" 
@@ -57,12 +53,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth';
 import Navbar from '../components/Navbar.vue'
 import packageInfo from "../../package.json"
-import config from '../config' // pastikan path config ini benar ya
-import { useAuthStore } from '../stores/auth';
+import config from '../config'
+import Swal from 'sweetalert2'
 
 const app_name = packageInfo.name
 const showResetForm = ref(false)
