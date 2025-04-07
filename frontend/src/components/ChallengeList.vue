@@ -1,17 +1,54 @@
 <template>
   <div>
-    <div class="flex justify-end mb-4">
-      <select
-        v-model="selectedDifficulty"
-        @change="onFilterChange"
-        class="border px-3 py-1 rounded"
-      >
-        <option value="">All Difficulties</option>
-        <option value="1">Easy</option>
-        <option value="2">Medium</option>
-        <option value="3">Hard</option>
-      </select>
+    <div class="flex justify-start mb-4 gap-4">
+      <!-- Filter Difficulty -->
+      <div class="max-w-xs w-full">
+        <label for="difficulty" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Filter Difficulty
+        </label>
+        <select
+          id="difficulty"
+          v-model="selectedDifficulty"
+          @change="onFilterChange"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option value="">All Difficulties</option>
+          <option value="1">Easy</option>
+          <option value="2">Medium</option>
+          <option value="3">Hard</option>
+        </select>
+      </div>
+
+      <!-- Filter Tags -->
+      <div class="max-w-xs w-full">
+        <label for="tags" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Filter Tag
+        </label>
+        <select
+          id="tags"
+          v-model="selectedTag"
+          @change="onFilterChange"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option value="">All Tags</option>
+          <option
+            v-for="tag in availableTags"
+            :key="tag"
+            :value="tag"
+          >
+            {{ tag }}
+          </option>
+        </select>
+      </div>
     </div>
+
+    <div v-if="challenges.length === 0" class="text-center text-gray-500 mt-8">Challenge tidak ditemukan.</div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
       <ChallengeCard
@@ -22,7 +59,7 @@
     </div>
 
     <!-- Pagination -->
-    <nav aria-label="Page navigation example" class="flex justify-center mt-6">
+    <nav v-if="challenges.length > 0" aria-label="Page navigation example" class="flex justify-center mt-6">
       <ul class="flex gap-2">
         <li>
           <button
@@ -88,14 +125,15 @@
   const page = ref(1);
   const totalPages = ref(1);
   const selectedDifficulty = ref('');
+  const selectedTag = ref('');
+  const availableTags = ref<string[]>([]);
 
   const fetchChallenges = async () => {
     try {
       const params = new URLSearchParams();
       params.set("page", page.value.toString());
-      if (selectedDifficulty.value) {
-        params.set("difficulty", selectedDifficulty.value);
-      }
+      if (selectedDifficulty.value) params.set("difficulty", selectedDifficulty.value);
+      if (selectedTag.value) params.set("tags", selectedTag.value);
 
       const res = await fetch(`${config.BASE_URL}/api/challenges?${params.toString()}`, {
         headers: {
@@ -105,7 +143,10 @@
 
       if (!res.ok) throw new Error("Gagal ambil challenge");
       const json = await res.json();
-      console.log(json)
+
+      challenges.value = json.data;
+      totalPages.value = json.totalPages;
+      availableTags.value = json.tags || [];
       challenges.value = json.data;
       totalPages.value = json.totalPages;
     } catch (err) {
@@ -115,13 +156,14 @@
 
   const onFilterChange = () => {
     page.value = 1; // reset ke page 1 saat filter berubah
-    router.replace({
-      query: {
-        ...route.query,
-        page: '1',
-        difficulty: selectedDifficulty.value || undefined,
-      },
-    });
+      router.replace({
+        query: {
+          ...route.query,
+          page: '1',
+          difficulty: selectedDifficulty.value || undefined,
+          tags: selectedTag.value || undefined, // ✅ tambahin
+        },
+      });
     fetchChallenges();
   };
 
@@ -129,15 +171,11 @@
   onMounted(() => {
     const queryPage = parseInt(route.query.page as string);
     const queryDifficulty = route.query.difficulty as string;
+    const queryTag = route.query.tags as string;
 
-    if (!isNaN(queryPage) && queryPage > 0) {
-      page.value = queryPage;
-    }
-
-    if (queryDifficulty) {
-      selectedDifficulty.value = queryDifficulty;
-    }
-
+    if (!isNaN(queryPage) && queryPage > 0) page.value = queryPage;
+    if (queryDifficulty) selectedDifficulty.value = queryDifficulty;
+    if (queryTag) selectedTag.value = queryTag;
     fetchChallenges();
   });
 
