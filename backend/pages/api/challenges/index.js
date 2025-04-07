@@ -19,7 +19,9 @@ export default async function handler(req, res) {
 
       return res.status(200).json(result);
     });
-  } else if (req.method === "POST") {
+  }
+
+  if (req.method === "POST") {
     verifyToken(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
         const challenge = req.body;
@@ -32,7 +34,5 @@ export default async function handler(req, res) {
         return res.status(201).json({ message: "Challenge berhasil ditambahkan!", data: result.data });
       });
     });
-  } else {
-    return res.status(405).json({ message: "Method not allowed" });
   }
 }

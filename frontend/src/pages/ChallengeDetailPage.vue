@@ -21,14 +21,17 @@
         </span>
       </div>
   
-      <div class="text-sm text-gray-700 mb-6 truncate">
+      <!-- <div class="text-sm text-gray-700 mb-6 break-words whitespace-pre-line">
         {{ challenge.description || 'No description available.' }}
-      </div>
-  
+      </div> -->
+      <!-- <div class="text-sm text-gray-700 mb-6 break-words whitespace-pre-line" v-html="formatText(challenge.description || 'No description available.')"></div> -->
+      <div class="prose prose-sm max-w-none text-sm text-gray-700 mb-6 break-words" v-html="formatText(challenge.description)"></div>
+
       <!-- New: Display Hint -->
-      <div v-if="challenge.hint" class="bg-yellow-50 p-4 rounded-md mb-6 border-l-4 border-yellow-400 truncate">
-        <h3 class="font-semibold text-yellow-700">Hint</h3>
-        <p class="text-sm text-yellow-700 truncate">{{ challenge.hint }}</p>
+      <div v-if="challenge.hint" class="bg-yellow-50 p-4 rounded-md mb-6 border-l-4 border-yellow-400 break-words">
+        <h3 class="font-semibold text-yellow-700 mb-1">Hint</h3>
+        <!-- <p class="text-sm text-yellow-700 whitespace-pre-line">{{ challenge.hint }}</p> -->
+        <p class="text-sm text-yellow-700 whitespace-pre-line" v-html="formatText(challenge.hint)"></p>
       </div>
       <div v-else>
         <p class="text-sm text-gray-500">No hint available for this challenge.</p>
@@ -39,7 +42,7 @@
           #{{ tag }}
         </span>
       </div>
-  
+
       <div v-if="challenge.url" class="mt-6 truncate">
         <div v-if="isFile(challenge.url)">
           <a
@@ -48,7 +51,8 @@
             class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
           >
             <i class="fas fa-download mr-2"></i>
-            Download {{ challenge.url.split('/').pop() }}
+            Download
+            <!-- {{ challenge.url.split('/').pop() }} -->
           </a>
         </div>
         <div v-else>
@@ -59,7 +63,8 @@
             class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
           >
             <i class="fas fa-link mr-2"></i>
-            Open: {{ challenge.url }}
+            Open
+            <!-- {{ challenge.url }} -->
           </a>
         </div>
       </div>
@@ -97,6 +102,7 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import config from "../config"
+import { marked } from 'marked';
 
 const auth = useAuthStore();
 
@@ -104,6 +110,8 @@ const route = useRoute();
 const challenge = ref<any>(null);
 const solvers = ref<any[]>([]);
 const solved = ref(false);
+
+const formatText = (text: string) => marked.parse(text || '');
 
 const fetchChallenge = async (id: string) => {
   try {
