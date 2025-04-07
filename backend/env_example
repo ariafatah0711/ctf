@@ -6,3 +6,4 @@ SUPABASE_SERVICE_ROLE_KEY=key
 # app
 <!-- buatnya pake ini node -e "console.log(require('crypto').randomBytes(32).toString('hex'))" -->
 ENCRYPTION_KEY=<KEY>
+BASE_URL=<domain>

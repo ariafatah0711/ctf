@@ -42,7 +42,7 @@
 
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
+              <input type="checkbox" v-model="rememberMe" class="form-checkbox text-blue-600" />
               Remember me
             </label>
             <router-link to="/forgot-password" class="text-blue-600 hover:underline dark:text-blue-400">Forgot password?</router-link>
@@ -69,14 +69,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { login } from '../../services/authService';
   import { useAuthStore } from '../../stores/auth';
   import GlobalSwal from '../../utills/GlobalSwal';
+  import { encryptAuthData, decryptAuthData } from '../../utills/crypto';
   const Swal = GlobalSwal;
   
   const router = useRouter();
+  const rememberMe = ref(false);
   // const authStore = useAuthStore();
   
   const form = reactive({
@@ -87,16 +89,48 @@
   const loading = ref(false);
   const error = ref('');
   
+  // async function handleLogin() {
+  //   try {
+  //     // const { session, user } = await loginRequest({ email, password });
+  //     const { session, user } = await login(form);
+  //     const auth = useAuthStore();
+  //     auth.login(session, user);
+  //     await auth.checkAuth();
+  //     router.push('/challenges'); // redirect ke dashboard/home
+  //   } catch (err: any) {
+  //     Swal.fire({ icon: 'error', title: 'Login gagal', text: err.message });
+  //   }
+  // }
+
   async function handleLogin() {
     try {
-      // const { session, user } = await loginRequest({ email, password });
       const { session, user } = await login(form);
       const auth = useAuthStore();
       auth.login(session, user);
       await auth.checkAuth();
-      router.push('/challenges'); // redirect ke dashboard/home
+
+      if (rememberMe.value) {
+        const encrypted = encryptAuthData(form.email, form.password);
+        localStorage.setItem('auth_data', encrypted);
+      } else {
+        localStorage.removeItem('auth_data');
+      }
+
+      router.push('/challenges');
     } catch (err: any) {
       Swal.fire({ icon: 'error', title: 'Login gagal', text: err.message });
     }
   }
-</script>  
+
+  onMounted(() => {
+  const encryptedAuth = localStorage.getItem('auth_data');
+  if (encryptedAuth) {
+    const data = decryptAuthData(encryptedAuth);
+    if (data) {
+      form.email = data.email;
+      form.password = data.password;
+      rememberMe.value = true;
+    }
+  }
+});
+</script>

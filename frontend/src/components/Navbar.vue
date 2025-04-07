@@ -86,10 +86,10 @@
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-6 items-center">
-          <RouterLink to="/challenges" class="hover:text-gray-300 transition">Challenges</RouterLink>
-          <RouterLink to="/leaderboard" class="hover:text-gray-300 transition">Leaderboard</RouterLink>
+          <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="hover:text-gray-300 transition">Challenges</RouterLink>
+          <RouterLink v-if="auth.isAuthenticated" to="/leaderboard" class="hover:text-gray-300 transition">Leaderboard</RouterLink>
           <RouterLink to="/about" class="hover:text-gray-300 transition">About</RouterLink>
-          <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)" to="/Dashboard" class="hover:text-gray-300 transition">Dashboard</RouterLink>
+          <RouterLink v-if="auth.isAuthenticated" to="/Dashboard" class="hover:text-gray-300 transition">Dashboard</RouterLink>
 
           <div v-if="auth.isAuthenticated" class="flex items-center space-x-4">
             <!-- Dropdown User -->
@@ -165,12 +165,12 @@
 
     <!-- Mobile Menu -->
     <div v-if="isOpen" class="md:hidden px-4 pb-4 space-y-2">
-      <RouterLink to="/challenges" class="block hover:text-gray-300">Challenges</RouterLink>
-      <RouterLink to="/leaderboard" class="block hover:text-gray-300">Leaderboard</RouterLink>
+      <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="block hover:text-gray-300">Challenges</RouterLink>
+      <RouterLink v-if="auth.isAuthenticated" to="/leaderboard" class="block hover:text-gray-300">Leaderboard</RouterLink>
       <RouterLink to="/about" class="block hover:text-gray-300">About</RouterLink>
 
       <div v-if="auth.isAuthenticated" class="space-y-2">
-        <RouterLink v-if="['admin', 'maker', 'user'].includes(auth.role)" to="/dashboard" class="block hover:text-blue-300">Dashboard</RouterLink>
+        <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="block hover:text-blue-300">Dashboard</RouterLink>
       </div>
       <div v-else class="space-y-2">
         <RouterLink to="/login" class="block hover:text-blue-300">Login</RouterLink>

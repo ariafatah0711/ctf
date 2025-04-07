@@ -47,17 +47,19 @@ NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 
 ENCRYPTION_KEY=<hasil-dari-crypto-randomBytes>
+BASE_URL=<your-base-url-frontentend>
 ```
 
 ### 📁 Frontend (`/frontend/.env`)
 ```
-VITE_API_BASE_URL=http://localhost:3000
-VITE_FLAG_FORMAT=CWA{FLAG}
+VITE_API_BASE_URL=<your-base-url-backend>
+VITE_FLAG_FORMAT=<yout-format-flag>
+VITE_PASSWORD_REMEMBER_ME_LOGIN=<your_secret_key_for_remeber_password_form_login>
 ```
 
 ---
 
-## 💻 Install & Run (Development Mode)
+## 💻 Install & Run (Development Mode) 1
 
 ### 📦 Install dependencies
 ```bash
@@ -79,15 +81,33 @@ cd ../frontend
 npm run dev
 ```
 
+## 💻 Install & Run (Development Mode) 2
+
+### 📦 Install dependencies
+```bash
+cd frontend
+npm install
+
+cd ../backend
+npm install
+```
+
+### 🚀 Jalankan Dev Mode
+```bash
+cd ..
+npm install
+npm run dev # use concurently
+```
+
 ---
 
 ## 🚢 Deploy ke Production
 ```bash
 cd frontend
-vercel --prod
+vercel --prod -t <token>
 
 cd ../backend
-vercel --prod
+vercel --prod -t <token>
 ```
 
 ---

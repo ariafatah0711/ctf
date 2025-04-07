@@ -24,7 +24,7 @@
         Proyek ini bersifat open-source dan dikembangkan sebagai latihan serta kontribusi terhadap komunitas. Semua masukan dan kontribusi sangat dihargai!
       </p>
 
-      <div class="flex justify-center gap-6">
+      <div class="flex flex-col md:flex-row justify-center gap-4">
         <a
           href="https://github.com/ariafatah0711/ctf"
           target="_blank"

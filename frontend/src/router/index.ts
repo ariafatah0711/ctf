@@ -62,11 +62,13 @@ const routes = [
     path: '/verify',
     name: 'Verify',
     component: Verify,
+    meta: { requiresGuest: true },
   },
   {
     path: '/forgot-password',
     name: 'forgot password',
     component: ForgotPassword,
+    meta: { requiresGuest: true },
   },
   // {
   //   path: '/dashboard',
@@ -151,7 +153,7 @@ router.beforeEach(async (to, _from, next) => {
         icon: 'error',
         confirmButtonText: 'OK'
       });
-      next('/');
+      next('/dashboard');
       return;
   }
 
@@ -162,7 +164,7 @@ router.beforeEach(async (to, _from, next) => {
       icon: 'warning',
       confirmButtonText: 'OK',
     })
-    next('/dashboard/challenges');
+    next('/dashboard');
     return;
   }
 

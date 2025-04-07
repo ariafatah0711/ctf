@@ -23,7 +23,9 @@
   import Swal from 'sweetalert2';
   import { useAuthStore } from '../stores/auth';
   import config from "../config"
-  
+  import { useRouter } from 'vue-router'
+
+  const router = useRouter()
   const flag = ref('');
   const loading = ref(false);
   const auth = useAuthStore();
@@ -65,7 +67,8 @@
         timer: 1500,
         showConfirmButton: false,
       }).then(() => {
-        location.reload(); // Refresh halaman setelah alert selesai
+        // location.reload(); // Refresh halaman setelah alert selesai
+        router.push('/challenges');
       });
   
       flag.value = '';
