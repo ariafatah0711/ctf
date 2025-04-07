@@ -1,92 +1,96 @@
 <template>  
   <div class="w-full flex justify-center">
-    <div class="p-4 w-full max-w-screen-xl">
-      <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🚩 Challenges</h1> 
-      <div class="flex flex-col md:flex-row m-0 pb-6">
-          <Breadcrumbs />
-          <SubmitFlag class="w-full md:w-auto flex-1" />
+    <div class="p-4 w-full max-w-screen-lg">
+      <h1 class="text-2xl font-bold text-blue-600 mb-6 text-center sm:text-left">🚩 Challenges</h1> 
+
+      <!-- Breadcrumb & Submit -->
+      <div class="flex flex-col md:flex-row items-start justify-between gap-4 mb-8">
+        <Breadcrumbs />
+        <SubmitFlag class="w-full md:w-auto" />
       </div>
 
-      <!-- Display Challenge Data -->
-      <div v-if="challenge" :class="['shadow-lg rounded-lg p-6 transition truncate',
-        solved ? 'bg-green-100 dark:bg-green-700' : 'bg-white dark:bg-gray-800']">
-        <h1 class="text-3xl font-semibold text-gray-800 mb-3 truncate">{{ challenge.title }}</h1>
-        <p class="text-sm text-gray-500 mb-6">{{ formattedDate(challenge.created_at) }}</p>
-    
-        <div class="mb-6">
-          <span class="text-sm px-4 py-2 rounded-full font-medium" :class="badgeColor(challenge.difficulty)">
+      <!-- Challenge Detail -->
+      <div
+        v-if="challenge"
+        :class="[
+          'rounded-2xl p-6 border shadow-sm transition',
+          solved ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
+        ]"
+      >
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-1 truncate">
+          {{ challenge.title }}
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ formattedDate(challenge.created_at) }}</p>
+
+        <!-- Difficulty Badge -->
+        <div class="mb-4">
+          <span class="text-xs px-3 py-1 rounded-full font-semibold" :class="badgeColor(challenge.difficulty)">
             {{ difficultyLabel(challenge.difficulty) }}
           </span>
         </div>
-    
-        <!-- <div class="text-sm text-gray-700 mb-6 break-words whitespace-pre-line">
-          {{ challenge.description || 'No description available.' }}
-        </div> -->
-        <!-- <div class="text-sm text-gray-700 mb-6 break-words whitespace-pre-line" v-html="formatText(challenge.description || 'No description available.')"></div> -->
-        <div class="prose prose-sm max-w-none text-sm text-gray-700 mb-6 break-words" v-html="formatText(challenge.description)"></div>
 
-        <!-- New: Display Hint -->
-        <div v-if="challenge.hint" class="bg-yellow-50 p-4 rounded-md mb-6 border-l-4 border-yellow-400 break-words">
-          <h3 class="font-semibold text-yellow-700 mb-1">Hint</h3>
-          <!-- <p class="text-sm text-yellow-700 whitespace-pre-line">{{ challenge.hint }}</p> -->
-          <p class="text-sm text-yellow-700 whitespace-pre-line" v-html="formatText(challenge.hint)"></p>
+        <!-- Description -->
+        <div class="text-sm text-gray-800 dark:text-gray-300 space-y-4 prose prose-sm dark:prose-invert max-w-none mb-6 break-words"
+          v-html="formatText(challenge.description)">
         </div>
-        <div v-else>
-          <p class="text-sm text-gray-500">No hint available for this challenge.</p>
+
+        <!-- Hint -->
+        <div v-if="challenge.hint" class="bg-yellow-50 dark:bg-yellow-800 p-4 rounded-lg mb-6 border-l-4 border-yellow-400 dark:border-yellow-500">
+          <h3 class="font-semibold text-yellow-700 dark:text-yellow-100 mb-1">💡 Hint</h3>
+          <p class="text-sm text-yellow-700 dark:text-yellow-50 whitespace-pre-line" v-html="formatText(challenge.hint)"></p>
         </div>
-    
-        <div class="flex flex-wrap gap-2 text-xs text-white mb-6 truncate">
-          <span v-for="tag in challenge.tags" :key="tag" class="bg-gray-700 px-3 py-1 rounded-full">
+
+        <!-- No Hint -->
+        <div v-else class="text-sm text-gray-500 italic mb-6">
+          Tidak ada hint untuk challenge ini.
+        </div>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 text-xs mb-6">
+          <span
+            v-for="tag in challenge.tags"
+            :key="tag"
+            class="bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-white px-3 py-1 rounded-full"
+          >
             #{{ tag }}
           </span>
         </div>
 
-        <div v-if="challenge.url" class="mt-6 truncate">
-          <div v-if="isFile(challenge.url)">
-            <a
-              :href="challenge.url"
-              download
-              class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
-            >
-              <i class="fas fa-download mr-2"></i>
-              Download
-              <!-- {{ challenge.url.split('/').pop() }} -->
-            </a>
-          </div>
-          <div v-else>
-            <a
-              :href="challenge.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-3 rounded-lg transition duration-200"
-            >
-              <i class="fas fa-link mr-2"></i>
-              Open
-              <!-- {{ challenge.url }} -->
-            </a>
-          </div>
+        <!-- URL / Download -->
+        <div v-if="challenge.url" class="mt-8">
+          <button
+            @click="handleDownload"
+            class="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold text-white transition duration-200 shadow-sm"
+            :class="isFile(challenge.url)
+              ? 'bg-blue-600 hover:bg-blue-700'
+              : 'bg-green-600 hover:bg-green-700'"
+          >
+            <i :class="isFile(challenge.url) ? 'fas fa-download' : 'fas fa-link'"></i>
+            <span>{{ isFile(challenge.url) ? 'Download File' : 'Open Link' }}</span>
+          </button>
         </div>
       </div>
-    
-      <!-- Display Solvers -->
-      <div v-if="solvers.length" class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Solvers</h2>
-        <ul>
+
+      <!-- Solvers -->
+      <div v-if="solvers.length" class="mt-10">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">🧠 Solvers</h2>
+        <ul class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
           <router-link
             v-for="solver in solvers"
             :key="solver.user_id"
             :to="`/profile/${solver.username}`"
-            class="block"
+            class="block hover:bg-gray-50 dark:hover:bg-slate-700 transition"
           >
-            <li class="flex justify-between py-3 px-6 border-b border-gray-200 hover:bg-gray-50 transition">
-              <span class="font-medium text-gray-800">{{ solver.username }}</span>
-              <span class="text-sm text-gray-500">{{ formattedDate(solver.completed_at) }}</span>
+            <li class="flex justify-between py-3 px-6">
+              <span class="font-medium text-gray-800 dark:text-white">{{ solver.username }}</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ formattedDate(solver.completed_at) }}</span>
             </li>
           </router-link>
         </ul>
       </div>
 
-      <div v-else class="mt-8">
+      <!-- No Solvers -->
+      <div v-else class="mt-10">
         <p class="text-gray-500 italic">Belum ada yang menyelesaikan challenge ini.</p>
       </div>
     </div>
@@ -102,6 +106,7 @@ import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import config from "../config"
 import { marked } from 'marked';
+import downloadFileByUrl from "../utills/downloadFile.ts"
 
 const auth = useAuthStore();
 
@@ -123,6 +128,8 @@ const fetchChallenge = async (id: string) => {
     challenge.value = data.data.challenge;
     solvers.value = data.data.solvers; // Menyimpan data solvers
     solved.value = data.data.solved;
+
+    // challenge.value.description = `Line pertama\n\nLine kedua\n\n- Item 1\n- Item 2\n\n**Bold Text**`;
     // console.log('Fetched:', data);
   } catch (error) {
     console.error('Error loading challenge:', error);
@@ -171,8 +178,18 @@ const formattedDate = (raw: string) => {
         });
 };
 
+const handleDownload = () => {
+  const url = challenge.value?.url;
+  if (!url) return;
+
+  // const urltest = "https://ariaf.my.idd"
+  // downloadFileByUrl(urltest);
+  downloadFileByUrl(url);
+};
+
 // Function to check if the URL points to a file
 const isFile = (url: string): boolean => {
+  console.log(url)
   return /\.(pdf|zip|txt|png|jpg|jpeg|mp4|mp3|docx)$/i.test(url);
 };
 </script>

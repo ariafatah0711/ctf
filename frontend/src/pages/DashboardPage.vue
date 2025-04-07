@@ -63,7 +63,7 @@
             to="/dashboard/users"
             class="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-3 self-start"
           >
-            View All Users → 
+          → View All Users
           </router-link>
         </div>
 
@@ -145,16 +145,17 @@
           <!-- Difficulty Breakdown -->
           <div>
             <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Difficulty Breakdown:</p>
-            <ul class="grid grid-cols-2 sm:grid-cols-4 gap-y-1 text-sm text-gray-700 dark:text-slate-300">
-              <li
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div
                 v-for="(count, diff) in challengesByDifficulty"
                 :key="diff"
-                class="flex items-center justify-between border-b border-gray-200 dark:border-slate-600 py-1 pr-2"
+                class="flex flex-col bg-slate-50 dark:bg-slate-700 px-4 py-3 rounded-lg shadow-sm text-gray-800 dark:text-white"
               >
-                <span class="text-sm">Difficulty {{ diff }}</span>
-                <span class="font-medium">{{ count }}</span>
-              </li>
-            </ul>
+              <span class="text-sm font-semibold mb-0.5">{{ diff }}</span>
+              <span class="text-lg font-bold">{{ count }}</span>
+              <span class="text-xs text-gray-500 dark:text-slate-400">Challenges</span>
+              </div>
+            </div>
           </div>
 
           <!-- View All Link -->
@@ -175,13 +176,14 @@
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Tags Distribution</h2>
 
         <ul class="flex flex-wrap gap-2">
-          <li
+          <router-link
             v-for="item in tagsDistribution"
             :key="item.tag"
-            class="px-4 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+            :to="`/challenges?tags=${encodeURIComponent(item.tag)}`"
+            class="px-4 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 hover:underline"
           >
             {{ item.tag }} ({{ item.count }})
-          </li>
+          </router-link>
         </ul>
       </div>
     </div>

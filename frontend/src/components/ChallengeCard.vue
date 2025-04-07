@@ -1,47 +1,56 @@
 <template>
-  <RouterLink :to="`/challenges/${slugify(challenge.id)}`" class="block group">
-    <div :class="['rounded-lg p-6 shadow-md transition duration-200 ease-in-out h-full flex flex-col justify-between',
-      challenge.solved ? 'bg-green-100 dark:bg-green-700' : 'bg-white dark:bg-gray-800'
-    ]">
-
-      <div class="relative truncate">
-        <span class="absolute top-0 right-0 text-sm px-1.5 py-0.5 rounded-full font-medium" :class="badgeColor(challenge.difficulty)">
+  <RouterLink :to="`/challenges/${slugify(challenge.id)}`" class="block group h-full">
+    <div
+      :class="[
+        'rounded-2xl p-5 h-full shadow hover:shadow-lg transition duration-200 flex flex-col justify-between border',
+        challenge.solved
+          ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600'
+          : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
+      ]"
+    >
+      <!-- Top Section -->
+      <div>
+        <!-- Badge Difficulty -->
+        <div class="flex justify-between items-start mb-2">
+          <h5 class="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 truncate transition">
+            {{ challenge.title }}
+          </h5>
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-semibold"
+            :class="badgeColor(challenge.difficulty)"
+          >
             {{ difficultyLabel(challenge.difficulty) }}
-        </span>
-        <!-- Title -->
-        <h5 class="mb-2 text-xl font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition truncate">
-          {{ challenge.title }}
-        </h5>
+          </span>
+        </div>
 
-        <!-- Description (optional) -->
-        <p v-if="challenge.description" class="mb-4 text-sm text-gray-600 dark:text-gray-300 truncate">
+        <!-- Description -->
+        <p
+          v-if="challenge.description"
+          class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3"
+        >
           {{ challenge.description }}
         </p>
 
         <!-- Tags -->
-        <div class="flex flex-wrap gap-2 text-xs mb-4 truncate">
+        <div class="flex flex-wrap gap-1.5 text-xs mb-4">
           <span
             v-for="tag in challenge.tags"
             :key="tag"
-            class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white px-2 py-0.5 rounded-full"
+            class="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-white px-2 py-0.5 rounded-full"
           >
             #{{ tag }}
           </span>
         </div>
-
-        <!-- Date & Difficulty -->
-        <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-400 truncate">
-          <span>{{ formattedDate(challenge.created_at) }}</span>
-        </div>
       </div>
 
-      <!-- Action Button -->
-      <div class="mt-6">
+      <!-- Bottom Section -->
+      <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <span>{{ formattedDate(challenge.created_at) }}</span>
         <button
           type="button"
-          class="inline-block rounded bg-blue-600 px-4 py-2 text-xs font-medium uppercase text-white shadow hover:bg-blue-700 transition"
+          class="text-blue-600 dark:text-blue-400 hover:underline font-medium"
         >
-          Lihat Detail
+          Lihat Detail →
         </button>
       </div>
     </div>

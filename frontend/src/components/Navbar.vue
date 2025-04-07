@@ -13,8 +13,8 @@
         <div class="hidden md:flex flex-1 justify-center space-x-6">
           <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="hover:text-blue-400 transition">Challenges</RouterLink>
           <RouterLink to="/leaderboard" class="hover:text-blue-400 transition">Leaderboard</RouterLink>
-          <RouterLink to="/about" class="hover:text-blue-400 transition">About</RouterLink>
           <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="hover:text-blue-400 transition">Dashboard</RouterLink>
+          <RouterLink to="/about" class="hover:text-blue-400 transition">About</RouterLink>
         </div>
 
         <!-- Kanan: Avatar atau Login + Dark Mode -->
@@ -110,8 +110,8 @@
     <div v-if="isOpen" class="md:hidden px-4 pb-4 space-y-2">
       <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="block hover:text-blue-400">Challenges</RouterLink>
       <RouterLink to="/leaderboard" class="block hover:text-blue-400">Leaderboard</RouterLink>
-      <RouterLink to="/about" class="block hover:text-blue-400">About</RouterLink>
       <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="block hover:text-blue-400">Dashboard</RouterLink>
+      <RouterLink to="/about" class="block hover:text-blue-400">About</RouterLink>
 
       <div v-if="auth.isAuthenticated" class="pt-2 space-y-1 border-t border-gray-700">
         <RouterLink :to="`/profile/${auth.username}`" class="block hover:text-blue-300">Profile</RouterLink>

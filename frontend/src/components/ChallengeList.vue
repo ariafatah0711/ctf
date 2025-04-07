@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div class="flex justify-start mb-4 gap-4">
+    <!-- Filter Section -->
+    <div class="flex flex-wrap justify-start mb-6 gap-4">
       <!-- Filter Difficulty -->
-      <div class="max-w-xs w-full">
+      <div class="w-full sm:w-64">
         <label for="difficulty" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           Filter Difficulty
         </label>
@@ -10,10 +11,9 @@
           id="difficulty"
           v-model="selectedDifficulty"
           @change="onFilterChange"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
-                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="w-full p-2.5 rounded-xl text-sm bg-white border border-gray-300 
+                 text-gray-900 dark:bg-slate-700 dark:border-slate-600 dark:text-white 
+                 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
           <option value="">All Difficulties</option>
           <option value="1">Easy</option>
@@ -22,8 +22,8 @@
         </select>
       </div>
 
-      <!-- Filter Tags -->
-      <div class="max-w-xs w-full">
+      <!-- Filter Tag -->
+      <div class="w-full sm:w-64">
         <label for="tags" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           Filter Tag
         </label>
@@ -31,26 +31,25 @@
           id="tags"
           v-model="selectedTag"
           @change="onFilterChange"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
-                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="w-full p-2.5 rounded-xl text-sm bg-white border border-gray-300 
+                 text-gray-900 dark:bg-slate-700 dark:border-slate-600 dark:text-white 
+                 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
           <option value="">All Tags</option>
-          <option
-            v-for="tag in availableTags"
-            :key="tag"
-            :value="tag"
-          >
+          <option v-for="tag in availableTags" :key="tag" :value="tag">
             {{ tag }}
           </option>
         </select>
       </div>
     </div>
 
-    <div v-if="challenges.length === 0" class="text-center text-gray-500 mt-8">Challenge tidak ditemukan.</div>
+    <!-- No Challenges -->
+    <div v-if="challenges.length === 0" class="text-center text-gray-500 dark:text-gray-400 mt-12">
+      Challenge tidak ditemukan.
+    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+    <!-- Challenge Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
       <ChallengeCard
         v-for="challenge in challenges"
         :key="challenge.id"
@@ -59,37 +58,42 @@
     </div>
 
     <!-- Pagination -->
-    <nav v-if="challenges.length > 0" aria-label="Page navigation example" class="flex justify-center mt-6">
-      <ul class="flex gap-2">
+    <nav v-if="challenges.length > 0" class="flex justify-center mt-8" aria-label="Page navigation">
+      <ul class="inline-flex items-center space-x-2">
+        <!-- Prev -->
         <li>
           <button
             @click="prevPage"
             :disabled="page === 1"
-            class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 
+                   text-gray-800 dark:text-white disabled:opacity-50"
           >
             Prev
           </button>
         </li>
 
+        <!-- Page Numbers -->
         <li v-for="n in totalPages" :key="n">
           <button
             @click="setPage(n)"
-            :class="[ 
-              'px-3 py-1.5 rounded',
+            :class="[
+              'px-3 py-2 rounded-xl text-sm font-medium',
               page === n
-                ? 'bg-blue-600 text-white font-semibold'
-                : 'bg-gray-100 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-slate-600'
             ]"
           >
             {{ n }}
           </button>
         </li>
 
+        <!-- Next -->
         <li>
           <button
             @click="nextPage"
             :disabled="page === totalPages"
-            class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 
+                   text-gray-800 dark:text-white disabled:opacity-50"
           >
             Next
           </button>
