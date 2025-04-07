@@ -67,6 +67,7 @@ export async function getLeaderboard(page = 1, limit = 10) {
 
 // index.js
 export async function fetchChallengesWithFilters(userId, { tags, difficulty, title, page = 1, limit = 9 }) {
+  // Query utama
   let query = supabase
     .from("challenges")
     .select(
@@ -94,11 +95,19 @@ export async function fetchChallengesWithFilters(userId, { tags, difficulty, tit
     solved: challenge.user_challenges?.some((uc) => uc.user_id === userId) ?? false,
   }));
 
+  // ✅ Ambil semua tags unik dari seluruh challenge
+  const { data: allChallenges, error: tagError } = await supabase.from("challenges").select("tags");
+
+  if (tagError) return { error: tagError.message };
+
+  const allTags = Array.from(new Set(allChallenges.flatMap((challenge) => challenge.tags || []).filter((tag) => !!tag)));
+
   return {
     data: result,
     total: count,
     page: parseInt(page),
     totalPages: Math.ceil(count / limit),
+    tags: allTags,
   };
 }
 

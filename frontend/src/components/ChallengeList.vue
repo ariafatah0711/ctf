@@ -1,5 +1,18 @@
 <template>
   <div>
+    <div class="flex justify-end mb-4">
+      <select
+        v-model="selectedDifficulty"
+        @change="onFilterChange"
+        class="border px-3 py-1 rounded"
+      >
+        <option value="">All Difficulties</option>
+        <option value="1">Easy</option>
+        <option value="2">Medium</option>
+        <option value="3">Hard</option>
+      </select>
+    </div>
+
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
       <ChallengeCard
         v-for="challenge in challenges"
@@ -74,17 +87,25 @@
   const challenges = ref<Challenge[]>([]);
   const page = ref(1);
   const totalPages = ref(1);
+  const selectedDifficulty = ref('');
 
   const fetchChallenges = async () => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}`, {
+      const params = new URLSearchParams();
+      params.set("page", page.value.toString());
+      if (selectedDifficulty.value) {
+        params.set("difficulty", selectedDifficulty.value);
+      }
+
+      const res = await fetch(`${config.BASE_URL}/api/challenges?${params.toString()}`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
 
-      if (!res.ok) throw new Error('Gagal ambil challenge');
+      if (!res.ok) throw new Error("Gagal ambil challenge");
       const json = await res.json();
+      console.log(json)
       challenges.value = json.data;
       totalPages.value = json.totalPages;
     } catch (err) {
@@ -92,14 +113,34 @@
     }
   };
 
+  const onFilterChange = () => {
+    page.value = 1; // reset ke page 1 saat filter berubah
+    router.replace({
+      query: {
+        ...route.query,
+        page: '1',
+        difficulty: selectedDifficulty.value || undefined,
+      },
+    });
+    fetchChallenges();
+  };
+
   // onMounted(fetchChallenges);
   onMounted(() => {
     const queryPage = parseInt(route.query.page as string);
+    const queryDifficulty = route.query.difficulty as string;
+
     if (!isNaN(queryPage) && queryPage > 0) {
       page.value = queryPage;
     }
-    fetchChallenges()
+
+    if (queryDifficulty) {
+      selectedDifficulty.value = queryDifficulty;
+    }
+
+    fetchChallenges();
   });
+
   // watch(page, fetchChallenges);
   watch(page, (newPage) => {
     router.replace({ query: { ...route.query, page: newPage.toString() } });
