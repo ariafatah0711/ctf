@@ -98,7 +98,6 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from '../components/Navbar.vue';
 import SubmitFlag from '../components/SubmitFlag.vue';
 import Breadcrumbs from "../components/Breadcrumbs.vue"
 import { ref, watch } from 'vue';
@@ -107,6 +106,8 @@ import { useAuthStore } from '../stores/auth';
 import config from "../config"
 import { marked } from 'marked';
 import downloadFileByUrl from "../utills/downloadFile.ts"
+import GlobalSwal from "../utills/GlobalSwal";
+const Swal = GlobalSwal;
 
 const auth = useAuthStore();
 
@@ -178,13 +179,27 @@ const formattedDate = (raw: string) => {
         });
 };
 
-const handleDownload = () => {
+const handleDownload = async () => {
   const url = challenge.value?.url;
   if (!url) return;
 
-  // const urltest = "https://ariaf.my.idd"
-  // downloadFileByUrl(urltest);
-  downloadFileByUrl(url);
+  if (isFile(url)) {
+    // const url = "dfasfsadafsa"
+    await downloadFileByUrl(url);
+  } else {
+    // const url = "https:dancok.id"
+    try {
+      new URL(url);
+      const newWindow = window.open(url, '_blank');
+
+      if (!newWindow) {
+        console.warn("⚠️ Window gagal dibuka. Mungkin diblokir oleh popup blocker.");
+        await Swal.fire({icon: "warning", title: "Popup diblokir", text: "Silakan izinkan popup untuk membuka file."});}
+    } catch (e) {
+      console.error("❌ URL tidak valid:", e);
+      await Swal.fire({icon: "error", title: "URL tidak valid", text: "Tautan yang diberikan tidak sesuai format URL."});
+    }
+  }
 };
 
 // Function to check if the URL points to a file

@@ -24,24 +24,13 @@ export default async function downloadFileByUrl(url: string) {
     const fileName = url.split("/").pop() || "file";
     saveAs(blob, fileName);
 
-    // Tutup loading sebelum tampil swal sukses
     Swal.close();
-
-    await Swal.fire({
-      icon: "success",
-      title: "Berhasil!",
-      text: `File ${fileName} berhasil diunduh.`,
-    });
+    await Swal.fire({icon: "success", title: "Berhasil!", text: `File ${fileName} berhasil diunduh.`});
   } catch (error) {
     console.error("❌ Error saat mengunduh:", error);
-
-    // Tutup loading sebelum tampil swal error
     Swal.close();
-
-    await Swal.fire({
-      icon: "error",
-      title: "Gagal mengunduh",
-      text: "Terjadi kesalahan saat mengunduh file.",
-    });
+    const newWindow = window.open(url, '_blank');
+    if (!newWindow) await Swal.fire({icon: "error", title: "Gagal mengunduh", text: "Terjadi kesalahan saat mengunduh file."});
+    await Swal.fire({icon: "success", title: "Berhasil!", text: `File berhasil diunduh.`});
   }
 }
