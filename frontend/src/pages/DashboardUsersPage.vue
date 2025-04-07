@@ -1,11 +1,11 @@
-<template class="min-h-screen">
-  <Navbar />
-  <div class="h-16"></div>
-
+<template>
   <div class="p-4 max-w-screen-xl mx-auto">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-      <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">👤 User Management</h1>
+      <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left flex-1 my-4">
+        👤 User Management
+      </h1>
     </div>
+
     <div class="flex flex-row items-center justify-between gap-4">
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
@@ -14,68 +14,72 @@
       </div>
     </div>
 
-    <div v-if="loading" class="text-gray-500">Loading users...</div>
-      <div v-else>
-        <div v-if="members.length > 0" class="overflow-x-auto">
-          <BaseTable
-              :columns="[
-              { label: 'Member', key: 'member', grow: true },
-              { label: 'Role', key: 'role', width: 'w-25' },
-              { label: 'Last Sign In', key: 'lastSignIn', width: 'w-45' }
-              ]"
-              :rows="users"
-              @edit="handleEdit"
-              @delete="handleDelete"
-            >
-            <template #member="{ row }">
-              <div class="flex items-center gap-3">
-                <img :src="row.avatar" class="w-8 h-8 rounded object-cover" :alt="row.name" />
-                <div class="flex flex-col">
-                  <small class="font-medium">{{ row.name }}</small>
-                  <small class="text-slate-500">{{ row.email }}</small>
-                </div>
+    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading users...</div>
+    <div v-else>
+      <div v-if="members.length > 0" class="overflow-x-auto mt-4">
+        <BaseTable
+          :columns="[
+            { label: 'Member', key: 'member', grow: true },
+            { label: 'Role', key: 'role', width: 'w-25' },
+            { label: 'Last Sign In', key: 'lastSignIn', width: 'w-45' }
+          ]"
+          :rows="users"
+          @edit="handleEdit"
+          @delete="handleDelete"
+        >
+          <template #member="{ row }">
+            <div class="flex items-center gap-3">
+              <img :src="row.avatar" class="w-8 h-8 rounded object-cover" :alt="row.name" />
+              <div class="flex flex-col">
+                <small class="font-medium dark:text-white">{{ row.name }}</small>
+                <small class="text-slate-500 dark:text-slate-400">{{ row.email }}</small>
               </div>
-            </template>
-          </BaseTable>
-          <!-- Pagination -->
-          <nav aria-label="User pagination" class="flex justify-center mt-6">
-            <ul class="flex gap-2">
-              <li>
-                <button
-                  @click="prevPage"
-                  :disabled="page === 1"
-                  class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-                >
-                  Prev
-                </button>
-              </li>
-              <li v-for="n in totalPages" :key="n">
-                <button
-                  @click="setPage(n)"
-                  :class="[
-                    'px-3 py-1.5 rounded',
-                    page === n
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  ]"
-                >
-                  {{ n }}
-                </button>
-              </li>
-              <li>
-                <button
-                  @click="nextPage"
-                  :disabled="page === totalPages"
-                  class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div v-else class="text-center text-gray-500 mt-10">Tidak ada data pengguna.</div>
+            </div>
+          </template>
+        </BaseTable>
+
+        <!-- Pagination -->
+        <nav aria-label="User pagination" class="flex justify-center mt-6">
+          <ul class="flex gap-2">
+            <li>
+              <button
+                @click="prevPage"
+                :disabled="page === 1"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
+              >
+                Prev
+              </button>
+            </li>
+            <li v-for="n in totalPages" :key="n">
+              <button
+                @click="setPage(n)"
+                :class="[
+                  'px-3 py-1.5 rounded text-sm font-medium',
+                  page === n
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
+                ]"
+              >
+                {{ n }}
+              </button>
+            </li>
+            <li>
+              <button
+                @click="nextPage"
+                :disabled="page === totalPages"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
+
+      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
+        Tidak ada data pengguna.
+      </div>
+    </div>
   </div>
 </template>
 
@@ -229,7 +233,7 @@ const handleEdit = async (index: number) => {
 
     const result = await res.json();
 
-    if (!res.ok) throw new Error(result.message || "Gagal update");
+    if (!res.ok) throw new Error(result.error || "Gagal update");
 
     Swal.fire('Berhasil!', 'User berhasil diperbarui.', 'success');
     await fetchUsers();

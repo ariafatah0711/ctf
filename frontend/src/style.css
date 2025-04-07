@@ -1,5 +1,7 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* drag */
 input,
 textarea,
 [draggable="true"] {
@@ -11,14 +13,19 @@ pre {
   user-select: text;
 }
 
+/* scrool */
 html,
 body {
   padding-right: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
+  /* overflow-y: scroll !important; */
   /* scrollbar-gutter: stable !important; */
+
+  /* scrollbar-gutter: stable both-edges; */
 }
 
+/* app */
 #app,
 main,
 .container {

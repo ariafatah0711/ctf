@@ -51,7 +51,6 @@ const routes = [
     path: '/leaderboard',
     name: 'Leaderboard',
     component: LeaderboardPage,
-    meta: { requiresAuth: true },
   },
   {
     path: '/about',

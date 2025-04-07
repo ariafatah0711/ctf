@@ -1,10 +1,7 @@
-<template class="min-h-screen">
-  <Navbar />
-  <div class="h-16"></div>
-
+<template>
   <div class="p-4 max-w-screen-xl mx-auto">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-      <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">
+      <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left flex-1 my-4">
         🛠️ Manage Challenges
       </h1>
     </div>
@@ -16,9 +13,9 @@
       </div>
     </div>
 
-    <div v-if="loading" class="text-gray-500">Loading challenges...</div>
+    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading challenges...</div>
     <div v-else>
-      <div v-if="challenges.length > 0" class="overflow-x-auto">
+      <div v-if="challenges.length > 0" class="overflow-x-auto mt-4">
         <BaseTable
           :columns="[
             { label: 'Challenge Name', key: 'challenge', grow: true },
@@ -29,26 +26,25 @@
           @edit="showEditChallengeModal"
           @delete="deleteChallenge"
         >
-        <!-- Slot untuk kolom Challenge Name -->
-        <template #challenge="{ row }">
-          <div class="flex flex-col">
-            <span class="font-medium">{{ row.title }}</span>
-            <!-- <small class="text-sm text-gray-500">ID: {{ row.id }}</small> -->
-          </div>
-        </template>
+          <template #challenge="{ row }">
+            <div class="flex flex-col">
+              <span class="font-medium dark:text-white">{{ row.title }}</span>
+            </div>
+          </template>
 
-        <template #difficulty="{ row }">
-          <span>{{ levelMap[row.difficulty] || 'Tidak Diketahui' }}</span>
-        </template>
-      </BaseTable>
-        
+          <template #difficulty="{ row }">
+            <span class="dark:text-slate-200">{{ levelMap[row.difficulty] || 'Tidak Diketahui' }}</span>
+          </template>
+        </BaseTable>
+
+        <!-- Pagination -->
         <nav aria-label="Challenges pagination" class="flex justify-center mt-6">
           <ul class="flex gap-2">
             <li>
               <button
                 @click="prevPage"
                 :disabled="page === 1"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
               >
                 Prev
               </button>
@@ -56,7 +52,12 @@
             <li v-for="n in totalPages" :key="n">
               <button
                 @click="setPage(n)"
-                :class="[ 'px-3 py-1.5 rounded', page === n ? 'bg-blue-600 text-white font-semibold' : 'bg-gray-100 hover:bg-gray-200' ]"
+                :class="[
+                  'px-3 py-1.5 rounded text-sm font-medium',
+                  page === n
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
+                ]"
               >
                 {{ n }}
               </button>
@@ -65,7 +66,7 @@
               <button
                 @click="nextPage"
                 :disabled="page === totalPages"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
               >
                 Next
               </button>
@@ -73,7 +74,10 @@
           </ul>
         </nav>
       </div>
-      <div v-else class="text-center text-gray-500 mt-10">Tidak ada data tantangan.</div>
+
+      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
+        Tidak ada data tantangan.
+      </div>
     </div>
   </div>
 </template>
@@ -119,7 +123,7 @@
         ...challenge,
         tags: Array.isArray(challenge.tags) ? challenge.tags.join(', ') : ''
       }))
-      console.log(data_challenges)
+      // console.log(data_challenges)
       challenges.value =  data_challenges || []
       totalPages.value = data.totalPages || 1
     } catch (error) {

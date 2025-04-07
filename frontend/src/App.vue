@@ -1,8 +1,11 @@
 <template>
-  <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col min-h-screen">
+  <div class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col min-h-screen w-full">
     <Navbar />
-    <div class="h-16"></div>
-    <router-view />
+    <div class="w-full pt-16">
+      <router-view />
+    </div>
+    <!-- <div class="h-16"></div> -->
+    <!-- <router-view /> -->
   </div>
 </template>
 

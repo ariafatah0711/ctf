@@ -1,59 +1,57 @@
-<template class="min-h-screen">
-  <Navbar />
-  <div class="h-16"></div>
+<template>
+  <div class="w-full flex justify-center">
+    <div class="p-4 w-full max-w-screen-md mx-auto">
+      <div v-if="loading" class="text-gray-500 text-center">Memuat profil...</div>
+      <div v-else-if="error" class="text-red-500 text-center">Gagal memuat profil: {{ error }}</div>
 
-  <div class="p-6 max-w-4xl mx-auto">
-    <div v-if="loading" class="text-gray-500 text-center">Memuat profil...</div>
-    <div v-else-if="error" class="text-red-500 text-center">Gagal memuat profil: {{ error }}</div>
-    
-    <div v-else>
-      <!-- Header Profil -->
-      <div class="flex flex-col items-center space-y-4 mb-6">
-        <img
-          :src="user.avatar"
-          alt="Avatar"
-          class="w-24 h-24 rounded-full shadow-lg ring-2 ring-blue-500"
-        />
-        <div class="text-center">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ user.username }}</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
+      <div v-else>
+        <div class="flex flex-col items-center space-y-4 mb-6">
+          <img
+            :src="user.avatar"
+            alt="Avatar"
+            class="w-24 h-24 rounded-full shadow-lg ring-2 ring-blue-500"
+          />
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ user.username }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
+          </div>
         </div>
-      </div>
 
-      <!-- Detail Info -->
-      <div class="border-t border-gray-200 dark:border-white/10 pt-4">
-        <dl class="divide-y divide-gray-100 dark:divide-white/10">
-          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-sm font-medium text-gray-900 dark:text-white">User ID</dt>
-            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0 truncate">{{ user.id }}</dd>
-          </div>
+        <!-- Detail Info -->
+        <div class="border-t border-gray-200 dark:border-white/10 pt-4">
+          <dl class="divide-y divide-gray-100 dark:divide-white/10">
+            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">User ID</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0 truncate">{{ user.id }}</dd>
+            </div>
 
-          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-sm font-medium text-gray-900 dark:text-white">Username</dt>
-            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
-          </div>
+            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">Username</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
+            </div>
 
-          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-sm font-medium text-gray-900 dark:text-white">Role</dt>
-            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.role }}</dd>
-          </div>
+            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">Role</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.role }}</dd>
+            </div>
 
-          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-sm font-medium text-gray-900 dark:text-white">Solved Challenges</dt>
-            <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
-              <div v-if="user.solves && user.solves.length">
-                <ul class="list-disc list-inside space-y-1 truncate">
-                  <li v-for="challenge in user.solves" :key="challenge.id">
-                    <RouterLink :to="`/challenges/${challenge.id}`" class="text-blue-600 hover:underline dark:text-blue-400 truncate">
-                      {{ challenge.title }}
-                    </RouterLink>
-                  </li>
-                </ul>
-              </div>
-              <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge apapun.</div>
-            </dd>
-          </div>
-        </dl>
+            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">Solved Challenges</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
+                <div v-if="user.solves && user.solves.length">
+                  <ul class="list-disc list-inside space-y-1 truncate">
+                    <li v-for="challenge in user.solves" :key="challenge.id">
+                      <RouterLink :to="`/challenges/${challenge.id}`" class="text-blue-600 hover:underline dark:text-blue-400 truncate">
+                        {{ challenge.title }}
+                      </RouterLink>
+                    </li>
+                  </ul>
+                </div>
+                <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge apapun.</div>
+              </dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </div>
   </div>

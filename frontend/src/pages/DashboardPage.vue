@@ -1,84 +1,189 @@
-<template class="min-h-screen">
-  <Navbar />
-  <div class="h-16"></div>
-
-  <div class="p-4 max-w-screen-xl mx-auto">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-      <h1 class="text-2xl font-bold text-blue-600 text-center sm:text-left flex-1 my-4">🖥️ Dashboard</h1>
-      <div>
-        <router-link to="/dashboard/users" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2 truncate">Users</router-link>
-        <router-link to="/dashboard/challenges" class="text-blue-500 hover:underline text-lg w-full sm:w-auto px-2 truncate">Challenges</router-link>
-      </div>
-    </div>
-
-    <div v-if="loading" class="text-gray-500">Loading...</div>
-
-    <!-- Cards Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch" v-if="!loading">
-      <!-- User Stats -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full flex flex-col mt-4">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">👥 User Stats</h2>
-        <p class="text-gray-700 mb-1">Total Users: <strong>{{ totalUsers }}</strong></p>
-        <p class="text-gray-700 mb-1">Total Role: <strong>{{ totalRoles }}</strong></p>
-
-        <ul class="space-y-1 flex-grow ml-6"> <!-- Menambahkan margin left (ml-6) untuk indentasi -->
-          <li v-for="(count, role) in usersByRole.user_role" :key="role" class="text-gray-600">
-            {{ role }}: <strong>{{ count }}</strong>
-          </li>
-        </ul>
-        <router-link to="/dashboard/users" class="text-blue-500 hover:underline mt-4 inline-block">View All Users →</router-link>
-      </div>
-
-      <!-- Top Users -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">🏆 Top Users</h2>
-        <ul class="space-y-1">
-          <li v-for="user in topUsers.slice(0, 5)" :key="user.username" class="text-gray-700">
-            {{ user.username }} - <strong>{{ user.solved }}</strong> solved
-          </li>
-        </ul>
-        <router-link to="/leaderboard" class="text-blue-500 hover:underline mt-4 inline-block">View Leaderboard →</router-link>
-      </div>
-
-      <!-- Challenge Stats -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm h-full col-span-1 sm:col-span-2 flex flex-col">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">🎯 Challenge Stats</h2>
-
-        <p class="text-gray-700 mb-3">Total Challenges: <strong>{{ totalChallenges }}</strong></p>
-        <p class="text-gray-700 mb-3">Challenges Solved: <strong>{{ completedChallengesUniq }}</strong></p>
-        <p class="text-gray-700 mb-3">Completed: <strong>{{ completedChallenges }}</strong></p>
-
-        <!-- Most Solved Challenges -->
-        <div class="mb-3">
-          <p class="text-gray-700">Most Solved Challenges:</p>
-          <p class="text-gray-700 truncate">
-            <strong>{{ mostSolvedChallenges.title }}</strong> - <strong>{{ mostSolvedChallenges.count }}</strong> solved
-          </p>
-        </div>
-
-        <!-- Difficulty Breakdown -->
-        <ul class="space-y-2 mb-3">
-          <li v-for="(count, diff) in challengesByDifficulty" :key="diff" class="text-gray-600">
-            Difficulty {{ diff }}: <strong>{{ count }}</strong>
-          </li>
-        </ul>
-
-        <!-- View All Challenges Link -->
-        <div class="mt-auto">
-          <router-link to="/dashboard/challenges" class="text-blue-500 hover:underline mt-4 inline-block">View All Challenges →</router-link>
+<template>
+  <div class="w-full flex justify-center">
+    <div class="p-4 w-full max-w-screen-xl">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left flex-1 my-4">
+          🖥️ Dashboard
+        </h1>
+        <div class="flex gap-2">
+          <router-link
+            to="/dashboard/users"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-lg px-2"
+          >
+            Users
+          </router-link>
+          <router-link
+            to="/dashboard/challenges"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-lg px-2"
+          >
+            Challenges
+          </router-link>
         </div>
       </div>
-    </div>
 
-    <!-- Tags Distribution -->
-    <div class="mt-8 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm" v-if="!loading">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">🏷️ Tags Distribution</h2>
-      <ul class="flex flex-wrap gap-2 truncate">
-        <li v-for="item in tagsDistribution" :key="item.tag"
-            class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm truncate">
-          {{ item.tag }} ({{ item.count }})
-        </li>
-      </ul>
+      <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        <!-- User Stats -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col gap-4">
+          <!-- Judul -->
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-1">User Stats</h2>
+
+          <!-- Total Users -->
+          <div class="flex items-center justify-between bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-lg">
+            <p class="text-sm font-medium">Total Users</p>
+            <p class="text-lg font-semibold">{{ totalUsers }}</p>
+          </div>
+
+          <!-- Total Roles -->
+          <div class="flex items-center justify-between bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-lg">
+            <p class="text-sm font-medium">Total Roles</p>
+            <p class="text-lg font-semibold">{{ totalRoles }}</p>
+          </div>
+
+          <!-- Distribusi Role -->
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 mb-1">Users per Role</p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <li
+                v-for="(count, role) in usersByRole.user_role"
+                :key="role"
+                class="flex items-center justify-between px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-gray-700 dark:text-gray-100"
+              >
+                <span class="capitalize font-medium">{{ role }}</span>
+                <span class="text-sm font-semibold">{{ count }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex-grow"></div>
+
+          <!-- Link -->
+          <router-link
+            to="/dashboard/users"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-3 self-start"
+          >
+            View All Users → 
+          </router-link>
+        </div>
+
+        <!-- Top Users -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col gap-4">
+          <!-- Judul -->
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Top Users</h2>
+
+          <!-- List Top Users -->
+          <ul class="flex flex-col gap-2">
+            <li
+              v-for="(user, index) in topUsers.slice(0, 5)"
+              :key="user.username"
+              class="flex justify-between items-center px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-gray-700 dark:text-gray-100"
+            >
+              <span class="font-medium truncate">{{ user.username }}</span>
+              <span class="text-sm font-semibold">{{ user.solved }} solved</span>
+            </li>
+          </ul>
+
+          <!-- Spacer untuk dorong link ke bawah -->
+          <div class="flex-grow"></div>
+
+          <!-- Link ke leaderboard di bawah kiri -->
+          <router-link
+            to="/leaderboard"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-2"
+          >
+            → View Leaderboard
+          </router-link>
+        </div>
+
+        <!-- Challenge Stats -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm h-full sm:col-span-2 flex flex-col gap-4">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Challenge Stats</h2>
+
+          <!-- Summary -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Total Challenges</p>
+              <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ totalChallenges }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Challenges Solved (Unique)</p>
+              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ completedChallengesUniq }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Total Solved Submissions</p>
+              <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ completedChallenges }}</p>
+            </div>
+          </div>
+
+          <!-- Most & Least Solved Challenges -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <!-- Most Solved -->
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Most Solved Challenge</p>
+              <p class="font-medium text-gray-800 dark:text-white truncate">
+                {{ mostSolvedChallenges.title }} (
+                <span class="font-semibold text-blue-600 dark:text-blue-400">{{ mostSolvedChallenges.count }} solved</span> )
+              </p>
+            </div>
+
+            <!-- Least Solved -->
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Least Solved Challenge</p>
+              <p class="font-medium text-gray-800 dark:text-white truncate">-</p>
+            </div>
+
+            <!-- Average Solve Time -->
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Average Solve Time</p>
+              <p class="font-medium text-gray-800 dark:text-white truncate">
+                -
+              </p>
+            </div>
+          </div>
+
+          <!-- Difficulty Breakdown -->
+          <div>
+            <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Difficulty Breakdown:</p>
+            <ul class="grid grid-cols-2 sm:grid-cols-4 gap-y-1 text-sm text-gray-700 dark:text-slate-300">
+              <li
+                v-for="(count, diff) in challengesByDifficulty"
+                :key="diff"
+                class="flex items-center justify-between border-b border-gray-200 dark:border-slate-600 py-1 pr-2"
+              >
+                <span class="text-sm">Difficulty {{ diff }}</span>
+                <span class="font-medium">{{ count }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- View All Link -->
+          <router-link
+            to="/dashboard/challenges"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-2"
+          >
+            → View All Challenges
+          </router-link>
+        </div>
+      </div>
+
+      <!-- Tags Distribution -->
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm sm:col-span-2 flex flex-col gap-4 mt-6"
+        v-if="!loading"
+      >
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Tags Distribution</h2>
+
+        <ul class="flex flex-wrap gap-2">
+          <li
+            v-for="item in tagsDistribution"
+            :key="item.tag"
+            class="px-4 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+          >
+            {{ item.tag }} ({{ item.count }})
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -118,14 +223,13 @@ const fetchDashboardStats = async () => {
       },
     })
     const data = await res.json()
-    console.log(data)
+    // console.log(data)
 
     totalUsers.value = data.totalUsers || 0
     totalRoles.value = data.usersByRole.total_role || 0
     usersByRole.value = data.usersByRole || {}
     totalChallenges.value = data.totalChallenges || 0
     challengesByDifficulty.value = data.challengesByDifficulty?.reduce((acc, { level, count }) => {
-      // Mengonversi level menjadi nama yang lebih deskriptif
       acc[levelMap[level] || `Level ${level}`] = count;
       return acc;
     }, {}) || {};
@@ -146,6 +250,3 @@ onMounted(() => {
   fetchDashboardStats()
 })
 </script>
-
-<style scoped>
-</style>
