@@ -15,10 +15,12 @@
           </div>
           <button
             type="submit"
-            :disabled="loading"
+            :disabled="loading || cooldown > 0"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
           >
-            {{ loading ? 'Mengirim...' : 'Kirim Link Reset' }}
+            <span v-if="loading">Mengirim...</span>
+            <span v-else-if="cooldown > 0">Tunggu {{ cooldown }} detik</span>
+            <span v-else>Kirim Link Reset</span>
           </button>
           <p class="text-center text-sm text-gray-600 dark:text-gray-300 mt-2">
             <router-link to="/login" class="text-blue-600 hover:underline dark:text-blue-400">Kembali ke Login</router-link>
@@ -27,29 +29,63 @@
       </div>
     </div>
 </template>
-  
+
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { forgotPassword } from '../services/authService';
-  import GlobalSwal from '../utills/GlobalSwal';
-  const Swal = GlobalSwal;
-  
-  const email = ref('');
-  const loading = ref(false);
-  
-  async function handleForgotPassword() {
-    loading.value = true;
-    try {
-      await forgotPassword(email.value);
-      Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'Link reset password telah dikirim ke email kamu.',
-      });
-    } catch (err: any) {
-      Swal.fire({ icon: 'error', title: 'Gagal', text: err.message });
-    } finally {
-      loading.value = false;
+import { ref, onMounted } from 'vue';
+import { forgotPassword } from '../services/authService';
+import GlobalSwal from '../utills/GlobalSwal';
+
+const Swal = GlobalSwal;
+
+const email = ref('');
+const loading = ref(false);
+const cooldown = ref(0);
+let timer: NodeJS.Timeout | null = null;
+
+const COOLDOWN_DURATION = 60; // detik
+const COOLDOWN_KEY = 'forgot_password_last_sent';
+
+onMounted(() => {
+  const lastSent = localStorage.getItem(COOLDOWN_KEY);
+  if (lastSent) {
+    const secondsPassed = Math.floor((Date.now() - parseInt(lastSent)) / 1000);
+    const remaining = COOLDOWN_DURATION - secondsPassed;
+    if (remaining > 0) {
+      startCooldown(remaining);
     }
   }
+});
+
+async function handleForgotPassword() {
+  if (cooldown.value > 0) return;
+
+  loading.value = true;
+  try {
+    await forgotPassword(email.value);
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil',
+      text: 'Link reset password telah dikirim ke email kamu.',
+    });
+    email.value = '';
+    localStorage.setItem(COOLDOWN_KEY, Date.now().toString()); // simpan timestamp
+    startCooldown(COOLDOWN_DURATION);
+  } catch (err: any) {
+    Swal.fire({ icon: 'error', title: 'Gagal', text: err.message });
+  } finally {
+    loading.value = false;
+  }
+}
+
+function startCooldown(seconds: number) {
+  cooldown.value = seconds;
+  timer = setInterval(() => {
+    cooldown.value--;
+    if (cooldown.value <= 0 && timer) {
+      clearInterval(timer);
+      timer = null;
+      localStorage.removeItem(COOLDOWN_KEY); // hapus data
+    }
+  }, 1000);
+}
 </script>

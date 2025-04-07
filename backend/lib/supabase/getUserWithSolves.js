@@ -29,12 +29,19 @@ export async function getUserWithSolves(username) {
     }));
   }
 
+  const initials = username
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word[0]?.toUpperCase() || "")
+    .join("");
+
   return {
     data: {
       id: userData.id,
       username: userData.username || "Unknown",
       role: userData.role || "user",
       solves: solvedChallenges,
+      avatar: `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&size=150`,
     },
   };
 }

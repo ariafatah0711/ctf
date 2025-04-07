@@ -3,30 +3,42 @@
   <div class="h-16"></div>
 
   <div class="p-6 max-w-4xl mx-auto">
-    <div v-if="loading" class="text-gray-500">Memuat profil...</div>
-    <div v-else-if="error" class="text-red-500">Gagal memuat profil: {{ error }}</div>
+    <div v-if="loading" class="text-gray-500 text-center">Memuat profil...</div>
+    <div v-else-if="error" class="text-red-500 text-center">Gagal memuat profil: {{ error }}</div>
+    
     <div v-else>
-      <div class="px-4 sm:px-0">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white">User Profile</h3>
-        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-300">Detail pengguna dan challenge yang telah diselesaikan.</p>
+      <!-- Header Profil -->
+      <div class="flex flex-col items-center space-y-4 mb-6">
+        <img
+          :src="user.avatar"
+          alt="Avatar"
+          class="w-24 h-24 rounded-full shadow-lg ring-2 ring-blue-500"
+        />
+        <div class="text-center">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.username }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
+        </div>
       </div>
 
-      <div class="mt-6 border-t border-gray-200 dark:border-white/10">
+      <!-- Detail Info -->
+      <div class="border-t border-gray-200 dark:border-white/10 pt-4">
         <dl class="divide-y divide-gray-100 dark:divide-white/10">
-          <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium text-gray-900 dark:text-white">User ID</dt>
             <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.id }}</dd>
           </div>
-          <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+
+          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium text-gray-900 dark:text-white">Username</dt>
             <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
           </div>
-          <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+
+          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium text-gray-900 dark:text-white">Role</dt>
             <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.role }}</dd>
           </div>
 
-          <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium text-gray-900 dark:text-white">Solved Challenges</dt>
             <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
               <div v-if="user.solves && user.solves.length">
@@ -73,6 +85,7 @@
       });
 
       const result = await res.json();
+      console.log(result)
       if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
 
       user.value = result.data;
