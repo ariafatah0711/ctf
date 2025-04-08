@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+  <div class="min-h-screen fixed w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
     <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
       <div class="hidden md:block">
         <img src="../assets/2.png" alt="Register Illustration" class="w-full h-auto"/>

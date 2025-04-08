@@ -13,16 +13,10 @@ pre {
   user-select: text;
 }
 
-/* scrool */
 html,
 body {
-  padding-right: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* overflow-y: scroll !important; */
-  /* scrollbar-gutter: stable !important; */
-
-  /* scrollbar-gutter: stable both-edges; */
 }
 
 /* app */
@@ -44,34 +38,42 @@ a {
   cursor: pointer;
 }
 
-/* scroll */
-/* Untuk browser modern (Firefox, Edge, dll.) */
+/* Scrollbar global */
 body {
-  scrollbar-color: #444 #1e1e1e;
-  /* thumb, track */
-  scrollbar-width: thin;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
-/* Untuk Webkit (Chrome, Safari, Edge berbasis Chromium) */
 body::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 12px;
 }
 
 body::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: transparent;
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: #555;
-  border-radius: 10px;
-  border: 2px solid #1e1e1e;
+  background: linear-gradient(180deg, #3b82f6, #60a5fa);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.3s ease;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background-color: #777;
+  background: linear-gradient(180deg, #2563eb, #3b82f6);
 }
 
+@media (prefers-color-scheme: dark) {
+  body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6b7280, #4b5563);
+  }
+
+  body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #374151, #1f2937);
+  }
+}
 
 /* swal */
 .swal2-popup.swal2-dark {
