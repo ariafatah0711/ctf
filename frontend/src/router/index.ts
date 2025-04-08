@@ -127,6 +127,7 @@ const router = createRouter({
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
   // console.log(auth.user.username, auth.user.role)
+  console.log(auth)
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     await Swal.fire({

@@ -171,3 +171,60 @@ body::-webkit-scrollbar-thumb:hover {
     transform: rotate(360deg);
   }
 }
+
+/* ################################ */
+/* ################################ */
+/* Fix ikon success untuk dark mode */
+/* Reset dan rapikan ikon success */
+.swal2-popup.swal2-dark .swal2-icon.swal2-success {
+  border-color: transparent !important;
+  width: 64px !important;
+  height: 64px !important;
+  margin: 1em auto !important;
+  box-shadow: none !important;
+  padding-top: 20px !important;
+}
+
+/* Sembunyikan background lingkaran hijau */
+.swal2-popup.swal2-dark .swal2-success-circular-line-left,
+.swal2-popup.swal2-dark .swal2-success-circular-line-right,
+.swal2-popup.swal2-dark .swal2-success-ring,
+.swal2-popup.swal2-dark .swal2-success-fix {
+  display: none !important;
+}
+
+/* Atur ulang centang ✔ */
+.swal2-popup.swal2-dark .swal2-success-line-tip {
+  margin-top: 25px;
+  top: 26px !important;
+  left: 14px !important;
+  width: 25px !important;
+  height: 5px !important;
+  background-color: #4CAF50 !important;
+  transform: rotate(45deg) !important;
+  border-radius: 2px !important;
+  /* animation: none !important; */
+}
+
+.swal2-popup.swal2-dark .swal2-success-line-long {
+  margin-top: 25px;
+  top: 22px !important;
+  left: 26px !important;
+  width: 40px !important;
+  height: 5px !important;
+  background-color: #4CAF50 !important;
+  transform: rotate(-45deg) !important;
+  border-radius: 2px !important;
+  /* animation: none !important; */
+}
+
+/* Perbesar dan posisikan centang */
+.swal2-popup.swal2-dark .swal2-success {
+  transform: scale(1.8);
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100px;
+  padding-top: 20px;
+}

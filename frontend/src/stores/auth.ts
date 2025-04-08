@@ -8,7 +8,19 @@ const Swal = GlobalSwal;
 
 function getUserFromLocalStorage() {
   const encrypted = localStorage.getItem('user');
-  return encrypted ? decryptUserData(encrypted) || {} : {};
+  if (!encrypted) return {};
+
+  try {
+    const decrypted = decryptUserData(encrypted);
+    if (!decrypted) {
+      console.warn('Gagal decrypt user dari localStorage.');
+      return {};
+    }
+    return decrypted;
+  } catch (e) {
+    console.error('Error decryptUserData:', e);
+    return {};
+  }
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -30,8 +42,9 @@ export const useAuthStore = defineStore('auth', {
         avatar: user.user_metadata.avatar || '',
       };
 
+      this.checkAuth();
       const encrypted = encryptUserData(this.user);
-      localStorage.setItem('user', JSON.stringify(encrypted));
+      localStorage.setItem('user', encrypted);
     },
 
     logout() {
@@ -79,7 +92,7 @@ export const useAuthStore = defineStore('auth', {
         };
 
         const encrypted = encryptUserData(this.user);
-        localStorage.setItem('user', JSON.stringify(encrypted));
+        localStorage.setItem('user', encrypted);
 
         return true;
       } catch (err) {
