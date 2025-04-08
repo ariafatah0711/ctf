@@ -118,6 +118,9 @@ supabase db diff --local --file v1.5
 supabase db push
 ```
 
+## add cronjob
+- [https://github.com/travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention)
+
 ## 🔐 Catatan Penting
 - Tambahkan `.env` ke Vercel Environment Variables secara manual via Dashboard.
 - `ENCRYPTION_KEY` harus unik dan aman.
