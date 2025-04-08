@@ -131,7 +131,7 @@ router.beforeEach(async (to, _from, next) => {
     });
     next('/login');
     return; 
-  }
+  } else
 
   // Untuk halaman yang membutuhkan guest dan pengguna sudah login
   if (to.meta.requiresGuest && auth.isAuthenticated) {
@@ -143,7 +143,7 @@ router.beforeEach(async (to, _from, next) => {
     })
     next('/');
     return;
-  }
+  } else
 
   if (to.meta.requiresAdmin && auth.user.role !== 'admin') {
       await Swal.fire({
@@ -154,7 +154,7 @@ router.beforeEach(async (to, _from, next) => {
       });
       next('/dashboard');
       return;
-  }
+  } else
 
   if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.user.role)) {
     Swal.fire({
@@ -168,65 +168,24 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   // if (to.meta.requiresAuth) {
-  //   auth.checkAuth();
-  //   console.log("check auth")
-  // }
+  //   setTimeout(() => {
+  //     auth.checkAuth();
+  //     console.log("check");
+  //     }, 3000);
+  //   }
 
   next();
 });
 
+// Menggunakan afterEach untuk pengecekan dan notifikasi setelah halaman dimuat
 router.afterEach((to, _from) => {
-  const auth = useAuthStore();
-
-  setTimeout(() => {
-    if (to.meta.requiresAuth) {
-      auth.checkAuth();
+  if (to.meta.requiresAuth) {
+    const auth = useAuthStore();
+    setTimeout(() => {
+      auth.checkAuth(); // Melakukan pengecekan setelah navigasi
       console.log("check");
-    }
-
-    if (to.meta.requiresAuth && !auth.isAuthenticated) {
-      Swal.fire({
-        title: 'Akses Dibatasi',
-        text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.',
-        icon: 'warning',
-        confirmButtonText: 'Login',
-      }).then(() => {
-        router.push('/login');
-      });
-    }
-  }, 3000);
+    }, 3000); // Menunda sedikit pengecekan autentikasi
+  }
 });
-
-// router.beforeEach(async (to, _from, next) => {
-//   const auth = useAuthStore();
-
-//   if (to.meta.requiresAuth) {
-//     console.log("check auth")
-//     const valid = await auth.checkAuth();
-//     if (!valid) {
-//       await Swal.fire({title: 'Akses Dibatasi', text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.', icon: 'warning', confirmButtonText: 'Login',});
-//       return next('/login');
-//     }
-//   }
-
-//   // Untuk halaman yang membutuhkan guest dan pengguna sudah login
-//   // if (to.meta.requiresGuest && auth.isAuthenticated) {
-//   //   Swal.fire({title: 'Anda sudah login!', text: 'Silakan keluar terlebih dahulu jika ingin mendaftar ulang.', icon: 'info', confirmButtonText: 'OK'});
-//   //   return next('/');
-//   // }
-
-//   if (to.meta.requiresAdmin && auth.user.role !== 'admin') {
-//     await Swal.fire({title: 'Akses Dibatasi', text: 'Hanya admin yang dapat mengakses halaman ini.', icon: 'error', confirmButtonText: 'OK'});
-//     return next('/dashboard');
-//   }
-
-//   if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.user.role)) {
-//     await Swal.fire({title: 'Akses Dibatasi', text: 'Halaman ini hanya untuk maker atau admin.', icon: 'warning', confirmButtonText: 'OK',});
-//     return next('/dashboard');
-//   }
-
-//   next();
-// });
-
 
 export default router;
