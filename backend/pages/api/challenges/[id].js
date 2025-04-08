@@ -43,8 +43,8 @@ export default async function handler(req, res) {
   } else if (req.method === "PUT" || req.method === "PATCH") {
     verifyToken(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
-        const { title, description, difficulty, flag, url, tags, hint } = req.body;
-        const result = await updateChallenge(id, { title, description, difficulty, flag, url, tags, hint });
+        const { title, description, difficulty, flag, url, tags, hint, active } = req.body;
+        const result = await updateChallenge(id, { title, description, difficulty, flag, url, tags, hint, active });
 
         if (result?.notFound) return res.status(404).json({ message: result.error });
         if (result?.error) return res.status(400).json({ message: result.error });

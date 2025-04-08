@@ -38,6 +38,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = {
         token: session.access_token,
         username: user.user_metadata.display_name || '',
+        email: user.user_metadata.email || '', 
         role: user.user_metadata.role || '',
         avatar: user.user_metadata.avatar || '',
       };
@@ -82,11 +83,13 @@ export const useAuthStore = defineStore('auth', {
         }
 
         const data = await res.json();
+        console.log(data)
 
         // Update objek user
         this.user = {
           username: data.user.username,
           role: data.user.role,
+          email: data.user.email,
           avatar: data.user.avatar || '',
           token: this.user.token,
         };

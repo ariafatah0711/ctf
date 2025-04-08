@@ -22,10 +22,12 @@
     <div v-else>
       <div v-if="challenges.length > 0" class="overflow-x-auto mt-4">
         <BaseTable
+          :min-width="'800px'"
           :columns="[
             { label: 'Challenge Name', key: 'challenge', grow: true },
-            { label: 'Category', key: 'tags', width: 'w-40' },
-            { label: 'Difficulty', key: 'difficulty', width: 'w-35' }
+            { label: 'status', key: 'active', width: 'w-25' },
+            { label: 'Difficulty', key: 'difficulty', width: 'w-30' },
+            { label: 'Category', key: 'tags', width: 'w-40' }
           ]"
           :rows="challenges"
           @edit="showEditChallengeModal"
@@ -39,8 +41,32 @@
             </div>
           </template>
 
-          <template #difficulty="{ row }">
+          <!-- <template #difficulty="{ row }">
             <span class="dark:text-slate-200">{{ levelMap[row.difficulty] || 'Tidak Diketahui' }}</span>
+          </template> -->
+
+          <template #difficulty="{ row }">
+            <span
+              :class="{
+                'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300': row.difficulty === 1,
+                'text-yellow-600 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300': row.difficulty === 2,
+                'text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-300': row.difficulty === 3,
+              }"
+              class="px-2 py-0.5 rounded-full text-xs font-medium"
+            >
+              {{ levelMap[row.difficulty] || 'Tidak Diketahui' }}
+            </span>
+          </template>
+
+          <template #active="{ row }">
+            <span
+              :class="row.active
+                ? 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300'
+                : 'text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-300'"
+              class="px-2 py-0.5 rounded-full text-xs font-medium"
+            >
+              {{ row.active ? 'Aktif' : 'Nonaktif' }}
+            </span>
           </template>
         </BaseTable>
 
@@ -62,14 +88,13 @@
   import { ref, onMounted, watch } from 'vue'
   import { useAuthStore } from '../stores/auth'
   import config from '../config'
-  import Navbar from '../components/Navbar.vue'
   import Breadcrumbs from "../components/Breadcrumbs.vue"
   import IconButton from "../components/IconButton.vue"
   import { PlusIcon, TrashIcon, DocumentArrowUpIcon } from "@heroicons/vue/24/solid";
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
   import Pagination from '../components/Pagination.vue'
-  import { swalSuccess, swalError, swalAlert } from '@/utills/swalAlert'
+  import { swalSuccess, swalError } from '../utills/swalAlert'
 
   const Swal = GlobalSwal
   const auth = useAuthStore()
@@ -87,11 +112,11 @@
     2: 'Medium 🟡',
     3: 'Hard 🔴'
   }
-  
+
   const fetchChallenges = async () => {
     loading.value = true
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}&limit=${limit}`, {
+      const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}&limit=${limit}&active=all`, {
         headers: {
           Authorization: `Bearer ${auth.user.token}`,
         },
@@ -101,7 +126,7 @@
         ...challenge,
         tags: Array.isArray(challenge.tags) ? challenge.tags.join(', ') : ''
       }))
-      // console.log(data_challenges)
+      console.log(data_challenges)
       challenges.value =  data_challenges || []
       totalPages.value = data.totalPages || 1
     } catch (error) {
@@ -119,14 +144,6 @@
     await fetchChallenges()
   })
   
-  const nextPage = () => {
-    if (page.value < totalPages.value) page.value++
-  }
-  
-  const prevPage = () => {
-    if (page.value > 1) page.value--
-  }
-  
   const setPage = (n: number) => {
     if (n !== page.value) {
       page.value = n
@@ -134,7 +151,7 @@
   }
 
   // Add Challenge
-  const handleAddChallenge = async (challengeData) => {
+  const handleAddChallenge = async (challengeData: any) => {
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges`, {
         method: "POST",
@@ -150,7 +167,7 @@
 
       await swalSuccess("Challenge berhasil ditambahkan!");
       await fetchChallenges(); // refresh data
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       swalError("Gagal menambahkan challenge.", err.message || '');
     }
@@ -186,7 +203,7 @@
 
       await swalSuccess("Challenge berhasil dihapus.");
       await fetchChallenges(); // Refresh list
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       swalError("Gagal menghapus challenge.", err.message || '');
     }
@@ -194,6 +211,7 @@
 
   const handleEditChallenge = async (id: string, updatedData: any) => {
     try {
+      console.log(updatedData)
       const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
         method: 'PUT',
         headers: {
@@ -208,7 +226,7 @@
 
       await swalSuccess("Challenge berhasil diperbarui!");
       await fetchChallenges();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       swalError("Gagal memperbarui challenge.", err.message || '');
     }
@@ -225,7 +243,8 @@
         url = '',
         tags = [],
         hint = '',
-        difficulty = ''
+        difficulty = '',
+        active = false
       } = initialData;
 
     const { value: formValues } = await Swal.fire({
@@ -238,6 +257,9 @@
           <input id="swal-url" class="swal2-input" placeholder="URL Challenge" value="${url}" />
           <input id="swal-tags" class="swal2-input" placeholder="Tags (pisahkan dengan koma)" value="${tags}" />
           <input id="swal-hint" class="swal2-input" placeholder="Hint (opsional)" value="${hint}" />
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <input id="swal-active" type="checkbox" ${active ? 'checked' : ''} />
+            Challenge Aktif</label>
           <select id="swal-difficulty" class="swal2-select">
             <option value="" disabled ${!difficulty ? 'selected' : ''}>Pilih Tingkat Kesulitan</option>
             <option value="1" ${difficulty == 1 ? 'selected' : ''}>🟢 Easy</option>
@@ -256,6 +278,7 @@
         const tags = (document.getElementById('swal-tags') as HTMLInputElement)?.value.trim();
         const hint = (document.getElementById('swal-hint') as HTMLInputElement)?.value.trim();
         const difficulty = Number((document.getElementById('swal-difficulty') as HTMLSelectElement)?.value);
+        const active = (document.getElementById('swal-active') as HTMLInputElement)?.checked;
 
         if (!title || !description || !flag || !url || !difficulty) {
           Swal.showValidationMessage("Semua field wajib diisi (kecuali hint dan tags)");
@@ -269,7 +292,8 @@
           url,
           difficulty,
           tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-          hint: hint || ''
+          hint: hint || '',
+          active
         };
       }
     });
@@ -328,6 +352,42 @@
         rows: '8',
       },
       showCancelButton: true,
+      // preConfirm: (value) => {
+      //   const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
+      //   const data: any[] = [];
+
+      //   for (const line of lines) {
+      //     const parts = line.split(',').map(p => p.trim());
+      //     if (parts.length < 6) {
+      //       Swal.showValidationMessage(`Baris tidak valid (kurang field): "${line}"`);
+      //       return;
+      //     }
+
+      //     const [title, description, flag, url, difficultyRaw, tagsRaw, hintRaw = ''] = parts;
+
+      //     const difficulty = Number(difficultyRaw);
+      //     if (!title || !description || !flag || !url || !difficulty || isNaN(difficulty)) {
+      //       Swal.showValidationMessage(`Baris tidak valid atau ada field kosong: "${line}"`);
+      //       return;
+      //     }
+
+      //     const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+      //     const challenge = {
+      //       title,
+      //       description,
+      //       flag,
+      //       url,
+      //       difficulty,
+      //       tags,
+      //       hint: hintRaw || '',
+      //       active: false
+      //     };
+
+      //     data.push(challenge);
+      //   }
+
+      //   return data;
+      // }
       preConfirm: (value) => {
         const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
         const data: any[] = [];
@@ -339,7 +399,15 @@
             return;
           }
 
-          const [title, description, flag, url, difficultyRaw, tagsRaw, hintRaw = ''] = parts;
+          const [
+            title,
+            description,
+            flag,
+            url,
+            difficultyRaw,
+            tagsRaw,
+            hintRaw = ''
+          ] = parts;
 
           const difficulty = Number(difficultyRaw);
           if (!title || !description || !flag || !url || !difficulty || isNaN(difficulty)) {
@@ -347,18 +415,18 @@
             return;
           }
 
-          const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
-          const challenge = {
+          const tags = tagsRaw.split(';').map(t => t.trim()).filter(Boolean);
+
+          data.push({
             title,
             description,
             flag,
             url,
             difficulty,
             tags,
-            hint: hintRaw || ''
-          };
-
-          data.push(challenge);
+            hint: hintRaw || '',
+            active: false
+          });
         }
 
         return data;

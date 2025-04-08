@@ -75,11 +75,16 @@
           <!-- List Top Users -->
           <ul class="flex flex-col gap-2">
             <li
-              v-for="(user, index) in topUsers.slice(0, 5)"
+              v-for="(user) in topUsers.slice(0, 5)"
               :key="user.username"
               class="flex justify-between items-center px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-gray-700 dark:text-gray-100"
             >
-              <span class="font-medium truncate">{{ user.username }}</span>
+              <RouterLink
+                :to="`/profile/${user.username}`"
+                class="font-medium truncate hover:underline"
+              >
+                {{ user.username }}
+              </RouterLink>
               <span class="text-sm font-semibold">{{ user.solved }} solved</span>
             </li>
           </ul>
@@ -100,6 +105,10 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm h-full sm:col-span-2 flex flex-col gap-4">
           <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Challenge Stats</h2>
 
+          <p class="text-sm text-gray-600 dark:text-slate-300 leading-relaxed">
+            {{ challengeSummary }}
+          </p>
+
           <!-- Summary -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
@@ -107,38 +116,41 @@
               <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ totalChallenges }}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-500 dark:text-slate-400">Challenges Solved (Unique)</p>
-              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ completedChallengesUniq }}</p>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Active Challenges</p>
+              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ totalActiveChallenges }}</p>
             </div>
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Inactive Challenges</p>
+              <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ totalInactiveChallenges }}</p>
+            </div>
+          <!-- </div> -->
+
+          <!-- Most & Least Solved Challenges -->
+          <!-- <div class="grid grid-cols-1 sm:grid-cols-3 gap-6"> -->
             <div>
               <p class="text-sm text-gray-500 dark:text-slate-400">Total Solved Submissions</p>
               <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ completedChallenges }}</p>
-            </div>
-          </div>
+            </div> 
 
-          <!-- Most & Least Solved Challenges -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-slate-400">Challenges Solved (Unique)</p>
+              <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ completedChallengesUniq }}</p>
+            </div>
+
             <!-- Most Solved -->
             <div>
               <p class="text-sm text-gray-500 dark:text-slate-400">Most Solved Challenge</p>
-              <p class="font-medium text-gray-800 dark:text-white truncate">
-                {{ mostSolvedChallenges.title }} (
-                <span class="font-semibold text-blue-600 dark:text-blue-400">{{ mostSolvedChallenges.count }} solved</span> )
-              </p>
-            </div>
-
-            <!-- Least Solved -->
-            <div>
-              <p class="text-sm text-gray-500 dark:text-slate-400">Least Solved Challenge</p>
-              <p class="font-medium text-gray-800 dark:text-white truncate">-</p>
-            </div>
-
-            <!-- Average Solve Time -->
-            <div>
-              <p class="text-sm text-gray-500 dark:text-slate-400">Average Solve Time</p>
-              <p class="font-medium text-gray-800 dark:text-white truncate">
-                -
-              </p>
+              <RouterLink
+                :to="`/challenges/${mostSolvedChallenges.challengeId}`"
+                class="font-medium text-gray-800 dark:text-white truncate hover:underline"
+              >
+                {{ mostSolvedChallenges.title }}
+                (
+                <span class="font-semibold text-blue-600 dark:text-blue-400">
+                  {{ mostSolvedChallenges.count }} solved
+                </span>
+                )
+              </RouterLink>
             </div>
           </div>
 
@@ -146,15 +158,16 @@
           <div>
             <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Difficulty Breakdown:</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div
-                v-for="(count, diff) in challengesByDifficulty"
-                :key="diff"
-                class="flex flex-col bg-slate-50 dark:bg-slate-700 px-4 py-3 rounded-lg shadow-sm text-gray-800 dark:text-white"
+              <RouterLink
+                v-for="item in challengesByDifficulty"
+                :key="item.level"
+                :to="`/challenges?difficulty=${item.level}`"
+                class="flex flex-col bg-slate-50 dark:bg-slate-700 px-4 py-3 rounded-lg shadow-sm text-gray-800 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors duration-150"
               >
-              <span class="text-sm font-semibold mb-0.5">{{ diff }}</span>
-              <span class="text-lg font-bold">{{ count }}</span>
-              <span class="text-xs text-gray-500 dark:text-slate-400">Challenges</span>
-              </div>
+                <span class="text-sm font-semibold mb-0.5">{{ item.label }}</span>
+                <span class="text-lg font-bold">{{ item.count }}</span>
+                <span class="text-xs text-gray-500 dark:text-slate-400">Challenges</span>
+              </RouterLink>
             </div>
           </div>
 
@@ -194,9 +207,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
-import Navbar from '../components/Navbar.vue'
 import DashboardSkeleton from '../components/skelaton/DashboardSkeleton.vue'
-import Breadcrumbs from '../components/Breadcrumbs.vue'
 
 const auth = useAuthStore()
 const loading = ref(true)
@@ -208,6 +219,10 @@ const totalChallenges = ref(0)
 const challengesByDifficulty = ref<Record<string, number>>({})
 const completedChallenges = ref(0)
 const completedChallengesUniq = ref(0)
+const totalActiveChallenges = ref(0)
+const totalInactiveChallenges = ref(0)
+const challengeSummary = ref(0)
+const topChallengeInfo = ref(0)
 const topUsers = ref<any[]>([])
 const mostSolvedChallenges = ref<{ challengeId: string; count: number; title: string }[]>([]);
 const tagsDistribution = ref<{ tag: string; count: number }[]>([])
@@ -226,21 +241,26 @@ const fetchDashboardStats = async () => {
       },
     })
     const data = await res.json()
-    // console.log(data)
+    console.log(data)
 
     totalUsers.value = data.totalUsers || 0
     totalRoles.value = data.usersByRole.total_role || 0
     usersByRole.value = data.usersByRole || {}
     totalChallenges.value = data.totalChallenges || 0
-    challengesByDifficulty.value = data.challengesByDifficulty?.reduce((acc, { level, count }) => {
-      acc[levelMap[level] || `Level ${level}`] = count;
-      return acc;
-    }, {}) || {};
+    challengesByDifficulty.value = data.challengesByDifficulty?.map(({ level, count }) => ({
+      label: levelMap[level] || `Level ${level}`,
+      level,
+      count,
+    })) || [];
+    totalActiveChallenges.value = data.totalActiveChallenges
+    totalInactiveChallenges.value = data.totalInactiveChallenges
     completedChallenges.value = data.totalSolvedSubmissions || 0
     mostSolvedChallenges.value = data.mostSolvedChallenges || []
     completedChallengesUniq.value = data.uniqueChallengesSolved || 0
     topUsers.value = data.leaderboard || []
     tagsDistribution.value = data.tagsDistribution || []
+    challengeSummary.value = data.description.challengeSummary
+    topChallengeInfo.value = data.description.topChallengeInfo
 
     loading.value = false
   } catch (error) {

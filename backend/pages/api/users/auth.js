@@ -8,7 +8,8 @@ export default async function handler(req, res) {
   verifyToken(req, res, () => {
     const { user_metadata } = req.user;
     const username = user_metadata?.display_name || req.user.email;
-    const role = user_metadata?.role || "authenticated";
+    const role = user_metadata?.role || "user";
+    const email = user_metadata?.email || "N/A";
 
     const initials = username
       .split(" ")
@@ -22,6 +23,7 @@ export default async function handler(req, res) {
         username,
         role,
         avatar,
+        email,
       },
     });
   });

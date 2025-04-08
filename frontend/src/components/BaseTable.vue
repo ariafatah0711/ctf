@@ -79,7 +79,8 @@ const props = defineProps<{
     class?: string
   }>
   rows: Array<Record<string, any>>
-  selected: number[] // <-- Tambahkan ini
+  selected: number[], // <-- Tambahkan ini
+  minWidth?: string
 }>()
 
 const emit = defineEmits<{
@@ -88,6 +89,7 @@ const emit = defineEmits<{
   (e: 'update:selected', selected: number[]): void // <-- ganti jadi ini
 }>()
 
+const minWidth = props.minWidth || '600px'
 const internalSelected = ref<number[]>([...(props.selected ?? [])])
 
 watch(() => props.selected, (val) => {
@@ -116,8 +118,8 @@ const toggleSelectAll = () => {
 </script>
 
 <template>
-  <div class="mt-4 w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
-    <table class="min-w-[600px] w-full table-fixed border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden">
+  <div :style="{ minWidth }" class="mt-4 w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+    <table :class="`min-w-[${minWidth}] w-full table-fixed border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden`">
       <thead class="bg-slate-100 dark:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
         <tr>
           <!-- Checkbox header -->

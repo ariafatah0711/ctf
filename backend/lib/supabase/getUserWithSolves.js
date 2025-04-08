@@ -1,6 +1,7 @@
 import supabaseAdmin from "@/lib/supabaseAdmin";
 
 export async function getUserWithSolves(username) {
+  // const { data: user, error: userError } = await supabaseAdmin.rpc("get_user_by_username", { username_input: username });
   const { data: user, error: userError } = await supabaseAdmin.rpc("get_user_by_username", { username_input: username });
   if (userError || !user || user.length === 0) return { error: userError?.message || "User tidak ditemukan." };
 
@@ -19,6 +20,7 @@ export async function getUserWithSolves(username) {
     const { data: challengeData, error: challengeError } = await supabaseAdmin
       .from("challenges")
       .select("id, title")
+      .eq("active", true)
       .in("id", challengeIds);
 
     if (challengeError) return { error: challengeError.message };
@@ -38,7 +40,8 @@ export async function getUserWithSolves(username) {
   return {
     data: {
       id: userData.id,
-      username: userData.username || "Unknown",
+      username: userData.username || "N/A",
+      email: userData.email || "N/A",
       role: userData.role || "user",
       solves: solvedChallenges,
       avatar: `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&size=150`,
