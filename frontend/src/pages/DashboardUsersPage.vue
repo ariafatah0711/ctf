@@ -6,11 +6,11 @@
       </h1>
     </div>
 
-    <div class="flex flex-row items-center justify-between gap-4">
+    <div class="flex flex-wrap justify-center items-center gap-4">
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
-        <IconButton @click="handleAddUser" :icon="UserPlusIcon" label="Add User" color="blue" />
-        <IconButton @click="handleBatchAddUsers" :icon="UserGroupIcon" label="Batch Add" color="green" />
+        <IconButton @click="showAddUserModal" :icon="UserPlusIcon" label="Add" color="blue" />
+        <IconButton @click="handleBatchAddUsers" :icon="UserGroupIcon" label="Batch" color="green" />
         <IconButton @click="handleBatchDelete" :icon="UserMinusIcon" label="Delete" color="red" />
       </div>
     </div>
@@ -29,7 +29,7 @@
             { label: 'Last Sign In', key: 'lastSignIn', width: 'w-45' }
           ]"
           :rows="users"
-          @edit="handleEdit"
+          @edit="showEditUserModal"
           @delete="handleDelete"
           :selected="selectedUsers"
           @update:selected="(val) => selectedUsers = val"
@@ -57,6 +57,28 @@
       </div>
     </div>
   </div>
+
+  <Teleport to="body">
+    <div v-if="showForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <!-- <div v-if="showForm"> -->
+      <UserForm
+          :type="formType"
+          :initialData="formData"
+          @submit="(data) => {
+            if (formType === 'add') {
+              handleAddUser(data)
+            } else {
+              handleEditUser(data)
+            }
+            showForm.value = false
+          }"
+        />
+      <button
+        @click="showForm = false"
+        class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
+        aria-label="Tutup form">❌</button>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -71,6 +93,7 @@ import BaseTable  from "../components/BaseTable.vue"
 import { UserPlusIcon, UserGroupIcon, UserMinusIcon } from "@heroicons/vue/24/solid";
 import GlobalSwal from '../utills/GlobalSwal'
 import Pagination from '../components/Pagination.vue'
+import UserForm from "../components/dashboard/UserForm.vue"
 
 const Swal = GlobalSwal
 const users = ref<any[]>([])
@@ -83,6 +106,10 @@ const page = ref(1)
 const limit = 25
 const totalPages = ref(1)
 const selected = ref<number[]>([])
+
+const showForm = ref(false)
+const formType = ref('add')
+const formData = ref({});
 
 const fetchUsers = async () => {
   loading.value = true
@@ -122,18 +149,6 @@ watch(page, async (newPage) => {
   await fetchUsers()
 })
 
-// 🔁 Transform users -> members format
-const members = computed(() =>
-  users.value.map((user) => ({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    lastSignIn: user.lastSignIn,
-    avatar: user.avatar,
-  }))
-)
-
 const nextPage = () => {
   if (page.value < totalPages.value) page.value++
 }
@@ -148,75 +163,80 @@ const setPage = (n: number) => {
   }
 }
 
-// EDIT USER
-const handleEdit = async (index: number) => {
-  const user = members.value[index];
+const openForm = (type = 'add', data = {}) => {
+  formType.value = type;
+  formData.value = data;  // Pastikan data terisi
+  showForm.value = true;
+  console.log("Form Data:", formData.value);  // Tambahkan log untuk cek data
+};
 
-  const { value: formValues } = await Swal.fire({
-    title: 'Edit User',
-    html: `
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" value="${user.name}" />
+// 🔁 Transform users -> members format
+const members = computed(() =>
+  users.value.map((user) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    lastSignIn: user.lastSignIn,
+    avatar: user.avatar,
+  }))
+)
 
-      <input id="swal-email" type="email" class="swal2-input" placeholder="Email" value="${user.email}" />
-
-      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (biarkan kosong jika tidak diubah)" />
-
-      <select id="swal-role" class="swal2-select">
-        <option value="user" ${user.role === 'user' ? 'selected' : ''}>👤 User</option>
-        <option value="maker" ${user.role === 'maker' ? 'selected' : ''}>🛠️ Maker</option>
-        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Admin</option>
-      </select>
-    </div>
-    `,
-    focusConfirm: false,
-    showCancelButton: true,
-    preConfirm: () => {
-      const name = (document.getElementById('swal-name') as HTMLInputElement)?.value.trim();
-      const email = (document.getElementById('swal-email') as HTMLInputElement)?.value.trim();
-      const password = (document.getElementById('swal-password') as HTMLInputElement)?.value;
-      const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value;
-
-      if (!name || !role || !email) {
-        Swal.showValidationMessage('Nama, email, dan role tidak boleh kosong');
-        return;
+const showAddUserModal = () => openForm('add');
+const handleAddUser = async (userData: any) => {
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+        body: JSON.stringify(userData),
+      })
+      const result = await res.json()
+      if (res.ok) {
+        await Swal.fire('Berhasil', 'User berhasil ditambahkan!', 'success')
+        await fetchUsers()
+        showForm.value = false
+      } else {
+        throw new Error(result.message)
       }
-
-      return { name, email, role, password };
+    } catch (err) {
+      Swal.fire('Gagal', err.message || 'Terjadi kesalahan', 'error')
     }
-  });
+}
 
-  if (!formValues) return;
+const showEditUserModal = async (index: number) => {
+  const user = members.value[index]; // Ambil data pengguna berdasarkan index
 
+  // Buka form untuk edit
+  formType.value = 'edit';
+  formData.value = { ...user }; // Set data untuk edit ke state userData
+  showForm.value = true; // Tampilkan form
+};
+
+const handleEditUser = async (updatedData: any) => {
   try {
-    // Hapus password jika kosong agar tidak dikirim ke backend
-    const payload: any = {
-      name: formValues.name,
-      email: formValues.email,
-      role: formValues.role,
-    };
-
-    if (formValues.password && formValues.password.length >= 6) {
-      payload.password = formValues.password;
-    }
-
-    const res = await fetch(`${config.BASE_URL}/api/users/${user.id}`, {
-      method: "PUT",
+    // Kirim data yang diperbarui ke API
+    const res = await fetch(`${config.BASE_URL}/api/users/${updatedData.id}`, {
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${auth.user.token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(updatedData),
     });
 
     const result = await res.json();
 
-    if (!res.ok) throw new Error(result.error || "Gagal update");
+    if (!res.ok) throw new Error(result.error || 'Gagal update');
 
-    Swal.fire('Berhasil!', 'User berhasil diperbarui.', 'success');
-    await fetchUsers();
+    // Jika berhasil, tampilkan notifikasi
+    await Swal.fire('Berhasil', 'User berhasil diperbarui!', 'success');
+    await fetchUsers(); // Ambil ulang data pengguna setelah update
+    showForm.value = false; // Sembunyikan form setelah berhasil
   } catch (err: any) {
-    Swal.fire('Error', `Gagal update user: ${err.message}`, 'error');
+    Swal.fire('Gagal', err.message || 'Terjadi kesalahan', 'error');
   }
 };
 
@@ -269,42 +289,43 @@ const submitUserPayload = async (payload: object) => {
     Swal.fire('Error', `Gagal tambah user: ${err.message}`, 'error')
   }
 }
-const handleAddUser = async () => {
-  const { value: formValues } = await Swal.fire({
-    title: 'Tambah User Baru',
-    html: `
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" />
-      <input id="swal-email" type="email" class="swal2-input" placeholder="Email" />
-      <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 6 karakter)" />
-      <select id="swal-role" class="swal2-select">
-        <option value="user">👤 User</option>
-        <option value="maker">🛠️ Maker</option>
-        <option value="admin">👑 Admin</option>
-      </select>
-    </div>
-    `,
-    focusConfirm: false,
-    showCancelButton: true,
-    preConfirm: () => {
-      const name = (document.getElementById('swal-name') as HTMLInputElement)?.value.trim()
-      const email = (document.getElementById('swal-email') as HTMLInputElement)?.value.trim()
-      const password = (document.getElementById('swal-password') as HTMLInputElement)?.value
-      const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value
 
-      if (!name || !email || !password || password.length < 6 || !role) {
-        Swal.showValidationMessage('Semua field wajib diisi dan password minimal 6 karakter')
-        return
-      }
+// const handleAddUser = async () => {
+//   const { value: formValues } = await Swal.fire({
+//     title: 'Tambah User Baru',
+//     html: `
+//     <div style="display: flex; flex-direction: column; gap: 10px;">
+//       <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" />
+//       <input id="swal-email" type="email" class="swal2-input" placeholder="Email" />
+//       <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 6 karakter)" />
+//       <select id="swal-role" class="swal2-select">
+//         <option value="user">👤 User</option>
+//         <option value="maker">🛠️ Maker</option>
+//         <option value="admin">👑 Admin</option>
+//       </select>
+//     </div>
+//     `,
+//     focusConfirm: false,
+//     showCancelButton: true,
+//     preConfirm: () => {
+//       const name = (document.getElementById('swal-name') as HTMLInputElement)?.value.trim()
+//       const email = (document.getElementById('swal-email') as HTMLInputElement)?.value.trim()
+//       const password = (document.getElementById('swal-password') as HTMLInputElement)?.value
+//       const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value
 
-      return { name, email, password, role }
-    }
-  })
+//       if (!name || !email || !password || password.length < 6 || !role) {
+//         Swal.showValidationMessage('Semua field wajib diisi dan password minimal 6 karakter')
+//         return
+//       }
 
-  if (formValues) {
-    await submitUserPayload(formValues)
-  }
-}
+//       return { name, email, password, role }
+//     }
+//   })
+
+//   if (formValues) {
+//     await submitUserPayload(formValues)
+//   }
+// }
 
 const handleBatchAddUsers = async () => {
   const { value: csv } = await Swal.fire({

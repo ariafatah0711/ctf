@@ -6,11 +6,12 @@
       </h1>
     </div>
 
-    <div class="flex flex-row items-center justify-between gap-4">
+    <div class="flex flex-wrap justify-center items-center gap-4">
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
-        <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add Challenge" color="blue" />
-        <IconButton @click="handleBatchAddChallenges" :icon="DocumentArrowUpIcon" label="Batch Add" color="green" />
+        <IconButton @click="handleActive" :icon="CheckCircleIcon" label="Status" color="gray" />
+        <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add" color="blue" />
+        <IconButton @click="handleBatchAddChallenges" :icon="DocumentArrowUpIcon" label="Batch" color="green" />
         <IconButton @click="handleBatchDelete" :icon="TrashIcon" label="Delete" color="red" />
       </div>
     </div>
@@ -112,11 +113,17 @@
   import config from '../config'
   import Breadcrumbs from "../components/Breadcrumbs.vue"
   import IconButton from "../components/IconButton.vue"
-  import { PlusIcon, TrashIcon, DocumentArrowUpIcon } from "@heroicons/vue/24/solid";
+  // import { PlusIcon, TrashIcon, DocumentArrowUpIcon } from "@heroicons/vue/24/solid";
+  import {
+    PlusIcon,
+    TrashIcon,
+    DocumentArrowUpIcon,
+    CheckCircleIcon,
+  } from "@heroicons/vue/24/solid";
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
   import Pagination from '../components/Pagination.vue'
-  import ChallengeForm from "../components/ChallengeForm.vue"
+  import ChallengeForm from "../components/dashboard/ChallengeForm.vue"
   import { swalSuccess, swalError } from '../utills/swalAlert'
 
   const Swal = GlobalSwal
@@ -145,7 +152,6 @@
     formData.value = data;
     showForm.value = true;
   }
-
 
   const fetchChallenges = async () => {
     loading.value = true
@@ -380,6 +386,61 @@
     } catch (err: any) {
       console.error(err);
       swalError("Gagal menghapus challenge.", err.message || '');
+    }
+  };
+
+  const handleActive = async () => {
+    const selectedChallenges = selected.value.map(i => challenges.value[i]);
+    const total = selectedChallenges.length;
+
+    if (total === 0) {
+      return Swal.fire('Oops', 'Tidak ada challenge yang dipilih.', 'warning');
+    }
+
+    const { isConfirmed, value: status } = await Swal.fire({
+      title: 'Konfirmasi',
+      text: `Ubah status ${total} challenge ke?`,
+      input: 'select',
+      inputOptions: {
+        aktif: 'Aktif',
+        nonaktif: 'Nonaktif',
+      },
+      inputPlaceholder: 'Pilih status',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, ubah',
+      cancelButtonText: 'Batal',
+      preConfirm: (status) => {
+        if (!status) {
+          Swal.showValidationMessage('Pilih status dulu ya.');
+          return false;
+        }
+        return status;
+      },
+    });
+
+    if (!isConfirmed) return;
+
+    const isActive = status === "aktif";
+
+    try {
+      await Promise.all(
+        selectedChallenges.map(challenge =>
+          fetch(`${config.BASE_URL}/api/challenges/${challenge.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${auth.user.token}`,
+            },
+            body: JSON.stringify({ changeStatus: isActive }),
+          })
+        )
+      );
+
+      await fetchChallenges();
+      Swal.fire('Berhasil!', `${total} challenge berhasil diperbarui.`, 'success');
+      selected.value = []
+    } catch (err) {
+      Swal.fire('Gagal', `Terjadi kesalahan: ${err.message}`, 'error');
     }
   };
 

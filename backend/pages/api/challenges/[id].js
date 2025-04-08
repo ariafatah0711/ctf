@@ -5,6 +5,7 @@ import { validate as validateUUID } from "uuid";
 import {
   getChallengeDetailWithSolvers,
   updateChallenge,
+  updateChallengeActiveStatus,
   deleteChallengeById,
   getChallengeWithFlagById,
 } from "@/lib/supabase/challengesHelper";
@@ -40,10 +41,18 @@ export default async function handler(req, res) {
         return res.status(200).json(result);
       }
     });
-  } else if (req.method === "PUT" || req.method === "PATCH") {
+  } else if (req.method === "PUT") {
     verifyToken(req, res, async () => {
       requireRole(["admin", "maker"])(req, res, async () => {
-        const { title, description, difficulty, flag, url, tags, hint, active } = req.body;
+        const { title, description, difficulty, flag, url, tags, hint, active, changeStatus } = req.body;
+        if (typeof changeStatus !== "undefined") {
+          const result = await updateChallengeActiveStatus(id, changeStatus);
+          if (result?.error) {
+            return res.status(400).json({ message: result.error });
+          }
+          return res.status(200).json({ message: "Challenge berhasil diperbarui!", data: result.data });
+        }
+
         const result = await updateChallenge(id, { title, description, difficulty, flag, url, tags, hint, active });
 
         if (result?.notFound) return res.status(404).json({ message: result.error });

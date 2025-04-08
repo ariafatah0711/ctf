@@ -237,6 +237,20 @@ export async function updateChallenge(id, { title, description, difficulty, flag
   return { data };
 }
 
+export async function updateChallengeActiveStatus(id, status) {
+  const { exists, error: findError } = await checkIfChallengeExists(id);
+  if (findError) return { error: findError.message };
+  if (!exists) return { error: "Challenge tidak ditemukan.", notFound: true };
+
+  // Pastikan status yang diterima adalah boolean
+  const updatedActiveStatus = status === "true" || status === true; // Mengonversi menjadi boolean
+
+  const { data, error } = await supabase.from("challenges").update({ active: updatedActiveStatus }).eq("id", id);
+
+  if (error) return { error: error.message };
+  return { data }; // Bisa dihapus jika tidak ingin mengembalikan data
+}
+
 export async function deleteChallengeById(id) {
   const { exists, error: findError } = await checkIfChallengeExists(id);
   if (findError) return { error: findError.message };
