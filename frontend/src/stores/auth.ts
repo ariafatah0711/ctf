@@ -2,44 +2,46 @@ import GlobalSwal from '../utills/GlobalSwal';
 import { defineStore } from 'pinia';
 import config from "../config";
 import router from '../router';
+import { encryptUserData, decryptUserData } from '../utills/crypto';
 
 const Swal = GlobalSwal;
 
+function getUserFromLocalStorage() {
+  const encrypted = localStorage.getItem('user');
+  return encrypted ? decryptUserData(encrypted) || {} : {};
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: JSON.parse(sessionStorage.getItem('user') || '{}'), // ambil data user sebagai objek
-    isAuthenticated: !!localStorage.getItem('token'),
+    user: getUserFromLocalStorage(),
     isAuthChecked: false,
     isCheckingAuth: false,
   }),
+  getters: {
+    isAuthenticated: (state) => !!state.user.token,
+  },
   actions: {
     login(session: any, user: any) {
-      // simpan user sebagai objek di sessionStorage
+      console.log(user)
       this.user = {
         token: session.access_token,
-        username: user.username || '',
-        role: user.role || '',
-        avatar: user.avatar || '',
+        username: user.user_metadata.display_name || '',
+        role: user.user_metadata.role || '',
+        avatar: user.user_metadata.avatar || '',
       };
 
-      this.isAuthenticated = true;
-
-      localStorage.setItem('token', session.access_token);
-      sessionStorage.setItem('user', JSON.stringify(this.user)); // simpan objek user
+      const encrypted = encryptUserData(this.user);
+      localStorage.setItem('user', JSON.stringify(encrypted));
     },
 
     logout() {
-      this.user = {}; // reset data user
-      this.isAuthenticated = false;
-
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('user'); // hapus objek user
-
+      this.user = {};
+      localStorage.removeItem('user');
       router.push('/login');
     },
 
     async checkAuth() {
-      if (this.isCheckingAuth) return; // prevent double call
+      if (this.isCheckingAuth) return;
       this.isCheckingAuth = true;
 
       // Periksa token di localStorage
@@ -48,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
         return false;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 250)); // tambahkan delay jika perlu
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       try {
         const res = await fetch(`${config.BASE_URL}/api/users/auth`, {
@@ -73,15 +75,13 @@ export const useAuthStore = defineStore('auth', {
           username: data.user.username,
           role: data.user.role,
           avatar: data.user.avatar || '',
-          token: this.user.token, // token tetap sama
+          token: this.user.token,
         };
 
-        this.isAuthenticated = true;
-
-        sessionStorage.setItem('user', JSON.stringify(this.user));
+        const encrypted = encryptUserData(this.user);
+        localStorage.setItem('user', JSON.stringify(encrypted));
 
         return true;
-
       } catch (err) {
         if (!navigator.onLine) {
           await Swal.fire({

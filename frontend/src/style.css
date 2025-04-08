@@ -41,7 +41,7 @@ a {
 /* Scrollbar global */
 body {
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: scroll !important;
   scroll-behavior: smooth;
 }
 

@@ -17,3 +17,18 @@ export function decryptAuthData(ciphertext: string): { email: string; password: 
     return null;
   }
 }
+
+export function encryptUserData(user: any): string {
+  const data = JSON.stringify(user);
+  return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
+}
+
+export function decryptUserData(ciphertext: string): any | null {
+  try {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(decrypted);
+  } catch {
+    return null;
+  }
+}
