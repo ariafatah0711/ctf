@@ -118,6 +118,7 @@
 
       if (!res.ok) throw new Error("Gagal ambil challenge");
       const json = await res.json();
+      console.log(json)
 
       challenges.value = json.data;
       totalPages.value = json.totalPages;

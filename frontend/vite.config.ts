@@ -14,11 +14,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src') // ← sesuaikan dengan tsconfig
     }
   },
-  // build: {
-  //   terserOptions: {
-  //     compress: {
-  //       drop_console: true, // Menghapus semua console.log di build produksi
-  //     },
-  //   },
-  // },
 })

@@ -120,10 +120,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
-  if (to.meta.requiresAuth) {
-    await auth.checkAuth();
-    console.log("check auth")
-  }
   // console.log(auth.user.username, auth.user.role)
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
@@ -171,7 +167,34 @@ router.beforeEach(async (to, _from, next) => {
     return;
   }
 
+  // if (to.meta.requiresAuth) {
+  //   auth.checkAuth();
+  //   console.log("check auth")
+  // }
+
   next();
+});
+
+router.afterEach((to, _from) => {
+  const auth = useAuthStore();
+
+  setTimeout(() => {
+    if (to.meta.requiresAuth) {
+      auth.checkAuth();
+      console.log("check");
+    }
+
+    if (to.meta.requiresAuth && !auth.isAuthenticated) {
+      Swal.fire({
+        title: 'Akses Dibatasi',
+        text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.',
+        icon: 'warning',
+        confirmButtonText: 'Login',
+      }).then(() => {
+        router.push('/login');
+      });
+    }
+  }, 3000);
 });
 
 // router.beforeEach(async (to, _from, next) => {
