@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen fixed w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+  <div class="min-h-screen fixed w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 pb-30">
     <div class="w-full max-w-md">
       <AuthForm
         title="Forgot Password"

@@ -17,7 +17,7 @@
     </div>
   </div> -->
 
-  <div v-if="showResetForm" class="min-h-screen fixed w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+  <div v-if="showResetForm" class="min-h-screen fixed w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 pb-30">
     <div class="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded shadow">
       <h2 class="text-2xl font-bold mb-4 text-center">Reset Password</h2>
       <form @submit.prevent="handleReset">

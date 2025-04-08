@@ -118,7 +118,7 @@
 </script> -->
 
 <template>
-  <div class="min-h-screen w-full fixed flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+  <div class="min-h-screen w-full fixed flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 pb-30">
     <div class="max-w-md w-full">
       <AuthForm
         v-if="!setupCompleted"
