@@ -10,6 +10,8 @@
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
         <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add Challenge" color="blue" />
+        <IconButton @click="handleBatchAddChallenges" :icon="DocumentArrowUpIcon" label="Batch Add" color="green" />
+        <IconButton @click="handleBatchDelete" :icon="TrashIcon" label="Delete" color="red" />
       </div>
     </div>
 
@@ -28,6 +30,8 @@
           :rows="challenges"
           @edit="showEditChallengeModal"
           @delete="deleteChallenge"
+          :selected="selected"
+          @update:selected="selected = $event"
         >
           <template #challenge="{ row }">
             <div class="flex flex-col">
@@ -61,7 +65,7 @@
   import Navbar from '../components/Navbar.vue'
   import Breadcrumbs from "../components/Breadcrumbs.vue"
   import IconButton from "../components/IconButton.vue"
-  import { PlusIcon } from "@heroicons/vue/24/solid"
+  import { PlusIcon, TrashIcon, DocumentArrowUpIcon } from "@heroicons/vue/24/solid";
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
   import Pagination from '../components/Pagination.vue'
@@ -76,6 +80,7 @@
   const page = ref(1)
   const limit = 25
   const totalPages = ref(1)
+  const selected = ref<number[]>([])
 
   const levelMap = {
     1: 'Easy 🟢',
@@ -312,4 +317,151 @@
       swalError("Terjadi kesalahan saat mengambil data challenge.", err.message || '');
     }
   };
+
+  const handleBatchAddChallenges = async () => {
+    const { value: csv } = await Swal.fire({
+      title: 'Batch Tambah Challenge',
+      input: 'textarea',
+      inputLabel: 'Masukkan daftar challenge (CSV: title,description,flag,url,difficulty,tags,hint)',
+      inputPlaceholder: `Contoh:\nSQL Injection,Cari celah SQL,flag{sql},http://ctf.local/sql,1,web,hati-hati\nXSS,Cari XSS,flag{xss},http://ctf.local/xss,2,web,javascript itu penting`,
+      inputAttributes: {
+        rows: '8',
+      },
+      showCancelButton: true,
+      preConfirm: (value) => {
+        const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
+        const data: any[] = [];
+
+        for (const line of lines) {
+          const parts = line.split(',').map(p => p.trim());
+          if (parts.length < 6) {
+            Swal.showValidationMessage(`Baris tidak valid (kurang field): "${line}"`);
+            return;
+          }
+
+          const [title, description, flag, url, difficultyRaw, tagsRaw, hintRaw = ''] = parts;
+
+          const difficulty = Number(difficultyRaw);
+          if (!title || !description || !flag || !url || !difficulty || isNaN(difficulty)) {
+            Swal.showValidationMessage(`Baris tidak valid atau ada field kosong: "${line}"`);
+            return;
+          }
+
+          const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+          const challenge = {
+            title,
+            description,
+            flag,
+            url,
+            difficulty,
+            tags,
+            hint: hintRaw || ''
+          };
+
+          data.push(challenge);
+        }
+
+        return data;
+      }
+    });
+
+    if (csv && Array.isArray(csv)) {
+      try {
+        const results = await Promise.all(csv.map(async (challenge) => {
+          const res = await fetch(`${config.BASE_URL}/api/challenges`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.user.token}`,
+            },
+            body: JSON.stringify(challenge),
+          });
+
+          const result = await res.json();
+          if (!res.ok) throw new Error(result.message || `Gagal menambahkan: ${challenge.title}`);
+          return result;
+        }));
+
+        await swalSuccess(`✅ ${results.length} challenge berhasil ditambahkan!`);
+        await fetchChallenges();
+      } catch (err: any) {
+        console.error(err);
+        swalError("❌ Gagal menambahkan beberapa challenge.", err.message || '');
+      }
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    if (selected.value.length === 0) {
+      alert('Tidak ada challenge yang dipilih.')
+      return
+    }
+
+    const selectedChallenges = selected.value.map(i => challenges.value[i])
+    const idsToDelete = selectedChallenges.map(c => c.id)
+    const total = idsToDelete.length
+
+    if (total === 0) {
+      Swal.fire('Oops', 'Tidak ada challenge yang dipilih.', 'warning')
+      return
+    }
+
+    let confirmText = 'delete challenges'
+    let warningMessage = `Ketik '${confirmText}' untuk menghapus ${total} challenge.`
+
+    if (total > 5) {
+      confirmText = 'permanently delete challenges'
+      warningMessage = `⚠️ Kamu akan menghapus *banyak challenge secara permanen*.\n\nKetik '${confirmText}' untuk melanjutkan.`
+    }
+
+    const { value: input } = await Swal.fire({
+      title: 'Konfirmasi Hapus',
+      input: 'text',
+      inputLabel: warningMessage,
+      inputPlaceholder: `Ketik: ${confirmText}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal',
+      preConfirm: (val) => {
+        if (val !== confirmText) {
+          Swal.showValidationMessage(`Kamu harus mengetik '${confirmText}'`)
+        }
+      }
+    })
+
+    if (input !== confirmText) return
+
+    console.log('Batch deleting:', idsToDelete)
+
+    try {
+      const deleteRequests = idsToDelete.map(id =>
+        fetch(`${config.BASE_URL}/api/challenges/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${auth.user.token}`,
+          },
+        })
+      )
+
+      const responses = await Promise.all(deleteRequests)
+
+      const hasFailed = responses.some(res => !res.ok)
+
+      if (hasFailed) {
+        const errors = await Promise.all(responses.map(res => res.json()))
+        const failedMessages = errors.map((r, i) =>
+          responses[i].ok ? null : r.message || `Gagal hapus challenge dengan ID ${idsToDelete[i]}`
+        ).filter(Boolean)
+
+        throw new Error(failedMessages.join(', '))
+      }
+
+      Swal.fire('Dihapus!', 'Semua challenge berhasil dihapus.', 'success')
+      await fetchChallenges()
+      selected.value = []
+    } catch (err: any) {
+      Swal.fire('Error', `Gagal hapus challenge: ${err.message}`, 'error')
+    }
+  }
 </script>

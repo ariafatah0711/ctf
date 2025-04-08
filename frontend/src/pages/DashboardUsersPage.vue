@@ -10,7 +10,8 @@
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
         <IconButton @click="handleAddUser" :icon="UserPlusIcon" label="Add User" color="blue" />
-        <IconButton @click="handleBatchAddUsers" :icon="UsersIcon" label="Batch Add" color="green" />
+        <IconButton @click="handleBatchAddUsers" :icon="UserGroupIcon" label="Batch Add" color="green" />
+        <IconButton @click="handleBatchDelete" :icon="UserMinusIcon" label="Delete" color="red" />
       </div>
     </div>
 
@@ -21,6 +22,7 @@
     <div v-else>
       <div v-if="members.length > 0" class="overflow-x-auto mt-4">
         <BaseTable
+          v-model:selected="selected"
           :columns="[
             { label: 'Member', key: 'member', grow: true },
             { label: 'Role', key: 'role', width: 'w-25' },
@@ -29,6 +31,8 @@
           :rows="users"
           @edit="handleEdit"
           @delete="handleDelete"
+          :selected="selectedUsers"
+          @update:selected="(val) => selectedUsers = val"
         >
           <template #member="{ row }">
             <div class="flex items-center gap-3">
@@ -64,7 +68,7 @@ import Navbar from '../components/Navbar.vue'
 import IconButton from "../components/IconButton.vue"
 import Breadcrumbs from "../components/Breadcrumbs.vue"
 import BaseTable  from "../components/BaseTable.vue"
-import { UserPlusIcon, UsersIcon } from '@heroicons/vue/24/solid'
+import { UserPlusIcon, UserGroupIcon, UserMinusIcon } from "@heroicons/vue/24/solid";
 import GlobalSwal from '../utills/GlobalSwal'
 import Pagination from '../components/Pagination.vue'
 
@@ -78,6 +82,7 @@ const route = useRoute()
 const page = ref(1)
 const limit = 25
 const totalPages = ref(1)
+const selected = ref<number[]>([])
 
 const fetchUsers = async () => {
   loading.value = true
@@ -220,14 +225,8 @@ const handleDelete = async (index: number) => {
   const user = members.value[index]
 
   const confirm = await Swal.fire({
-    title: 'Yakin?',
-    text: `Hapus user ${user.name}?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Ya, hapus!',
-    cancelButtonText: 'Batal',
-  })
-
+    title: 'Yakin?', text: `Hapus user ${user.name}?`, icon: 'warning',
+    showCancelButton: true, confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal'})
   if (!confirm.isConfirmed) return
 
   try {
@@ -337,6 +336,82 @@ const handleBatchAddUsers = async () => {
 
   if (csv && Array.isArray(csv)) {
     await submitUserPayload({ users: csv })
+  }
+}
+
+const handleBatchDelete = async () => {
+  if (selected.value.length === 0) {
+    alert('No users selected.')
+    return
+  }
+  
+  const selectedUsers = selected.value.map(i => users.value[i])
+  const idsToDelete = selectedUsers.map(u => u.id)
+  const total = idsToDelete.length
+
+  if (total === 0) {
+    Swal.fire('Oops', 'Tidak ada user yang dipilih.', 'warning')
+    return
+  }
+
+  let confirmText = 'delete users'
+  let warningMessage = `Ketik '${confirmText}' untuk menghapus ${total} user.`
+
+  if (total > 5) {
+    confirmText = 'permanently delete users'
+    warningMessage = `⚠️ Kamu akan menghapus *banyak user secara permanen*.\n\nKetik '${confirmText}' untuk melanjutkan.`
+  }
+
+  const { value: input } = await Swal.fire({
+    title: 'Konfirmasi Hapus',
+    input: 'text',
+    inputLabel: warningMessage,
+    inputPlaceholder: `Ketik: ${confirmText}`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Hapus',
+    cancelButtonText: 'Batal',
+    preConfirm: (val) => {
+      if (val !== confirmText) {
+        Swal.showValidationMessage(`Kamu harus mengetik '${confirmText}'`)
+      }
+    }
+  })
+
+  if (input !== confirmText) return
+
+  console.log('Batch deleting:', idsToDelete)
+
+  try {
+    // Gunakan Promise.all untuk menghapus secara paralel
+    const deleteRequests = idsToDelete.map(id =>
+      fetch(`${config.BASE_URL}/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+      })
+    )
+
+    const responses = await Promise.all(deleteRequests)
+
+    // Cek jika ada request yang gagal
+    const hasFailed = responses.some(res => !res.ok)
+
+    if (hasFailed) {
+      const errors = await Promise.all(responses.map(res => res.json()))
+      const failedMessages = errors.map((r, i) =>
+        responses[i].ok ? null : r.message || `Gagal hapus user dengan ID ${idsToDelete[i]}`
+      ).filter(Boolean)
+
+      throw new Error(failedMessages.join(', '))
+    }
+
+    Swal.fire('Dihapus!', 'Semua user berhasil dihapus.', 'success')
+    await fetchUsers()
+    selected.value = []
+  } catch (err: any) {
+    Swal.fire('Error', `Gagal hapus user: ${err.message}`, 'error')
   }
 }
 </script>
