@@ -1,4 +1,5 @@
-import Swal from 'sweetalert2'
+import GlobalSwal from "./GlobalSwal"
+const Swal = GlobalSwal
 
 export const swalSuccess = (
   title: string = 'Berhasil!',

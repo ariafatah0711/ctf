@@ -84,7 +84,7 @@ const fetchUsers = async () => {
   try {
     const res = await fetch(`${config.BASE_URL}/api/users?page=${page.value}&limit=${limit}`, {
       headers: {
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
     })
     const data = await res.json()
@@ -199,7 +199,7 @@ const handleEdit = async (index: number) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -234,7 +234,7 @@ const handleDelete = async (index: number) => {
     const res = await fetch(`${config.BASE_URL}/api/users/${user.id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
     })
 
@@ -256,7 +256,7 @@ const submitUserPayload = async (payload: object) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
       body: JSON.stringify(payload),
     })

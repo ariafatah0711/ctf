@@ -118,56 +118,88 @@ const router = createRouter({
   routes,
 });
 
+// router.beforeEach(async (to, _from, next) => {
+//   const auth = useAuthStore();
+//   // console.log(auth.user.username, auth.user.role)
+
+//   if (to.meta.requiresAuth && !auth.isAuthenticated) {
+//     await Swal.fire({
+//       title: 'Akses Dibatasi',
+//       text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.',
+//       icon: 'warning',
+//       confirmButtonText: 'Login',
+//     });
+//     next('/login');
+//     return; 
+//   }
+
+//   // Untuk halaman yang membutuhkan guest dan pengguna sudah login
+//   if (to.meta.requiresGuest && auth.isAuthenticated) {
+//     Swal.fire({
+//       title: 'Anda sudah login!',
+//       text: 'Anda sudah login. Silakan keluar terlebih dahulu jika ingin mendaftar ulang.',
+//       icon: 'info',
+//       confirmButtonText: 'OK'
+//     })
+//     next('/');
+//     return;
+//   }
+
+//   if (to.meta.requiresAdmin && auth.user.role !== 'admin') {
+//       await Swal.fire({
+//         title: 'Akses Dibatasi',
+//         text: 'Hanya admin yang dapat mengakses halaman ini.',
+//         icon: 'error',
+//         confirmButtonText: 'OK'
+//       });
+//       next('/dashboard');
+//       return;
+//   }
+
+//   if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.user.role)) {
+//     Swal.fire({
+//       title: 'Akses Dibatasi',
+//       text: 'Halaman ini hanya bisa diakses oleh pengguna dengan role maker atau admin.',
+//       icon: 'warning',
+//       confirmButtonText: 'OK',
+//     })
+//     next('/dashboard');
+//     return;
+//   }
+
+//   next();
+// });
+
 router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
-  // console.log(auth.username, auth.role)
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    await Swal.fire({
-      title: 'Akses Dibatasi',
-      text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.',
-      icon: 'warning',
-      confirmButtonText: 'Login',
-    });
-    next('/login');
-    return; 
+  if (to.meta.requiresAuth) {
+    console.log("check auth")
+    const valid = await auth.checkAuth();
+    if (!valid) {
+      await Swal.fire({title: 'Akses Dibatasi', text: 'Anda perlu login terlebih dahulu untuk mengakses halaman ini.', icon: 'warning', confirmButtonText: 'Login',});
+      return next('/login');
+    }
   }
 
   // Untuk halaman yang membutuhkan guest dan pengguna sudah login
   if (to.meta.requiresGuest && auth.isAuthenticated) {
-    Swal.fire({
-      title: 'Anda sudah login!',
-      text: 'Anda sudah login. Silakan keluar terlebih dahulu jika ingin mendaftar ulang.',
-      icon: 'info',
-      confirmButtonText: 'OK'
-    })
-    next('/');
-    return;
+    Swal.fire({title: 'Anda sudah login!', text: 'Silakan keluar terlebih dahulu jika ingin mendaftar ulang.', icon: 'info', confirmButtonText: 'OK'});
+    return next('/');
   }
 
-  if (to.meta.requiresAdmin && auth.role !== 'admin') {
-      await Swal.fire({
-        title: 'Akses Dibatasi',
-        text: 'Hanya admin yang dapat mengakses halaman ini.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-      next('/dashboard');
-      return;
+  if (to.meta.requiresAdmin && auth.user.role !== 'admin') {
+    await Swal.fire({title: 'Akses Dibatasi', text: 'Hanya admin yang dapat mengakses halaman ini.', icon: 'error', confirmButtonText: 'OK'});
+    return next('/dashboard');
   }
 
-  if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.role)) {
-    Swal.fire({
-      title: 'Akses Dibatasi',
-      text: 'Halaman ini hanya bisa diakses oleh pengguna dengan role maker atau admin.',
-      icon: 'warning',
-      confirmButtonText: 'OK',
-    })
-    next('/dashboard');
-    return;
+  if (to.meta.requiresMaker && !['maker', 'admin'].includes(auth.user.role)) {
+    await Swal.fire({title: 'Akses Dibatasi', text: 'Halaman ini hanya untuk maker atau admin.', icon: 'warning', confirmButtonText: 'OK',});
+    return next('/dashboard');
   }
 
   next();
 });
+
 
 export default router;

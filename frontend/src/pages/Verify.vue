@@ -14,3 +14,17 @@
       </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import config from '../config'
+import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+
+const router = useRouter()
+
+onMounted(() => {
+  if (!config.VERIV_EMAIL) {
+    router.push('/login')
+  }
+})
+</script>

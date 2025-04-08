@@ -24,15 +24,15 @@
             <Menu as="div" class="relative">
               <MenuButton class="text-sm hover:text-blue-300 transition font-medium flex items-center space-x-2">
                 <img
-                  v-if="auth.avatar"
-                  :src="auth.avatar"
+                  v-if="auth.user.avatar"
+                  :src="auth.user.avatar"
                   alt="Avatar"
                   class="w-8 h-8 rounded-full object-cover"
                 />
                 <span v-else class="w-8 h-8 bg-gray-500 text-white flex items-center justify-center rounded-full">
-                  {{ auth.username.charAt(0).toUpperCase() }}
+                  {{ auth.user.username.charAt(0).toUpperCase() }}
                 </span>
-                <span>{{ auth.username }}</span>
+                <span>{{ auth.user.username }}</span>
               </MenuButton>
               <transition
                 enter-active-class="transition duration-100 ease-out"
@@ -47,13 +47,13 @@
                 >
                   <MenuItem v-slot="{ active }">
                     <RouterLink
-                      :to="`/profile/${auth.username}`"
+                      :to="`/profile/${auth.user.username}`"
                       :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
                     >
                       Profile
                     </RouterLink>
                   </MenuItem>
-                  <MenuItem v-if="auth.role === 'admin'" v-slot="{ active }">
+                  <MenuItem v-if="auth.user.role === 'admin'" v-slot="{ active }">
                     <RouterLink
                       to="/dashboard/users"
                       :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
@@ -61,7 +61,7 @@
                       Dashboard Users
                     </RouterLink>
                   </MenuItem>
-                  <MenuItem v-if="auth.role === 'admin' || auth.role === 'maker'" v-slot="{ active }">
+                  <MenuItem v-if="auth.user.role === 'admin' || auth.user.role === 'maker'" v-slot="{ active }">
                     <RouterLink
                       to="/dashboard/challenges"
                       :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
@@ -114,9 +114,9 @@
       <RouterLink to="/about" class="block hover:text-blue-400">About</RouterLink>
 
       <div v-if="auth.isAuthenticated" class="pt-2 space-y-1 border-t border-gray-700">
-        <RouterLink :to="`/profile/${auth.username}`" class="block hover:text-blue-300">Profile</RouterLink>
-        <RouterLink v-if="auth.role === 'admin'" to="/dashboard/users" class="block hover:text-blue-300">Dashboard Users</RouterLink>
-        <RouterLink v-if="auth.role === 'admin' || auth.role === 'maker'" to="/dashboard/challenges" class="block hover:text-blue-300">Dashboard Challenges</RouterLink>
+        <RouterLink :to="`/profile/${auth.user.username}`" class="block hover:text-blue-300">Profile</RouterLink>
+        <RouterLink v-if="auth.user.role === 'admin'" to="/dashboard/users" class="block hover:text-blue-300">Dashboard Users</RouterLink>
+        <RouterLink v-if="auth.user.role === 'admin' || auth.user.role === 'maker'" to="/dashboard/challenges" class="block hover:text-blue-300">Dashboard Challenges</RouterLink>
         <button @click="logout" class="block w-full text-left hover:text-red-400">Logout</button>
       </div>
       <div v-else class="pt-2 space-y-1 border-t border-gray-700">
@@ -144,18 +144,13 @@
   const router = useRouter();
   const app_name = packageInfo.name;
 
-  onMounted(async () => {
-    if (auth.token && !auth.isAuthChecked) {
-      await auth.checkAuth();
-    }
-  });
+  // onMounted(async () => {
+  //   if (auth.user.token && !auth.isAuthChecked) {
+  //     await auth.checkAuth();
+  //   }
+  // });
 
   const isOpen = ref(false);
-
-  // const logout = () => {
-  //   auth.logout();
-  //   router.push('/login');
-  // };
 
   const logout = () => {
     Swal.fire({

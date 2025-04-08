@@ -82,7 +82,7 @@
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=${limit}`, {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
       });
 

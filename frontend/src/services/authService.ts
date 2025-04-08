@@ -1,5 +1,6 @@
 // src/services/authService.ts
-import config from '../config';  
+import config from '../config';
+import { swalSuccess } from '../utills/swalAlert';
 
 export interface LoginPayload {
   email: string;
@@ -24,6 +25,8 @@ export async function login(payload: LoginPayload) {
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || 'Login gagal');
+  } else {
+    await swalSuccess("Login Berhasil");
   }
 
   return res.json(); // { message, token }
@@ -41,6 +44,8 @@ export async function register(payload: RegisterPayload) {
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || 'Registrasi gagal');
+  } else {
+    await swalSuccess("Register Berhasil");
   }
 
   return res.json(); // { message }
@@ -56,6 +61,8 @@ export async function forgotPassword(email: string) {
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || 'Gagal mengirim email reset password');
+  } else {
+    await swalSuccess("Berhasil Mengirim Email");
   }
 
   return res.json(); // { message }

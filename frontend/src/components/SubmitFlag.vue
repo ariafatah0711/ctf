@@ -31,7 +31,7 @@
   const flag = ref('');
   const loading = ref(false);
   const auth = useAuthStore();
-  const token = auth.token;
+  const token = auth.user.token;
   const format_flag = ref(config.FLAG_FORMAT);
   
   const handleSubmit = async () => {

@@ -88,7 +88,7 @@
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges?page=${page.value}&limit=${limit}`, {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
       })
       const data = await res.json()
@@ -135,7 +135,7 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
         body: JSON.stringify(challengeData),
       });
@@ -172,7 +172,7 @@
       const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
       });
 
@@ -193,7 +193,7 @@
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
         body: JSON.stringify(updatedData),
       });
@@ -294,7 +294,7 @@
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.id}?detail=true`, {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
       });
 

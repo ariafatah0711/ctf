@@ -112,7 +112,7 @@
 
       const res = await fetch(`${config.BASE_URL}/api/challenges?${params.toString()}`, {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.user.token}`,
         },
       });
 

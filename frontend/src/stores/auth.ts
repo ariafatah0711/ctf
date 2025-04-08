@@ -7,54 +7,56 @@ const Swal = GlobalSwal;
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || '',
-    username: sessionStorage.getItem('username') || '',
-    role: sessionStorage.getItem('role') || '',
-    avatar: sessionStorage.getItem('avatar') || '',
+    user: JSON.parse(sessionStorage.getItem('user') || '{}'), // ambil data user sebagai objek
     isAuthenticated: !!localStorage.getItem('token'),
     isAuthChecked: false,
+    isCheckingAuth: false,
   }),
   actions: {
     login(session: any, user: any) {
-      this.token = session.access_token;
-      this.username = user.username || '';
-      this.role = user.role || '';
-      this.avatar = user.avatar || '';
+      // simpan user sebagai objek di sessionStorage
+      this.user = {
+        token: session.access_token,
+        username: user.username || '',
+        role: user.role || '',
+        avatar: user.avatar || '',
+      };
+
       this.isAuthenticated = true;
 
       localStorage.setItem('token', session.access_token);
-      sessionStorage.setItem('username', user.username);
-      sessionStorage.setItem('role', user.role || '');
-      sessionStorage.setItem('avatar', user.avatar || ''); 
+      sessionStorage.setItem('user', JSON.stringify(this.user)); // simpan objek user
     },
 
     logout() {
-      this.token = '';
-      this.username = '';
-      this.role = '';
+      this.user = {}; // reset data user
       this.isAuthenticated = false;
 
       localStorage.removeItem('token');
-      sessionStorage.removeItem('username');
-      sessionStorage.removeItem('role');
-      sessionStorage.removeItem('avatar'); 
+      sessionStorage.removeItem('user'); // hapus objek user
 
       router.push('/login');
     },
 
     async checkAuth() {
-      if (!this.token) {
+      if (this.isCheckingAuth) return; // prevent double call
+      this.isCheckingAuth = true;
+
+      // Periksa token di localStorage
+      if (!this.user.token) {
         this.logout();
         return false;
       }
 
+      await new Promise(resolve => setTimeout(resolve, 250)); // tambahkan delay jika perlu
+
       try {
         const res = await fetch(`${config.BASE_URL}/api/users/auth`, {
-          headers: { Authorization: `Bearer ${this.token}` },
+          headers: { Authorization: `Bearer ${this.user.token}` },
         });
 
         if (res.status === 401 || res.status === 403) {
-          Swal.fire({
+          await Swal.fire({
             icon: 'warning',
             title: 'Sesi Habis',
             text: 'Sesi login kamu telah berakhir. Silakan login kembali.',
@@ -65,29 +67,35 @@ export const useAuthStore = defineStore('auth', {
         }
 
         const data = await res.json();
-        console.log(data)
 
-        this.username = data.user.username;
-        this.role = data.user.role;
-        this.avatar = data.user.avatar || '';
+        // Update objek user
+        this.user = {
+          username: data.user.username,
+          role: data.user.role,
+          avatar: data.user.avatar || '',
+          token: this.user.token, // token tetap sama
+        };
+
         this.isAuthenticated = true;
 
-        sessionStorage.setItem('username', data.user.username);
-        sessionStorage.setItem('role', data.user.role);
-        sessionStorage.setItem('avatar', data.user.avatar || '');
+        sessionStorage.setItem('user', JSON.stringify(this.user));
 
         return true;
 
       } catch (err) {
-        Swal.fire({
-          icon: navigator.onLine ? 'error' : 'warning',
-          title: navigator.onLine ? 'Server Error' : 'Koneksi Terputus',
-          text: navigator.onLine ? 'Gagal menghubungi server. Silakan coba lagi nanti.' : 'Tidak ada koneksi internet.',
-          confirmButtonText: 'Oke',
-        });
-        this.logout();
+        if (!navigator.onLine) {
+          await Swal.fire({
+            icon: 'warning',
+            title: 'Koneksi Terputus',
+            text: 'Tidak ada koneksi internet.',
+            confirmButtonText: 'Oke',
+          });
+        } else {
+          console.error('checkAuth error:', err);
+        }
         return false;
       } finally {
+        this.isCheckingAuth = false;
         this.isAuthChecked = true;
       }
     }

@@ -143,7 +143,7 @@ const fetchChallenge = async (id: string) => {
   try {
     const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
       headers: {
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
     });
     const data = await res.json();

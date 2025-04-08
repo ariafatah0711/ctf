@@ -74,7 +74,7 @@
   const error = ref<string | null>(null);
 
   const auth = useAuthStore();
-  const token = auth.token;
+  const token = auth.user.token;
 
   onMounted(async () => {
     try {

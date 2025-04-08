@@ -222,7 +222,7 @@ const fetchDashboardStats = async () => {
   try {
     const res = await fetch(`${config.BASE_URL}/api/stats`, {
       headers: {
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.user.token}`,
       },
     })
     const data = await res.json()
