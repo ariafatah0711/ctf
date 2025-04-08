@@ -224,7 +224,6 @@ const handleDownload = async () => {
 
 // Function to check if the URL points to a file
 const isFile = (url: string): boolean => {
-  console.log(url)
   return /\.(pdf|zip|txt|png|jpg|jpeg|mp4|mp3|docx)$/i.test(url);
 };
 </script>

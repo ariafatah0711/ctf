@@ -30,7 +30,8 @@
                   class="w-8 h-8 rounded-full object-cover"
                 />
                 <span v-else class="w-8 h-8 bg-gray-500 text-white flex items-center justify-center rounded-full">
-                  {{ auth.user.username.charAt(0).toUpperCase() }}
+                  <!-- {{ auth.user.username.charAt(0).toUpperCase() }} -->
+                  {{ auth.user?.username?.charAt(0).toUpperCase() || 'N/A' }}
                 </span>
                 <span>{{ auth.user.username }}</span>
               </MenuButton>
