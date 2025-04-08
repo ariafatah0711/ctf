@@ -106,7 +106,13 @@ const routes = [
   },
   {
     path: '/profile/:username',
-    name: 'ProfilePage',
+    name: 'ProfilePage By Username',
+    component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/profile',
+    name: 'ProfilePage ME',
     component: ProfilePage,
     meta: { requiresAuth: true },
   },

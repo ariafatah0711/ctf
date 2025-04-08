@@ -48,7 +48,7 @@
                 >
                   <MenuItem v-slot="{ active }">
                     <RouterLink
-                      :to="`/profile/${auth.user.username}`"
+                      :to="`/profile`"
                       :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']"
                     >
                       Profile
@@ -115,7 +115,7 @@
       <RouterLink to="/about" class="block hover:text-blue-400">About</RouterLink>
 
       <div v-if="auth.isAuthenticated" class="pt-2 space-y-1 border-t border-gray-700">
-        <RouterLink :to="`/profile/${auth.user.username}`" class="block hover:text-blue-300">Profile</RouterLink>
+        <RouterLink :to="`/profile`" class="block hover:text-blue-300">Profile</RouterLink>
         <RouterLink v-if="auth.user.role === 'admin'" to="/dashboard/users" class="block hover:text-blue-300">Dashboard Users</RouterLink>
         <RouterLink v-if="auth.user.role === 'admin' || auth.user.role === 'maker'" to="/dashboard/challenges" class="block hover:text-blue-300">Dashboard Challenges</RouterLink>
         <button @click="logout" class="block w-full text-left hover:text-red-400">Logout</button>

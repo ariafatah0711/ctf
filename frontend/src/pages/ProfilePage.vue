@@ -67,7 +67,8 @@
   import config from '../config';
 
   const route = useRoute();
-  const username = route.params.username as string;
+  // const username = route.params.username as string;
+  const username = route.params.username as string | undefined;
 
   const user = ref<any>(null);
   const loading = ref(true);
@@ -78,7 +79,8 @@
 
   onMounted(async () => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/users?username=${username}`, {
+      const targetUsername = username ?? auth.user.username;
+      const res = await fetch(`${config.BASE_URL}/api/users?username=${targetUsername}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
