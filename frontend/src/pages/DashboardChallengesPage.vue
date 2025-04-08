@@ -82,6 +82,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Challenge Form -->
+  <Teleport to="body">
+    <div v-if="showForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <ChallengeForm
+        :type="formType"
+        :initialData="formData"
+        @submit="(data) => {
+          if (formType === 'add') {
+            handleAddChallenge(data)
+          } else {
+            handleEditChallenge(data)
+          }
+          showForm.value = false
+        }"
+      />
+      <button
+        @click="showForm = false"
+        class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
+        aria-label="Tutup form">❌</button>
+      </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -94,6 +116,7 @@
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
   import Pagination from '../components/Pagination.vue'
+  import ChallengeForm from "../components/ChallengeForm.vue"
   import { swalSuccess, swalError } from '../utills/swalAlert'
 
   const Swal = GlobalSwal
@@ -107,11 +130,22 @@
   const totalPages = ref(1)
   const selected = ref<number[]>([])
 
+  const showForm = ref(false);
+  const formType = ref('add');
+  const formData = ref({});
+
   const levelMap = {
     1: 'Easy 🟢',
     2: 'Medium 🟡',
     3: 'Hard 🔴'
   }
+
+  function openForm(type = 'add', data = {}) {
+    formType.value = type;
+    formData.value = data;
+    showForm.value = true;
+  }
+
 
   const fetchChallenges = async () => {
     loading.value = true
@@ -150,9 +184,15 @@
     }
   }
 
-  // Add Challenge
+  const showAddChallengeModal = () => openForm('add');
   const handleAddChallenge = async (challengeData: any) => {
     try {
+      if (isNaN(Number(challengeData.difficulty))) {
+        throw new Error("Difficulty harus berupa angka.");
+      }
+
+      challengeData.difficulty = Number(challengeData.difficulty);
+
       const res = await fetch(`${config.BASE_URL}/api/challenges`, {
         method: "POST",
         headers: {
@@ -166,53 +206,20 @@
       if (!res.ok) throw new Error(result.message);
 
       await swalSuccess("Challenge berhasil ditambahkan!");
-      await fetchChallenges(); // refresh data
+      await fetchChallenges();
+      showForm.value = false;
     } catch (err: any) {
       console.error(err);
       swalError("Gagal menambahkan challenge.", err.message || '');
     }
   };
 
-  const deleteChallenge = async (index: number) => {
-    const challenge = challenges.value[index];
-    const id = challenge?.id;
-
-    if (!id) return swalError("ID challenge tidak ditemukan");
-
-    const confirm = await Swal.fire({
-      title: 'Yakin?',
-      text: `Hapus challenge "${challenge.title}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal',
-    });
-
-    if (!confirm.isConfirmed) return;
-
+  const handleEditChallenge = async (updatedData: any) => {
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${auth.user.token}`,
-        },
-      });
+      if (!updatedData.id) throw new Error("ID challenge tidak ditemukan.");
+      console.log("formData (before open form):", JSON.stringify(updatedData));
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message);
-
-      await swalSuccess("Challenge berhasil dihapus.");
-      await fetchChallenges(); // Refresh list
-    } catch (err: any) {
-      console.error(err);
-      swalError("Gagal menghapus challenge.", err.message || '');
-    }
-  };
-
-  const handleEditChallenge = async (id: string, updatedData: any) => {
-    try {
-      console.log(updatedData)
-      const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/${updatedData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -226,100 +233,18 @@
 
       await swalSuccess("Challenge berhasil diperbarui!");
       await fetchChallenges();
+      showForm.value = false;
     } catch (err: any) {
       console.error(err);
       swalError("Gagal memperbarui challenge.", err.message || '');
     }
   };
 
-  const showChallengeModal = async (
-    type: 'add' | 'edit',
-    initialData: any = {}
-    ) => {
-      const {
-        title = '',
-        description = '',
-        flag = '',
-        url = '',
-        tags = [],
-        hint = '',
-        difficulty = '',
-        active = false
-      } = initialData;
-
-    const { value: formValues } = await Swal.fire({
-      title: type === 'add' ? 'Tambah Challenge Baru' : 'Edit Challenge',
-      html: `
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <input id="swal-title" class="swal2-input" placeholder="Judul Challenge" value="${title}" />
-          <textarea id="swal-description" class="swal2-textarea" placeholder="Deskripsi">${description}</textarea>
-          <input id="swal-flag" class="swal2-input" placeholder="${config.FLAG_FORMAT}" value="${flag}" />
-          <input id="swal-url" class="swal2-input" placeholder="URL Challenge" value="${url}" />
-          <input id="swal-tags" class="swal2-input" placeholder="Tags (pisahkan dengan koma)" value="${tags}" />
-          <input id="swal-hint" class="swal2-input" placeholder="Hint (opsional)" value="${hint}" />
-          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
-            <input id="swal-active" type="checkbox" ${active ? 'checked' : ''} />
-            Challenge Aktif</label>
-          <select id="swal-difficulty" class="swal2-select">
-            <option value="" disabled ${!difficulty ? 'selected' : ''}>Pilih Tingkat Kesulitan</option>
-            <option value="1" ${difficulty == 1 ? 'selected' : ''}>🟢 Easy</option>
-            <option value="2" ${difficulty == 2 ? 'selected' : ''}>🟡 Medium</option>
-            <option value="3" ${difficulty == 3 ? 'selected' : ''}>🔴 Hard</option>
-          </select>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      preConfirm: () => {
-        const title = (document.getElementById('swal-title') as HTMLInputElement)?.value.trim();
-        const description = (document.getElementById('swal-description') as HTMLTextAreaElement)?.value.trim();
-        const flag = (document.getElementById('swal-flag') as HTMLInputElement)?.value.trim();
-        const url = (document.getElementById('swal-url') as HTMLInputElement)?.value.trim();
-        const tags = (document.getElementById('swal-tags') as HTMLInputElement)?.value.trim();
-        const hint = (document.getElementById('swal-hint') as HTMLInputElement)?.value.trim();
-        const difficulty = Number((document.getElementById('swal-difficulty') as HTMLSelectElement)?.value);
-        const active = (document.getElementById('swal-active') as HTMLInputElement)?.checked;
-
-        if (!title || !description || !flag || !url || !difficulty) {
-          Swal.showValidationMessage("Semua field wajib diisi (kecuali hint dan tags)");
-          return;
-        }
-
-        return {
-          title,
-          description,
-          flag,
-          url,
-          difficulty,
-          tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-          hint: hint || '',
-          active
-        };
-      }
-    });
-
-    if (formValues) {
-      if (type === 'add') {
-        await handleAddChallenge(formValues);
-      } else if (type === 'edit' && initialData?.id) {
-        await handleEditChallenge(initialData.id, formValues);
-      }
-    }
-  };
-
-  const showAddChallengeModal = () => showChallengeModal('add');
-
   const showEditChallengeModal = async (index: number) => {
-    if (!Array.isArray(challenges.value) || index < 0 || index >= challenges.value.length) {
-      return swalError("Challenge tidak ditemukan di index tersebut.");
-    }
-
+    if (!Array.isArray(challenges.value) || index < 0 || index >= challenges.value.length) return swalError("Challenge tidak ditemukan di index tersebut.");
     const challenge = challenges.value[index];
-
-    if (!challenge?.id) {
-      return swalError("ID challenge tidak ditemukan.");
-    }
-
+    if (!challenge?.id) return swalError("ID challenge tidak ditemukan.");
+  
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.id}?detail=true`, {
         headers: {
@@ -333,9 +258,8 @@
       }
 
       const { data } = await res.json();
-      console.log("Detail challenge (admin):", data);
 
-      showChallengeModal('edit', data); // tampilkan modal dengan data lengkap
+      openForm('edit', data);
     } catch (err: any) {
       console.error(err);
       swalError("Terjadi kesalahan saat mengambil data challenge.", err.message || '');
@@ -352,42 +276,6 @@
         rows: '8',
       },
       showCancelButton: true,
-      // preConfirm: (value) => {
-      //   const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
-      //   const data: any[] = [];
-
-      //   for (const line of lines) {
-      //     const parts = line.split(',').map(p => p.trim());
-      //     if (parts.length < 6) {
-      //       Swal.showValidationMessage(`Baris tidak valid (kurang field): "${line}"`);
-      //       return;
-      //     }
-
-      //     const [title, description, flag, url, difficultyRaw, tagsRaw, hintRaw = ''] = parts;
-
-      //     const difficulty = Number(difficultyRaw);
-      //     if (!title || !description || !flag || !url || !difficulty || isNaN(difficulty)) {
-      //       Swal.showValidationMessage(`Baris tidak valid atau ada field kosong: "${line}"`);
-      //       return;
-      //     }
-
-      //     const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
-      //     const challenge = {
-      //       title,
-      //       description,
-      //       flag,
-      //       url,
-      //       difficulty,
-      //       tags,
-      //       hint: hintRaw || '',
-      //       active: false
-      //     };
-
-      //     data.push(challenge);
-      //   }
-
-      //   return data;
-      // }
       preConfirm: (value) => {
         const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
         const data: any[] = [];
@@ -456,6 +344,42 @@
         console.error(err);
         swalError("❌ Gagal menambahkan beberapa challenge.", err.message || '');
       }
+    }
+  };
+
+  const deleteChallenge = async (index: number) => {
+    const challenge = challenges.value[index];
+    const id = challenge?.id;
+
+    if (!id) return swalError("ID challenge tidak ditemukan");
+
+    const confirm = await Swal.fire({
+      title: 'Yakin?',
+      text: `Hapus challenge "${challenge.title}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message);
+
+      await swalSuccess("Challenge berhasil dihapus.");
+      await fetchChallenges(); // Refresh list
+    } catch (err: any) {
+      console.error(err);
+      swalError("Gagal menghapus challenge.", err.message || '');
     }
   };
 
