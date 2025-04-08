@@ -32,7 +32,7 @@
           Lihat di GitHub
         </a>
         <a
-          href="https://ariaf.my.id"
+          href="https://ariaf.my.id/blog/ctf_web"
           target="_blank"
           class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-6 rounded-lg transition dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 shadow"
         >

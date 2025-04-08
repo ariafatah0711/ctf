@@ -109,7 +109,7 @@
       </div>
 
       <!-- No Solvers -->
-      <div v-else class="mt-10">
+      <div v-else-if="!loading" class="mt-10">
         <p class="text-gray-500 italic">Belum ada yang menyelesaikan challenge ini.</p>
       </div>
     </div>
