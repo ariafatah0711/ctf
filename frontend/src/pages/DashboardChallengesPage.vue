@@ -13,7 +13,10 @@
       </div>
     </div>
 
-    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading challenges...</div>
+    <div v-if="loading" class="flex justify-center py-6">
+      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+    </div>
+
     <div v-else>
       <div v-if="challenges.length > 0" class="overflow-x-auto mt-4">
         <BaseTable
@@ -37,42 +40,11 @@
           </template>
         </BaseTable>
 
-        <!-- Pagination -->
-        <nav aria-label="Challenges pagination" class="flex justify-center mt-6">
-          <ul class="flex gap-2">
-            <li>
-              <button
-                @click="prevPage"
-                :disabled="page === 1"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
-              >
-                Prev
-              </button>
-            </li>
-            <li v-for="n in totalPages" :key="n">
-              <button
-                @click="setPage(n)"
-                :class="[
-                  'px-3 py-1.5 rounded text-sm font-medium',
-                  page === n
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
-                ]"
-              >
-                {{ n }}
-              </button>
-            </li>
-            <li>
-              <button
-                @click="nextPage"
-                :disabled="page === totalPages"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
-              >
-                Next
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <Pagination
+          :current-page="page"
+          :total-pages="totalPages"
+          @update:page="setPage"
+        />
       </div>
 
       <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -92,6 +64,7 @@
   import { PlusIcon } from "@heroicons/vue/24/solid"
   import GlobalSwal from "../utills/GlobalSwal"
   import BaseTable from '../components/BaseTable.vue'
+  import Pagination from '../components/Pagination.vue'
   import { swalSuccess, swalError, swalAlert } from '@/utills/swalAlert'
 
   const Swal = GlobalSwal

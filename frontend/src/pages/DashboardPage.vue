@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+      <DashboardSkeleton v-if="loading" />
 
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
         <!-- User Stats -->
@@ -195,6 +195,7 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
 import Navbar from '../components/Navbar.vue'
+import DashboardSkeleton from '../components/skelaton/DashboardSkeleton.vue'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 
 const auth = useAuthStore()

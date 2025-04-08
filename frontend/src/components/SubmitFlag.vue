@@ -19,11 +19,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import Swal from 'sweetalert2';
+  import { ref } from 'vue';  
   import { useAuthStore } from '../stores/auth';
   import config from "../config"
   import { useRouter, useRoute } from 'vue-router'
+  import GlobalSwal from '../utills/GlobalSwal';
+  const Swal = GlobalSwal;
 
   const router = useRouter()
   const route = useRoute();

@@ -43,3 +43,129 @@ button,
 a {
   cursor: pointer;
 }
+
+/* scroll */
+/* Untuk browser modern (Firefox, Edge, dll.) */
+body {
+  scrollbar-color: #444 #1e1e1e;
+  /* thumb, track */
+  scrollbar-width: thin;
+}
+
+/* Untuk Webkit (Chrome, Safari, Edge berbasis Chromium) */
+body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+  border: 2px solid #1e1e1e;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+
+/* swal */
+.swal2-popup.swal2-dark {
+  background: #1e1e1e !important;
+  color: #fff !important;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Title & Content */
+.swal2-popup.swal2-dark .swal2-title,
+.swal2-popup.swal2-dark .swal2-html-container,
+.swal2-popup.swal2-dark .swal2-content {
+  color: #fff !important;
+}
+
+/* Input Field */
+.swal2-popup.swal2-dark .swal2-input,
+.swal2-popup.swal2-dark .swal2-textarea,
+.swal2-popup.swal2-dark .swal2-select {
+  background: #2c2c2c !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+}
+
+.swal2-popup.swal2-dark .swal2-input::placeholder {
+  color: #aaa;
+}
+
+/* Buttons */
+.swal2-popup.swal2-dark .swal2-confirm,
+.swal2-popup.swal2-dark .swal2-cancel {
+  background-color: #3b82f6 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.swal2-popup.swal2-dark .swal2-cancel {
+  background-color: #ef4444 !important;
+}
+
+/* Button hover/focus */
+.swal2-popup.swal2-dark .swal2-confirm:focus,
+.swal2-popup.swal2-dark .swal2-cancel:focus {
+  box-shadow: 0 0 0 2px #ffffff33 !important;
+}
+
+/* Loader Spinner */
+.swal2-popup.swal2-dark .swal2-loader {
+  width: 2.5em !important;
+  height: 2.5em !important;
+  border: 0.3em solid rgba(255, 255, 255, 0.2) !important;
+  border-top-color: #fff !important;
+  border-radius: 50% !important;
+  animation: spin 1s linear infinite !important;
+  margin: 1em auto !important;
+}
+
+/* Validation Message */
+.swal2-popup.swal2-dark .swal2-validation-message {
+  background: #2c2c2c !important;
+  color: #ff6b6b !important;
+  border: none !important;
+}
+
+/* Footer */
+.swal2-popup.swal2-dark .swal2-footer {
+  border-top: 1px solid #444 !important;
+  color: #ccc !important;
+}
+
+/* Progress Steps */
+.swal2-popup.swal2-dark .swal2-progress-steps .swal2-progress-step {
+  background-color: #555 !important;
+}
+
+/* Timer progress bar */
+.swal2-popup.swal2-dark .swal2-timer-progress-bar {
+  background: #888 !important;
+}
+
+/* Toast */
+.swal2-toast.swal2-dark {
+  background: #1e1e1e !important;
+  color: #fff !important;
+}
+
+.swal2-toast.swal2-dark .swal2-title {
+  color: #fff !important;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

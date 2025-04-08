@@ -4,7 +4,10 @@
       🏆 Leaderboard
     </h1>
 
-    <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
+    <div v-if="loading" class="flex justify-center py-6">
+      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+    </div>
+    <!-- <LeaderboardSkeleton v-if="loading" /> -->
 
     <div v-else>
       <div v-if="leaderboard.length > 0" class="flex flex-col">
@@ -34,44 +37,11 @@
           </table>
         </div>
 
-        <!-- Pagination -->
-        <nav aria-label="Leaderboard pagination" class="flex justify-center mt-6">
-          <ul class="flex gap-2">
-            <li>
-              <button
-                @click="prevPage"
-                :disabled="page === 1"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
-              >
-                Prev
-              </button>
-            </li>
-
-            <li v-for="n in totalPages" :key="n">
-              <button
-                @click="setPage(n)"
-                :class="[ 
-                  'px-3 py-1.5 rounded text-sm font-medium',
-                  page === n
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
-                ]"
-              >
-                {{ n }}
-              </button>
-            </li>
-
-            <li>
-              <button
-                @click="nextPage"
-                :disabled="page === totalPages"
-                class="px-3 py-1.5 rounded bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 disabled:opacity-50 text-sm dark:text-white"
-              >
-                Next
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <Pagination
+          :current-page="page"
+          :total-pages="totalPages"
+          @update:page="setPage"
+        />
       </div>
 
       <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -86,6 +56,8 @@
   import { ref, onMounted, watch } from 'vue';
   import { useAuthStore } from '../stores/auth';
   import { useRouter } from 'vue-router';
+  import Pagination from '../components/Pagination.vue'
+  import LeaderboardSkeleton from '../components/skelaton/LeaderboardSkeleton.vue'
   import config from "../config"
 
   const router = useRouter();
@@ -102,12 +74,13 @@
   const leaderboard = ref<LeaderboardUser[]>([]);
   const loading = ref(true);
   const page = ref(1);
+  const limit = 25
   const totalPages = ref(1);
 
   const fetchLeaderboard = async () => {
     loading.value = true;
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=9`, {
+      const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },

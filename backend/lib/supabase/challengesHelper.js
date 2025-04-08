@@ -111,6 +111,57 @@ export async function fetchChallengesWithFilters(userId, { tags, difficulty, tit
   };
 }
 
+// export async function getFilteredChallenges(userId, { tags, difficulty, title, page = 1, limit = 9 }) {
+//   let query = supabase
+//     .from("challenges")
+//     .select(
+//       `
+//       id, title, difficulty, created_at, tags,
+//       user_challenges(challenge_id, user_id)
+//     `,
+//       { count: "exact" }
+//     )
+//     .range((page - 1) * limit, page * limit - 1);
+
+//   if (tags) {
+//     const tagArray = Array.isArray(tags) ? tags : [tags];
+//     query = query.contains("tags", tagArray);
+//   }
+
+//   if (difficulty) query = query.eq("difficulty", parseInt(difficulty));
+//   if (title) query = query.ilike("title", `%${title}%`);
+
+//   const { data, error, count } = await query;
+//   if (error) return { error: error.message };
+
+//   const result = data.map((challenge) => ({
+//     ...challenge,
+//     solved: challenge.user_challenges?.some((uc) => uc.user_id === userId) ?? false,
+//   }));
+
+//   return {
+//     data: result,
+//     total: count,
+//     page: parseInt(page),
+//     totalPages: Math.ceil(count / limit),
+//   };
+// }
+
+// export async function getChallengeMetadata() {
+//   const { data, error } = await supabase.from("challenges").select("tags");
+
+//   if (error) return { error: error.message };
+
+//   const allTags = Array.from(new Set(data.flatMap((challenge) => challenge.tags || []).filter(Boolean)));
+
+//   const totalCount = data.length;
+
+//   return {
+//     tags: allTags,
+//     totalCount,
+//   };
+// }
+
 export async function createChallenge({ title, description, difficulty, flag, url, tags = [], hint = null }) {
   const errorMessage = validateChallengeFields({ title, description, difficulty, flag, url, tags, hint });
   if (errorMessage) return { error: errorMessage };

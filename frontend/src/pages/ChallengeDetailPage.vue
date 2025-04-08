@@ -9,14 +9,23 @@
         <SubmitFlag class="w-full md:w-auto" />
       </div>
 
+      <!-- Skeleton Loading -->
+      <div v-if="loading" class="animate-pulse rounded-2xl p-6 border shadow-sm bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 space-y-4">
+        <div class="h-6 bg-gray-200 dark:bg-slate-700 w-3/4 rounded"></div>
+        <div class="h-4 bg-gray-200 dark:bg-slate-700 w-1/3 rounded"></div>
+        <div class="h-6 bg-gray-200 dark:bg-slate-700 w-24 rounded inline-block"></div>
+        <div class="h-32 bg-gray-200 dark:bg-slate-700 w-full rounded"></div>
+        <div class="h-6 bg-yellow-100 dark:bg-yellow-700 w-1/2 rounded"></div>
+        <div class="flex gap-2">
+          <div class="h-6 w-16 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+          <div class="h-6 w-12 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+        </div>
+        <div class="h-10 w-32 bg-blue-400 rounded-xl"></div>
+      </div>
+
       <!-- Challenge Detail -->
-      <div
-        v-if="challenge"
-        :class="[
-          'rounded-2xl p-6 border shadow-sm transition',
-          solved ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
-        ]"
-      >
+      <div v-else :class="['rounded-2xl p-6 border shadow-sm transition',
+          solved ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700']">
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-1 truncate">
           {{ challenge.title }}
         </h2>
@@ -71,6 +80,16 @@
         </div>
       </div>
 
+      <div v-if="loading" class="mt-10">
+        <div class="h-6 bg-gray-300 dark:bg-slate-700 w-32 rounded mb-4"></div>
+        <ul class="rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
+          <li v-for="n in 2" :key="n" class="flex justify-between py-3 px-6 animate-pulse">
+            <div class="h-4 w-32 bg-gray-300 dark:bg-slate-700 rounded"></div>
+            <div class="h-4 w-24 bg-gray-300 dark:bg-slate-700 rounded"></div>
+          </li>
+        </ul>
+      </div>
+
       <!-- Solvers -->
       <div v-if="solvers.length" class="mt-10">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">🧠 Solvers</h2>
@@ -110,6 +129,7 @@ import GlobalSwal from "../utills/GlobalSwal";
 const Swal = GlobalSwal;
 
 const auth = useAuthStore();
+const loading = ref(true);
 
 const route = useRoute();
 const challenge = ref<any>(null);
@@ -119,6 +139,7 @@ const solved = ref(false);
 const formatText = (text: string) => marked.parse(text || '');
 
 const fetchChallenge = async (id: string) => {
+  loading.value = true;
   try {
     const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
       headers: {
@@ -127,13 +148,12 @@ const fetchChallenge = async (id: string) => {
     });
     const data = await res.json();
     challenge.value = data.data.challenge;
-    solvers.value = data.data.solvers; // Menyimpan data solvers
+    solvers.value = data.data.solvers;
     solved.value = data.data.solved;
-
-    // challenge.value.description = `Line pertama\n\nLine kedua\n\n- Item 1\n- Item 2\n\n**Bold Text**`;
-    // console.log('Fetched:', data);
   } catch (error) {
     console.error('Error loading challenge:', error);
+  } finally {
+    loading.value = false;
   }
 };
 

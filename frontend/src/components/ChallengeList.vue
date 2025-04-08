@@ -44,12 +44,17 @@
     </div>
 
     <!-- No Challenges -->
-    <div v-if="challenges.length === 0" class="text-center text-gray-500 dark:text-gray-400 mt-12">
+    <div v-if="challenges.length === 0 && !loading" class="text-center text-gray-500 dark:text-gray-400 mt-12">
       Challenge tidak ditemukan.
     </div>
 
+    <!-- Skeleton Loader saat loading -->
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+      <ChallengeCardSkeleton v-for="n in 9" :key="n" />
+    </div>
+
     <!-- Challenge Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+    <div  v-if="!loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
       <ChallengeCard
         v-for="challenge in challenges"
         :key="challenge.id"
@@ -57,49 +62,11 @@
       />
     </div>
 
-    <!-- Pagination -->
-    <nav v-if="challenges.length > 0" class="flex justify-center mt-8" aria-label="Page navigation">
-      <ul class="inline-flex items-center space-x-2">
-        <!-- Prev -->
-        <li>
-          <button
-            @click="prevPage"
-            :disabled="page === 1"
-            class="px-3 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 
-                   text-gray-800 dark:text-white disabled:opacity-50"
-          >
-            Prev
-          </button>
-        </li>
-
-        <!-- Page Numbers -->
-        <li v-for="n in totalPages" :key="n">
-          <button
-            @click="setPage(n)"
-            :class="[
-              'px-3 py-2 rounded-xl text-sm font-medium',
-              page === n
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-slate-600'
-            ]"
-          >
-            {{ n }}
-          </button>
-        </li>
-
-        <!-- Next -->
-        <li>
-          <button
-            @click="nextPage"
-            :disabled="page === totalPages"
-            class="px-3 py-2 rounded-xl text-sm font-medium bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 
-                   text-gray-800 dark:text-white disabled:opacity-50"
-          >
-            Next
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <Pagination
+      :current-page="page"
+      :total-pages="totalPages"
+      @update:page="setPage"
+    />
   </div>
 </template>
 
@@ -107,6 +74,8 @@
   import { ref, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import ChallengeCard from './ChallengeCard.vue';
+  import ChallengeCardSkeleton from './skelaton/ChallengeCardSkeleton.vue';
+  import Pagination from "./Pagination.vue"
   import { useAuthStore } from '../stores/auth';
   import config from '../config';
 
@@ -114,6 +83,7 @@
   const router = useRouter();
 
   const auth = useAuthStore();
+  const loading = ref(false);
 
   interface Challenge {
     id: string;
@@ -133,6 +103,7 @@
   const availableTags = ref<string[]>([]);
 
   const fetchChallenges = async () => {
+    loading.value = true
     try {
       const params = new URLSearchParams();
       params.set("page", page.value.toString());
@@ -155,6 +126,8 @@
       totalPages.value = json.totalPages;
     } catch (err) {
       console.error(err);
+    } finally {
+      loading.value = false;
     }
   };
 

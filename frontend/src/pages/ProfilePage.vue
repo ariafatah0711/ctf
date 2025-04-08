@@ -1,7 +1,8 @@
 <template>
   <div class="w-full flex justify-center">
     <div class="p-4 w-full max-w-screen-md mx-auto">
-      <div v-if="loading" class="text-gray-500 text-center">Memuat profil...</div>
+      <ProfileSkeleton v-if="loading" />
+
       <div v-else-if="error" class="text-red-500 text-center">Gagal memuat profil: {{ error }}</div>
 
       <div v-else>
@@ -61,6 +62,7 @@
   import { ref, onMounted } from 'vue';
   import { useRoute, RouterLink } from 'vue-router';
   import Navbar from '../components/Navbar.vue';
+  import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue'
   import { useAuthStore } from '../stores/auth';
   import config from '../config';
 
