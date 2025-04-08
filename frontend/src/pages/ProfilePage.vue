@@ -27,13 +27,13 @@
             </div>
 
             <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium text-gray-900 dark:text-white">Username</dt>
-              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">Email</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.email }}</dd>
             </div>
 
             <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium text-gray-900 dark:text-white">Email</dt>
-              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.email }}</dd>
+              <dt class="text-sm font-medium text-gray-900 dark:text-white">Username</dt>
+              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">{{ user.username }}</dd>
             </div>
 
             <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

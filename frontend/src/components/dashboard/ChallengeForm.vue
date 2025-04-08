@@ -131,6 +131,7 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
+import { swalError } from '../../utills/swalAlert'
 
 const props = defineProps({
   type: String,
@@ -168,7 +169,7 @@ const handleSubmit = () => {
   form.difficulty = Number(form.difficulty);
 
   if (isNaN(Number(form.difficulty)) || form.difficulty === '') {
-    alert('Difficulty harus berupa angka.');
+    swalError('Difficulty harus berupa angka.');
     return;
   }
 
@@ -183,12 +184,3 @@ watch(() => props.initialData, (newData) => {
   }
 }, { immediate: true })
 </script>
-  
-<!-- <style scoped>
-  .input {
-    @apply w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500;
-  }
-  .textarea {
-    @apply w-full border rounded-lg px-3 py-2 h-24 resize-y focus:outline-none focus:ring-2 focus:ring-green-500;
-  }
-</style> -->

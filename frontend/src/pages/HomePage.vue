@@ -60,7 +60,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth';
 import packageInfo from "../../package.json"
 import config from '../config'
-import Swal from 'sweetalert2'
+import GlobalSwal from '../utills/GlobalSwal';
+const Swal = GlobalSwal
 
 const app_name = packageInfo.name
 const showResetForm = ref(false)

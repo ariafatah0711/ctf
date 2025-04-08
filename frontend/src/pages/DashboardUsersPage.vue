@@ -10,7 +10,7 @@
       <Breadcrumbs class="w-full sm:w-auto flex-1" />
       <div v-if="!loading" class="flex gap-2">
         <IconButton @click="showAddUserModal" :icon="UserPlusIcon" label="Add" color="blue" />
-        <IconButton @click="handleBatchAddUsers" :icon="UserGroupIcon" label="Batch" color="green" />
+        <IconButton @click="showAddBatchUsereModal" :icon="UserGroupIcon" label="Batch" color="green" />
         <IconButton @click="handleBatchDelete" :icon="UserMinusIcon" label="Delete" color="red" />
       </div>
     </div>
@@ -78,6 +78,20 @@
         class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
         aria-label="Tutup form">❌</button>
     </div>
+    <div v-if="showBatchForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <BatchForm
+          v-model:visible="showBatchForm"
+          title="➕ Batch Add User"
+          :placeholder="`John Doe,john@example.com,pass123,user\nJane,jane@example.com,pass456,maker`"
+          :fields="['name', 'email', 'password', 'role']"
+          @cancel="showBatchForm = false"
+          @submit="handleBatchSubmit"
+        />
+      <button
+        @click="showBatchForm = false"
+        class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
+        aria-label="Tutup form">❌</button>
+    </div>
   </Teleport>
 </template>
 
@@ -86,7 +100,6 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
-import Navbar from '../components/Navbar.vue'
 import IconButton from "../components/IconButton.vue"
 import Breadcrumbs from "../components/Breadcrumbs.vue"
 import BaseTable  from "../components/BaseTable.vue"
@@ -94,6 +107,8 @@ import { UserPlusIcon, UserGroupIcon, UserMinusIcon } from "@heroicons/vue/24/so
 import GlobalSwal from '../utills/GlobalSwal'
 import Pagination from '../components/Pagination.vue'
 import UserForm from "../components/dashboard/UserForm.vue"
+import BatchForm from '../components/dashboard/BatchForm.vue'
+import { swalSuccess, swalError } from '../utills/swalAlert'
 
 const Swal = GlobalSwal
 const users = ref<any[]>([])
@@ -108,6 +123,7 @@ const totalPages = ref(1)
 const selected = ref<number[]>([])
 
 const showForm = ref(false)
+const showBatchForm = ref(false);
 const formType = ref('add')
 const formData = ref({});
 
@@ -149,14 +165,6 @@ watch(page, async (newPage) => {
   await fetchUsers()
 })
 
-const nextPage = () => {
-  if (page.value < totalPages.value) page.value++
-}
-
-const prevPage = () => {
-  if (page.value > 1) page.value--
-}
-
 const setPage = (n: number) => {
   if (n !== page.value) {
     page.value = n
@@ -169,6 +177,11 @@ const openForm = (type = 'add', data = {}) => {
   showForm.value = true;
   console.log("Form Data:", formData.value);  // Tambahkan log untuk cek data
 };
+
+
+function openBatchForm() {
+    showBatchForm.value = true;
+}
 
 // 🔁 Transform users -> members format
 const members = computed(() =>
@@ -204,6 +217,31 @@ const handleAddUser = async (userData: any) => {
     } catch (err) {
       Swal.fire('Gagal', err.message || 'Terjadi kesalahan', 'error')
     }
+}
+
+const showAddBatchUsereModal = () => openBatchForm();
+const handleBatchSubmit = async (parsedData: any[]) => {
+  try {
+    await Promise.all(parsedData.map(user =>
+      fetch(`${config.BASE_URL}/api/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+        body: JSON.stringify(user)
+      }).then(async res => {
+        const result = await res.json()
+        if (!res.ok) throw new Error(result.message || 'Gagal tambah user')
+      })
+    ))
+
+    await swalSuccess(`✅ ${parsedData.length} user berhasil ditambahkan!`)
+    showBatchForm.value = false
+    await fetchUsers()
+  } catch (err: any) {
+    swalError('Gagal menambahkan user', err.message)
+  }
 }
 
 const showEditUserModal = async (index: number) => {
@@ -268,101 +306,9 @@ const handleDelete = async (index: number) => {
   }
 }
 
-// add user
-const submitUserPayload = async (payload: object) => {
-  try {
-    const res = await fetch(`${config.BASE_URL}/api/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.user.token}`,
-      },
-      body: JSON.stringify(payload),
-    })
-
-    const result = await res.json()
-    if (!res.ok) throw new Error(result.message || 'Gagal tambah user')
-
-    Swal.fire('Berhasil!', 'User berhasil ditambahkan.', 'success')
-    await fetchUsers()
-  } catch (err: any) {
-    Swal.fire('Error', `Gagal tambah user: ${err.message}`, 'error')
-  }
-}
-
-// const handleAddUser = async () => {
-//   const { value: formValues } = await Swal.fire({
-//     title: 'Tambah User Baru',
-//     html: `
-//     <div style="display: flex; flex-direction: column; gap: 10px;">
-//       <input id="swal-name" class="swal2-input" placeholder="Nama Lengkap" />
-//       <input id="swal-email" type="email" class="swal2-input" placeholder="Email" />
-//       <input id="swal-password" type="password" class="swal2-input" placeholder="Password (min. 6 karakter)" />
-//       <select id="swal-role" class="swal2-select">
-//         <option value="user">👤 User</option>
-//         <option value="maker">🛠️ Maker</option>
-//         <option value="admin">👑 Admin</option>
-//       </select>
-//     </div>
-//     `,
-//     focusConfirm: false,
-//     showCancelButton: true,
-//     preConfirm: () => {
-//       const name = (document.getElementById('swal-name') as HTMLInputElement)?.value.trim()
-//       const email = (document.getElementById('swal-email') as HTMLInputElement)?.value.trim()
-//       const password = (document.getElementById('swal-password') as HTMLInputElement)?.value
-//       const role = (document.getElementById('swal-role') as HTMLSelectElement)?.value
-
-//       if (!name || !email || !password || password.length < 6 || !role) {
-//         Swal.showValidationMessage('Semua field wajib diisi dan password minimal 6 karakter')
-//         return
-//       }
-
-//       return { name, email, password, role }
-//     }
-//   })
-
-//   if (formValues) {
-//     await submitUserPayload(formValues)
-//   }
-// }
-
-const handleBatchAddUsers = async () => {
-  const { value: csv } = await Swal.fire({
-    title: 'Batch Tambah User',
-    input: 'textarea',
-    inputLabel: 'Masukkan daftar user (CSV: name,email,password,role)',
-    inputPlaceholder: 'Contoh:\nJohn Doe,john@example.com,secret123,user\nJane Smith,jane@example.com,secret456,maker',
-    inputAttributes: {
-      rows: '8',
-    },
-    showCancelButton: true,
-    preConfirm: (value) => {
-      // const lines = value.split('\n').map(l => l.trim()).filter(Boolean)
-      const lines: string[] = value.split('\n').map((l: string) => l.trim()).filter(Boolean);
-      const data: any[] = []
-
-      for (const line of lines) {
-        const [name, email, password, role] = line.split(',').map(v => v.trim())
-        if (!name || !email || !password || !role) {
-          Swal.showValidationMessage(`Baris tidak valid: "${line}"`)
-          return
-        }
-        data.push({ name, email, password, role })
-      }
-
-      return data
-    }
-  })
-
-  if (csv && Array.isArray(csv)) {
-    await submitUserPayload({ users: csv })
-  }
-}
-
 const handleBatchDelete = async () => {
   if (selected.value.length === 0) {
-    alert('No users selected.')
+    swalError('No users selected.')
     return
   }
   

@@ -11,7 +11,7 @@
       <div v-if="!loading" class="flex gap-2">
         <IconButton @click="handleActive" :icon="CheckCircleIcon" label="Status" color="gray" />
         <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add" color="blue" />
-        <IconButton @click="handleBatchAddChallenges" :icon="DocumentArrowUpIcon" label="Batch" color="green" />
+        <IconButton @click="showAddBatchChallengeModal" :icon="DocumentArrowUpIcon" label="Batch" color="green" />
         <IconButton @click="handleBatchDelete" :icon="TrashIcon" label="Delete" color="red" />
       </div>
     </div>
@@ -103,7 +103,41 @@
         @click="showForm = false"
         class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
         aria-label="Tutup form">❌</button>
-      </div>
+    </div>
+    <div v-if="showBatchForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <!-- <BatchForm
+          :visible="showBatchForm"
+          title="➕ Batch Tambah Challenge"
+          @cancel="showBatchForm = false"
+          @submit="handleBatchSubmit"
+        /> -->
+        <BatchForm
+          v-model:visible="showBatchForm"
+          title="➕ Batch Tambah Challenge"
+          :placeholder="`SQL Injection,Deskripsi,flag{123},https://ctf.local,1,web;pentest,hint opsional`"
+          :fields="['title', 'description', 'flag', 'url', 'difficulty', 'tags', 'hint']"
+          :transform="(entry) => {
+            const diff = Number(entry.difficulty)
+            if (!diff || isNaN(diff)) {
+              swalError('Difficulty harus angka: ' + entry.difficulty)
+              return false
+            }
+
+            return {
+              ...entry,
+              difficulty: diff,
+              tags: entry.tags.split(';').map(t => t.trim()).filter(Boolean),
+              active: false
+            }
+          }"
+          @cancel="showBatchForm = false"
+          @submit="handleBatchSubmit"
+        />
+      <button
+        @click="showBatchForm = false"
+        class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
+        aria-label="Tutup form">❌</button>
+    </div>
   </Teleport>
 </template>
 
@@ -113,7 +147,6 @@
   import config from '../config'
   import Breadcrumbs from "../components/Breadcrumbs.vue"
   import IconButton from "../components/IconButton.vue"
-  // import { PlusIcon, TrashIcon, DocumentArrowUpIcon } from "@heroicons/vue/24/solid";
   import {
     PlusIcon,
     TrashIcon,
@@ -124,6 +157,7 @@
   import BaseTable from '../components/BaseTable.vue'
   import Pagination from '../components/Pagination.vue'
   import ChallengeForm from "../components/dashboard/ChallengeForm.vue"
+  import BatchForm from '../components/dashboard/BatchForm.vue'
   import { swalSuccess, swalError } from '../utills/swalAlert'
 
   const Swal = GlobalSwal
@@ -138,6 +172,7 @@
   const selected = ref<number[]>([])
 
   const showForm = ref(false);
+  const showBatchForm = ref(false);
   const formType = ref('add');
   const formData = ref({});
 
@@ -151,6 +186,10 @@
     formType.value = type;
     formData.value = data;
     showForm.value = true;
+  }
+
+  function openBatchForm() {
+    showBatchForm.value = true;
   }
 
   const fetchChallenges = async () => {
@@ -190,7 +229,7 @@
     }
   }
 
-  const showAddChallengeModal = () => openForm('add');
+  const showAddChallengeModal = () => openForm();
   const handleAddChallenge = async (challengeData: any) => {
     try {
       if (isNaN(Number(challengeData.difficulty))) {
@@ -272,86 +311,27 @@
     }
   };
 
-  const handleBatchAddChallenges = async () => {
-    const { value: csv } = await Swal.fire({
-      title: 'Batch Tambah Challenge',
-      input: 'textarea',
-      inputLabel: 'Masukkan daftar challenge (CSV: title,description,flag,url,difficulty,tags,hint)',
-      inputPlaceholder: `Contoh:\nSQL Injection,Cari celah SQL,flag{sql},http://ctf.local/sql,1,web,hati-hati\nXSS,Cari XSS,flag{xss},http://ctf.local/xss,2,web,javascript itu penting`,
-      inputAttributes: {
-        rows: '8',
-      },
-      showCancelButton: true,
-      preConfirm: (value) => {
-        const lines: string[] = value.split('\n').map(l => l.trim()).filter(Boolean);
-        const data: any[] = [];
+  const showAddBatchChallengeModal = () => openBatchForm();
+  const handleBatchSubmit = async (parsedData: any) => {
+    try {
+      await Promise.all(parsedData.map(data =>
+        fetch(`${config.BASE_URL}/api/challenges`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth.user.token}`,
+          },
+          body: JSON.stringify(data)
+        })
+      ))
 
-        for (const line of lines) {
-          const parts = line.split(',').map(p => p.trim());
-          if (parts.length < 6) {
-            Swal.showValidationMessage(`Baris tidak valid (kurang field): "${line}"`);
-            return;
-          }
-
-          const [
-            title,
-            description,
-            flag,
-            url,
-            difficultyRaw,
-            tagsRaw,
-            hintRaw = ''
-          ] = parts;
-
-          const difficulty = Number(difficultyRaw);
-          if (!title || !description || !flag || !url || !difficulty || isNaN(difficulty)) {
-            Swal.showValidationMessage(`Baris tidak valid atau ada field kosong: "${line}"`);
-            return;
-          }
-
-          const tags = tagsRaw.split(';').map(t => t.trim()).filter(Boolean);
-
-          data.push({
-            title,
-            description,
-            flag,
-            url,
-            difficulty,
-            tags,
-            hint: hintRaw || '',
-            active: false
-          });
-        }
-
-        return data;
-      }
-    });
-
-    if (csv && Array.isArray(csv)) {
-      try {
-        const results = await Promise.all(csv.map(async (challenge) => {
-          const res = await fetch(`${config.BASE_URL}/api/challenges`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${auth.user.token}`,
-            },
-            body: JSON.stringify(challenge),
-          });
-
-          const result = await res.json();
-          if (!res.ok) throw new Error(result.message || `Gagal menambahkan: ${challenge.title}`);
-          return result;
-        }));
-
-        await swalSuccess(`✅ ${results.length} challenge berhasil ditambahkan!`);
-        await fetchChallenges();
-      } catch (err: any) {
-        console.error(err);
-        swalError("❌ Gagal menambahkan beberapa challenge.", err.message || '');
-      }
+      await swalSuccess(`✅ ${parsedData.length} challenge berhasil ditambahkan!`)
+      showBatchForm.value = false
+      await fetchChallenges()
+    } catch (err) {
+      swalError('Gagal menambahkan challenge', err.message)
     }
-  };
+  }
 
   const deleteChallenge = async (index: number) => {
     const challenge = challenges.value[index];
@@ -446,7 +426,7 @@
 
   const handleBatchDelete = async () => {
     if (selected.value.length === 0) {
-      alert('Tidak ada challenge yang dipilih.')
+      swalError('Tidak ada challenge yang dipilih.')
       return
     }
 

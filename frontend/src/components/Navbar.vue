@@ -129,23 +129,25 @@
     <!-- Mobile Menu -->
     <div v-if="isOpen" class="md:hidden px-4 pb-4 space-y-2 text-black dark:text-white">
       <!-- Mini Profile Info (Mobile) -->
-      <div v-if="auth.isAuthenticated" class="pt-4 pb-2 border-t border-gray-300 dark:border-gray-700">
-        <div class="flex items-center space-x-3">
-          <img
-            v-if="auth.user.avatar"
-            :src="auth.user.avatar"
-            alt="Avatar"
-            class="w-10 h-10 rounded-full object-cover"
-          />
-          <div>
-            <p class="text-sm font-medium">{{ auth.user.username }}</p>
-            <p class="text-xs text-gray-600 dark:text-gray-400">{{ auth.user.email || 'No email' }}</p>
-            <span class="mt-1 inline-block text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-white">
-              {{ auth.user.role }}
-            </span>
+      <!-- <RouterLink to="/profile"> -->
+        <div v-if="auth.isAuthenticated" class="pt-4 pb-2 border-t border-gray-300 dark:border-gray-700">
+          <div class="flex items-center space-x-3">
+            <img
+              v-if="auth.user.avatar"
+              :src="auth.user.avatar"
+              alt="Avatar"
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="text-sm font-medium">{{ auth.user.username }}</p>
+              <p class="text-xs text-gray-600 dark:text-gray-400">{{ auth.user.email || 'No email' }}</p>
+              <span class="mt-1 inline-block text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-white">
+                {{ auth.user.role }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      <!-- </RouterLink> -->
 
       <!-- Navigation -->
       <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="block hover:text-blue-400 transition">Challenges</RouterLink>
