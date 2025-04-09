@@ -33,9 +33,16 @@
 
         <!-- Difficulty Badge -->
         <div class="mb-4">
-          <span class="text-xs px-3 py-1 rounded-full font-semibold" :class="badgeColor(challenge.difficulty)">
+          <RouterLink
+            :to="{
+              path: '/challenges',
+              query: { difficulty: challenge.difficulty }
+            }"
+            class="text-xs px-3 py-1 rounded-full font-semibold"
+            :class="badgeColor(challenge.difficulty)"
+          >
             {{ difficultyLabel(challenge.difficulty) }}
-          </span>
+          </RouterLink>
         </div>
 
         <!-- Description -->
@@ -56,13 +63,14 @@
 
         <!-- Tags -->
         <div class="flex flex-wrap gap-2 text-xs mb-6">
-          <span
+          <RouterLink
             v-for="tag in challenge.tags"
             :key="tag"
-            class="bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-white px-3 py-1 rounded-full"
+            :to="{ path: '/challenges', query: { tags: tag } }"
+            class="bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-white px-3 py-1 rounded-full hover:bg-gray-300 dark:hover:bg-slate-500 transition cursor-pointer"
           >
             #{{ tag }}
-          </span>
+          </RouterLink>
         </div>
 
         <!-- URL / Download -->
@@ -106,6 +114,16 @@
             </li>
           </router-link>
         </ul>
+
+        <div v-if="hasMore" class="mt-4 text-center">
+          <button
+            @click="loadMoreSolvers"
+            :disabled="isLoadingMore"
+            class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50"
+          >
+            {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+          </button>
+        </div>
       </div>
 
       <!-- No Solvers -->
@@ -136,24 +154,52 @@ const challenge = ref<any>(null);
 const solvers = ref<any[]>([]);
 const solved = ref(false);
 
+const offset = ref(0);
+const limit = 3;
+const hasMore = ref(true);
+const isLoadingMore = ref(false);
+
 const formatText = (text: string) => marked.parse(text || '');
 
 const fetchChallenge = async (id: string) => {
   loading.value = true;
+  offset.value = 0;
+  hasMore.value = true;
   try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}`, {
-      headers: {
-        Authorization: `Bearer ${auth.user.token}`,
-      },
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}?limit=${limit}&offset=0`, {
+      headers: { Authorization: `Bearer ${auth.user.token}` },
     });
     const data = await res.json();
     challenge.value = data.data.challenge;
     solvers.value = data.data.solvers;
     solved.value = data.data.solved;
+    if (data.data.solvers.length < limit) hasMore.value = false;
+    offset.value = data.data.solvers.length;
   } catch (error) {
     console.error('Error loading challenge:', error);
   } finally {
     loading.value = false;
+  }
+};
+
+const loadMoreSolvers = async () => {
+  isLoadingMore.value = true;
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.value.id}?limit=${limit}&offset=${offset.value}&appendOnly=true`, {
+      headers: { Authorization: `Bearer ${auth.user.token}` },
+    });
+    const data = await res.json();
+    if (data.solvers?.length) {
+      solvers.value.push(...data.solvers);
+      offset.value += data.solvers.length;
+      if (data.solvers.length < limit) hasMore.value = false;
+    } else {
+      hasMore.value = false;
+    }
+  } catch (error) {
+    console.error("❌ Error loading more solvers:", error);
+  } finally {
+    isLoadingMore.value = false;
   }
 };
 

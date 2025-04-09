@@ -34,7 +34,10 @@ export default async function handler(req, res) {
           return res.status(200).json(result);
         });
       } else {
-        const result = await getChallengeDetailWithSolvers(id, userId);
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = parseInt(req.query.offset) || 0;
+
+        const result = await getChallengeDetailWithSolvers(id, userId, limit, offset, req.query.appendOnly === "true");
         if (result?.notFound) return res.status(404).json({ message: result.error });
         if (result?.error) return res.status(500).json({ message: result.error });
 

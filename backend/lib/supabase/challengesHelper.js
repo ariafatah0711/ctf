@@ -162,22 +162,29 @@ export async function createChallenge({ title, description, difficulty, flag, ur
   return { data };
 }
 
-// id.js
-export async function getChallengeDetailWithSolvers(id, userId) {
-  const { data, error } = await supabase
-    .from("challenges")
-    .select("id, title, description, difficulty, created_at, url, tags, hint")
-    .eq("id", id)
-    .eq("active", true)
-    .single();
+export async function getChallengeDetailWithSolvers(id, userId, limit = 10, offset = 0, appendOnly = false) {
+  let challengeData = null;
 
-  if (error) return { error: error.message };
-  if (!data) return { notFound: true, error: "Challenge tidak ditemukan." };
+  if (!appendOnly) {
+    const { data, error } = await supabase
+      .from("challenges")
+      .select("id, title, description, difficulty, created_at, url, tags, hint")
+      .eq("id", id)
+      .eq("active", true)
+      .single();
+
+    if (error) return { error: error.message };
+    if (!data) return { notFound: true, error: "Challenge tidak ditemukan." };
+
+    challengeData = data;
+  }
 
   const { data: solversData, error: solversError } = await supabase
     .from("user_challenges")
     .select("user_id, completed_at")
-    .eq("challenge_id", id);
+    .eq("challenge_id", id)
+    .order("completed_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (solversError) return { error: solversError.message };
 
@@ -196,13 +203,7 @@ export async function getChallengeDetailWithSolvers(id, userId) {
 
   const solved = userId ? solversData.some((solver) => solver.user_id === userId) : false;
 
-  return {
-    data: {
-      challenge: data,
-      solvers,
-      solved,
-    },
-  };
+  return appendOnly ? { solvers } : { data: { challenge: challengeData, solvers, solved } };
 }
 
 export async function getChallengeWithFlagById(id) {
