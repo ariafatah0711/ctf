@@ -118,6 +118,33 @@ supabase db diff --local --file v1.5
 supabase db push
 ```
 
+## cara backup dan restore scheme
+```bash
+# backup
+supabase db dump --file backup/backup_v1.1.sql
+
+# restore
+supabase db restore backup/backup_v1.1.sql
+```
+
+## cara backup dan restore data
+### manual
+```bash
+# gunakan
+pg_dump -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -F c -f full_backup.dump
+pg_restore -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -c full_backup.dump
+
+# gunakan pooler
+pg_dump -h aws-0-ap-southeast-1.pooler.supabase.com -U postgres.<refid> -d postgres -p 5432 -F c -f full_backup.dump
+# jika ada error triger gitu
+pg_restore --disable-triggers -h <host> -U <user> -d <dbname> -p 5432 -c full_backup.dump
+
+# gunakan
+pg_dump "postgresql://postgres.xxxxxxxxxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres" > backup_$(date +%Y%m%d_%H%M%S).sql
+```
+### automatic
+- [https://github.com/sesto-dev/supabase-database-backup](https://github.com/sesto-dev/supabase-database-backup)
+
 ## add cronjob
 - [https://github.com/travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention)
 

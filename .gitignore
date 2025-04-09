@@ -32,3 +32,4 @@ supabase/*
 !supabase/migrations/**
 
 _draft
+backup

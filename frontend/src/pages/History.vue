@@ -14,7 +14,7 @@
         </div>
 
         <!-- Loading / Error -->
-        <ProfileSkeleton v-if="loading && currentPage === 1" />
+        <SkeletonHistory v-if="loading && currentPage === 1" />
         <div v-else-if="error" class="text-red-500 text-center">Gagal memuat riwayat: {{ error }}</div>
   
         <!-- Log Section -->
@@ -75,7 +75,7 @@
 <script setup lang="ts">
   import { ref, onMounted, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue';
+  import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue';
   import config from '../config';
   
   const route = useRoute();
