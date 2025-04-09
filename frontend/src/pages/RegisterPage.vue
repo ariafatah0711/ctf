@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '../services/authService'
 import AuthForm from "../components/AuthForm.vue"
@@ -67,4 +67,12 @@ async function handleRegister() {
     loading.value = false
   }
 }
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    handleRegister()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 </script>

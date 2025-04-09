@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthForm from '../components/AuthForm.vue'
 import config from '../config'
@@ -212,4 +212,12 @@ const handleSetup = async () => {
     loading.value = false
   }
 }
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    handleSetup()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 </script>

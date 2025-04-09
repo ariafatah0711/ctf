@@ -116,11 +116,14 @@
         </div>
   
         <!-- Tombol Submit -->
-        <div class="flex justify-end pt-4">
+        <div class="flex justify-end gap-3 pt-4">
+          <button @click="onCancel" class="px-5 py-2.5 text-base bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-white rounded-xl">
+            Batal
+          </button>
           <button
             type="submit"
             @click.prevent="handleSubmit"
-            class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium text-base rounded-xl shadow transition"
+            class="px-5 py-2.5 text-base bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
           >
             {{ type === 'add' ? '➕ Tambah Challenge' : '💾 Simpan Perubahan' }}
           </button>
@@ -129,8 +132,8 @@
     </div>
 </template>
 
-<script setup>
-import { ref, reactive, watch } from 'vue'
+<script setup lang="ts">
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
 import { swalError } from '../../utills/swalAlert'
 
 const props = defineProps({
@@ -138,7 +141,7 @@ const props = defineProps({
   initialData: Object
 })
 
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['cancel', 'submit'])
 
 const form = reactive({
   title: '',
@@ -176,6 +179,38 @@ const handleSubmit = () => {
   console.log('Submit', form)
   emit('submit', form)
 }
+
+const onCancel = () => {
+  emit('cancel')
+  form.title = ''
+  form.description = ''
+  form.flag = ''
+  form.url = ''
+  form.tags = []
+  form.hint = ''
+  form.active = false
+  form.difficulty = 1
+  form.id = null
+}
+
+// enter and escape
+const handleKeyDown = (e: KeyboardEvent) => {
+  const active = document.activeElement as HTMLElement | null
+
+  // Escape selalu bisa cancel
+  if (e.key === 'Escape') {
+    onCancel()
+  }
+
+  // Enter
+  if (e.key === 'Enter') {
+    // Cegah trigger submit kalau lagi fokus di input tag atau textarea atau select
+    if (active && (active.tagName === 'TEXTAREA' || active.tagName === 'SELECT' || (active instanceof HTMLInputElement && active.placeholder?.includes('tag')))) return
+    handleSubmit()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 
 // ⬇️ Taruh watch-nya di sini
 watch(() => props.initialData, (newData) => {

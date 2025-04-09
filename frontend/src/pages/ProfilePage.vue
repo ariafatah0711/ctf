@@ -87,6 +87,7 @@
           name: user.username,
           email: user.email,
         }"
+        @cancel="showForm = false"
         @submit="handleUpdateProfile"
       />
       <button

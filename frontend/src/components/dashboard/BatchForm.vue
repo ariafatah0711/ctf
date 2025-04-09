@@ -10,7 +10,7 @@
   
         <div>
           <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-            Masukkan data (format CSV)
+            Masukkan data format CSV: {{ format }}
           </label>
           <textarea
             v-model="csvInput"
@@ -32,8 +32,8 @@
     </div>
 </template>
 
-<script setup>
-import { ref, watch } from 'vue'
+<script setup lang="ts">
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { swalError } from '../../utills/swalAlert'
 
 const props = defineProps({
@@ -41,6 +41,10 @@ const props = defineProps({
   title: {
     type: String,
     default: 'Batch Form',
+  },
+  format: {
+    type: String,
+    default: '',
   },
   placeholder: {
     type: String,
@@ -65,6 +69,18 @@ const onCancel = () => {
   emit('cancel')
   csvInput.value = ''
 }
+
+// enter and escape
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    onCancel()
+  }
+  if (e.key === 'Enter') {
+    parseCSV()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 
 const parseCSV = () => {
   const lines = csvInput.value.split('\n').map(l => l.trim()).filter(Boolean)

@@ -85,7 +85,7 @@
   const error = ref<string | null>(null);
   const history = ref<any[]>([]);
   const currentPage = ref(1);
-  const limit = 12;
+  const limit = 15;
   const hasMore = ref(true);
 
   const usernameFromQuery = computed(() => route.query.user);

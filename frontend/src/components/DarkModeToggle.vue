@@ -11,6 +11,7 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { Moon, Sun } from 'lucide-vue-next'
+  import config from '../config.ts'
   
   const isDark = ref(false)
   
@@ -18,11 +19,13 @@
     isDark.value = !isDark.value
     const theme = isDark.value ? 'dark' : 'light'
     document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
+    localStorage.setItem('theme_', theme)
   }
   
   onMounted(() => {
-    const saved = localStorage.getItem('theme') || 'light'
+    localStorage.removeItem('theme') // hapus versi lama
+
+    const saved = localStorage.getItem('theme_') || config.DEFAULT_THEME || 'light'
     isDark.value = saved === 'dark'
     document.documentElement.setAttribute('data-theme', saved)
   })

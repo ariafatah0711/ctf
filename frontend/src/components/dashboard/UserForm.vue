@@ -60,10 +60,13 @@
   
         <!-- Tombol Submit -->
         <div class="flex justify-end pt-4">
+          <button @click="onCancel" class="px-5 py-2.5 text-base bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-white rounded-xl">
+            Batal
+          </button>
           <button
             type="submit"
             @click.prevent="handleSubmit"
-            class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium text-base rounded-xl shadow transition"
+            class="px-5 py-2.5 text-base bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
           >
             {{ type === 'add' ? '➕ Tambah Pengguna' : '💾 Simpan Perubahan' }}
           </button>
@@ -72,33 +75,54 @@
     </div>
 </template>
   
-<script setup>
-  import { ref, reactive, watch } from 'vue'
+<script setup lang="ts">
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
+  type: String,
+  initialData: Object
+})
+
+const emit = defineEmits(['cancel', 'submit'])
+
+const form = reactive({
+  name: '',
+  email: '',
+  password: '',
+  role: "user",
+  id: null,
+})
+
+const handleSubmit = () => {
+  console.log('Submit', form)
+  emit('submit', form)
+}
+
+const onCancel = () => {
+  emit('cancel')
+  form.name = ''
+  form.email = ''
+  form.password = ''
+  form.role = "user"
+  form.id = null
+}
   
-  const props = defineProps({
-    type: String,
-    initialData: Object
-  })
-  
-  const emit = defineEmits(['submit'])
-  
-  const form = reactive({
-    name: '',
-    email: '',
-    password: '',
-    role: "user",
-    id: null,
-  })
-  
-  const handleSubmit = () => {
-    console.log('Submit', form)
-    emit('submit', form)
+// enter and escape
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    onCancel()
   }
-  
-  // ⬇️ Taruh watch-nya di sini
-  watch(() => props.initialData, (newData) => {
-    if (props.type === 'edit' && newData) {
-      Object.assign(form, newData)
-    }
-  }, { immediate: true })
+  if (e.key === 'Enter') {
+    handleSubmit()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
+
+// ⬇️ Taruh watch-nya di sini
+watch(() => props.initialData, (newData) => {
+  if (props.type === 'edit' && newData) {
+    Object.assign(form, newData)
+  }
+}, { immediate: true })
 </script>  

@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { forgotPassword } from '../services/authService'
 import GlobalSwal from '../utills/GlobalSwal'
 import AuthForm from '../components/AuthForm.vue'
@@ -81,4 +81,12 @@ function startCooldown(seconds: number) {
     }
   }, 1000)
 }
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    handleForgotPassword()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 </script>

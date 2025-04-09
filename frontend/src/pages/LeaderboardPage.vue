@@ -27,7 +27,7 @@
                 :key="user.user_id"
                 class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition cursor-pointer"
                 :class="{
-                  'bg-slate-200 dark:bg-slate-800': isSimilarUsername(user.username, highlightUsername)
+                  'bg-slate-200 dark:bg-slate-800': isExactUsername(user.username, highlightUsername)
                 }"
                 @click="goToUser(user.username)"
               >
@@ -78,10 +78,11 @@
   const limit = 25
   const totalPages = ref(1);
 
-  const highlightUsername = auth.user.username;
-  const isSimilarUsername = (target: string, keyword: string) => {
-    return target.toLowerCase().includes(keyword.toLowerCase());
-  }
+  const highlightUsername = auth.user?.username || '';
+  const isExactUsername = (target: string, keyword: string) => {
+    if (!keyword) return false;
+    return target.trim().toLowerCase() === keyword.trim().toLowerCase();
+  };
 
   const fetchLeaderboard = async () => {
     loading.value = true;

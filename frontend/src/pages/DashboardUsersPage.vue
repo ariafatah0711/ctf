@@ -64,6 +64,7 @@
       <UserForm
           :type="formType"
           :initialData="formData"
+          @cancel="showForm = false"
           @submit="(data: any) => {
             if (formType === 'add') {
               handleAddUser(data)
@@ -82,6 +83,7 @@
         <BatchForm
           v-model:visible="showBatchForm"
           title="➕ Batch Add User"
+          format="name, email, password, role"
           :placeholder="`John Doe,john@example.com,pass123,user\nJane,jane@example.com,pass456,maker`"
           :fields="['name', 'email', 'password', 'role']"
           @cancel="showBatchForm = false"
@@ -178,11 +180,6 @@ const openForm = (type = 'add', data = {}) => {
   console.log("Form Data:", formData.value);  // Tambahkan log untuk cek data
 };
 
-
-function openBatchForm() {
-    showBatchForm.value = true;
-}
-
 // 🔁 Transform users -> members format
 const members = computed(() =>
   users.value.map((user) => ({
@@ -219,7 +216,7 @@ const handleAddUser = async (userData: any) => {
     }
 }
 
-const showAddBatchUsereModal = () => openBatchForm();
+const showAddBatchUsereModal = () => showBatchForm.value = true
 const handleBatchSubmit = async (parsedData: any[]) => {
   try {
     await Promise.all(parsedData.map(user =>

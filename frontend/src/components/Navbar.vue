@@ -114,7 +114,11 @@
         <!-- Mobile: Dark mode + hamburger -->
         <div class="md:hidden flex items-center gap-4">
           <DarkModeToggle />
-          <button @click="isOpen = !isOpen" class="focus:outline-none">
+          <button 
+            @click="isOpen = !isOpen" 
+            @keydown.enter.stop 
+            class="focus:outline-none"
+          >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"

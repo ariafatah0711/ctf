@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from '../services/authService';
 import { useAuthStore } from '../stores/auth';
@@ -86,4 +86,12 @@ onMounted(() => {
     }
   }
 });
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    handleLogin()
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 </script>

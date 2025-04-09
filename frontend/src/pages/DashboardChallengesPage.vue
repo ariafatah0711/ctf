@@ -42,10 +42,6 @@
             </div>
           </template>
 
-          <!-- <template #difficulty="{ row }">
-            <span class="dark:text-slate-200">{{ levelMap[row.difficulty] || 'Tidak Diketahui' }}</span>
-          </template> -->
-
           <template #difficulty="{ row }">
             <span
               :class="{
@@ -90,6 +86,7 @@
       <ChallengeForm
         :type="formType"
         :initialData="formData"
+        @cancel="showForm = false"
         @submit="(data) => {
           if (formType === 'add') {
             handleAddChallenge(data)
@@ -105,16 +102,11 @@
         aria-label="Tutup form">❌</button>
     </div>
     <div v-if="showBatchForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <!-- <BatchForm
-          :visible="showBatchForm"
-          title="➕ Batch Tambah Challenge"
-          @cancel="showBatchForm = false"
-          @submit="handleBatchSubmit"
-        /> -->
         <BatchForm
           v-model:visible="showBatchForm"
           title="➕ Batch Tambah Challenge"
-          :placeholder="`SQL Injection,Deskripsi,flag{123},https://ctf.local,1,web;pentest,hint opsional`"
+          format="title, description, flag, url, difficulty, tags, hint"
+          :placeholder="`SQL Injection,Deskripsi serangan SQL,flag{123},https://ctf.local,1,web;pentest,Hint opsional\nXSS Challenge,Serangan XSS dasar,flag{456},https://ctf.local/xss,2,xss;web,`"
           :fields="['title', 'description', 'flag', 'url', 'difficulty', 'tags', 'hint']"
           :transform="(entry) => {
             const diff = Number(entry.difficulty)
@@ -186,10 +178,6 @@
     formType.value = type;
     formData.value = data;
     showForm.value = true;
-  }
-
-  function openBatchForm() {
-    showBatchForm.value = true;
   }
 
   const fetchChallenges = async () => {
@@ -311,7 +299,7 @@
     }
   };
 
-  const showAddBatchChallengeModal = () => openBatchForm();
+  const showAddBatchChallengeModal = () => showBatchForm.value = true;
   const handleBatchSubmit = async (parsedData: any) => {
     try {
       await Promise.all(parsedData.map(data =>
