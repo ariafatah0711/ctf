@@ -15,6 +15,8 @@ import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
 import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
 import ForgotPassword from '../pages/ForgotPassword.vue';
 import History from '../pages/History.vue'
+
+import upload from '../pages/challenges/upload.vue';
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
 const Swal = GlobalSwal
@@ -103,6 +105,12 @@ const routes = [
     path: '/challenges/:id',
     name: 'ChallengeDetail',
     component: ChallengeDetailPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/challenges/upload',
+    name: 'Challenge Upload',
+    component: upload,
     meta: { requiresAuth: true },
   },
   {

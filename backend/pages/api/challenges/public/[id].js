@@ -1,5 +1,5 @@
-import { getUserFromToken } from "@/lib/auth";
-import { getPublicChallengeById, updatePublicChallenge, deletePublicChallenge } from "@/lib/supabase/publicChallengesHelper";
+import { getClientChallengeById, updateClientChallenge, deleteClientChallenge } from "@/lib/supabase/clientChallengesHelper";
+import { getUserFromToken } from "@/lib/middleware/auth";
 import handler from "@/lib/handler";
 
 export default handler()
@@ -8,7 +8,7 @@ export default handler()
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     const id = req.query.id;
-    const { data, error } = await getPublicChallengeById(id, user);
+    const { data, error } = await getClientChallengeById(id, user.id);
     if (error) return res.status(404).json({ error });
     return res.status(200).json({ data });
   })
@@ -18,7 +18,7 @@ export default handler()
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     const id = req.query.id;
-    const { data, error } = await updatePublicChallenge(id, { ...req.body, user_id: user.id });
+    const { data, error } = await updateClientChallenge(id, user.id, req.body);
     if (error) return res.status(400).json({ error });
     return res.status(200).json({ data });
   })
@@ -28,7 +28,7 @@ export default handler()
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     const id = req.query.id;
-    const { data, error } = await deletePublicChallenge(id, user);
+    const { error } = await deleteClientChallenge(id, user.id);
     if (error) return res.status(400).json({ error });
-    return res.status(200).json({ data });
+    return res.status(200).json({ success: true });
   });

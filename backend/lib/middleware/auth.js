@@ -46,3 +46,15 @@ export function requireRole(requiredRoles) {
     await next();
   };
 }
+
+export async function getUserFromToken(req) {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (!authHeader) return null;
+
+  const token = authHeader.replace("Bearer ", "");
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+  if (error || !data?.user) return null;
+
+  return data.user;
+}
