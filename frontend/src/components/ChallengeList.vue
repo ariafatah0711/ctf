@@ -177,3 +177,142 @@
     }
   };
 </script>
+
+<!-- <script setup lang="ts">
+import { ref, computed, watch, onMounted, onActivated } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import useSWRV, { mutate } from 'swrv';
+
+import ChallengeCard from './ChallengeCard.vue';
+import ChallengeCardSkeleton from './skelaton/ChallengeCardSkeleton.vue';
+import Pagination from './Pagination.vue';
+
+import { useAuthStore } from '../stores/auth';
+import config from '../config';
+
+const route = useRoute();
+const router = useRouter();
+const auth = useAuthStore();
+
+// State
+const page = ref(1);
+const totalPages = ref(1);
+const selectedDifficulty = ref('');
+const selectedTag = ref('');
+const availableTags = ref<string[]>([]);
+const challenges = ref([]);
+
+interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  tags: string[];
+  created_at: string;
+  solved?: boolean;
+}
+
+// Computed API URL
+const queryUrl = computed(() => {
+  const params = new URLSearchParams();
+  params.set('page', page.value.toString());
+  if (selectedDifficulty.value) params.set('difficulty', selectedDifficulty.value);
+  if (selectedTag.value) params.set('tags', selectedTag.value);
+  return `${config.BASE_URL}/api/challenges?${params.toString()}`;
+});
+
+// Fetcher for SWRV
+const fetcher = async (url: string) => {
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${auth.user.token}`,
+    },
+  });
+  if (!res.ok) throw new Error('Failed to fetch challenges');
+  return res.json();
+};
+
+// Use SWRV
+const { data, isValidating } = useSWRV(queryUrl, fetcher, {
+  ttl: 1000 * 60 * 5, // 5 minutes cache
+});
+
+// Update challenge list on data change
+watch(data, (val) => {
+  if (val) {
+    challenges.value = val.data || [];
+    totalPages.value = val.totalPages || 1;
+    availableTags.value = val.tags || [];
+  }
+});
+
+// Watch page to sync with URL
+watch(page, (newPage) => {
+  router.replace({
+    query: {
+      ...route.query,
+      page: newPage.toString(),
+    },
+  });
+});
+
+// Filter change handler
+const onFilterChange = () => {
+  page.value = 1;
+  router.replace({
+    query: {
+      page: '1',
+      difficulty: selectedDifficulty.value || undefined,
+      tags: selectedTag.value || undefined,
+    },
+  });
+};
+
+// Refetch on tab focus
+onMounted(() => {
+  const queryPage = parseInt(route.query.page as string);
+  const queryDifficulty = route.query.difficulty as string;
+  const queryTag = route.query.tags as string;
+
+  if (!isNaN(queryPage) && queryPage > 0) page.value = queryPage;
+  if (queryDifficulty) selectedDifficulty.value = queryDifficulty;
+  if (queryTag) selectedTag.value = queryTag;
+
+  window.addEventListener('focus', () => {
+    mutate(queryUrl.value);
+  });
+});
+
+// Refetch on keep-alive tab return
+onActivated(() => {
+  mutate(queryUrl.value);
+});
+
+// Watch queryUrl in case of recompute
+watch(queryUrl, () => {
+  mutate(queryUrl.value);
+});
+
+watch(() => route.name, (newName) => {
+  if (newName === 'Challenges') {
+    mutate(queryUrl.value);
+  }
+});
+
+window.addEventListener('focus', () => {
+  if (route.name === 'Challenges') {
+    mutate(queryUrl.value);
+  }
+});
+
+// Pagination
+const nextPage = () => {
+  if (page.value < totalPages.value) page.value++;
+};
+const prevPage = () => {
+  if (page.value > 1) page.value--;
+};
+const setPage = (n: number) => {
+  if (n !== page.value) page.value = n;
+};
+</script> -->

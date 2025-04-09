@@ -204,72 +204,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
+import useSWRV from 'swrv'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
 import DashboardSkeleton from '../components/skelaton/DashboardSkeleton.vue'
 
 const auth = useAuthStore()
-const loading = ref(true)
 
-const totalUsers = ref(0)
-const totalRoles = ref(0)
-const usersByRole = ref<Record<string, number>>({})
-const totalChallenges = ref(0)
-const challengesByDifficulty = ref<Record<string, number>>({})
-const completedChallenges = ref(0)
-const completedChallengesUniq = ref(0)
-const totalActiveChallenges = ref(0)
-const totalInactiveChallenges = ref(0)
-const challengeSummary = ref(0)
-const topChallengeInfo = ref(0)
-const topUsers = ref<any[]>([])
-const mostSolvedChallenges = ref<{ challengeId: string; count: number; title: string }[]>([]);
-const tagsDistribution = ref<{ tag: string; count: number }[]>([])
+const fetcher = (url: string) =>
+  fetch(url, {
+    headers: { Authorization: `Bearer ${auth.user.token}` },
+  }).then(res => res.json())
+
+const { data, error, isValidating } = useSWRV(
+  () => `${config.BASE_URL}/api/stats`, // pakai function biar reactive
+  fetcher,
+  {
+    ttl: 5 * 60 * 1000, // cache 5 menit
+    dedupingInterval: 2000, // optional: minimal interval antar fetch
+  }
+)
 
 const levelMap = {
   1: 'Easy 🟢',
   2: 'Medium 🟡',
-  3: 'Hard 🔴'
+  3: 'Hard 🔴',
 }
 
-const fetchDashboardStats = async () => {
-  try {
-    const res = await fetch(`${config.BASE_URL}/api/stats`, {
-      headers: {
-        Authorization: `Bearer ${auth.user.token}`,
-      },
-    })
-    const data = await res.json()
-    console.log(data)
+const totalUsers = computed(() => data.value?.totalUsers || 0)
+const totalRoles = computed(() => data.value?.usersByRole?.total_role || 0)
+const usersByRole = computed(() => data.value?.usersByRole || {})
+const totalChallenges = computed(() => data.value?.totalChallenges || 0)
 
-    totalUsers.value = data.totalUsers || 0
-    totalRoles.value = data.usersByRole.total_role || 0
-    usersByRole.value = data.usersByRole || {}
-    totalChallenges.value = data.totalChallenges || 0
-    challengesByDifficulty.value = data.challengesByDifficulty?.map(({ level, count }) => ({
-      label: levelMap[level] || `Level ${level}`,
-      level,
-      count,
-    })) || [];
-    totalActiveChallenges.value = data.totalActiveChallenges
-    totalInactiveChallenges.value = data.totalInactiveChallenges
-    completedChallenges.value = data.totalSolvedSubmissions || 0
-    mostSolvedChallenges.value = data.mostSolvedChallenges || []
-    completedChallengesUniq.value = data.uniqueChallengesSolved || 0
-    topUsers.value = data.leaderboard || []
-    tagsDistribution.value = data.tagsDistribution || []
-    challengeSummary.value = data.description.challengeSummary
-    topChallengeInfo.value = data.description.topChallengeInfo
+const challengesByDifficulty = computed(() =>
+  data.value?.challengesByDifficulty?.map(({ level, count }) => ({
+    label: levelMap[level] || `Level ${level}`,
+    level,
+    count,
+  })) || []
+)
 
-    loading.value = false
-  } catch (error) {
-    console.error('Error fetching dashboard stats:', error)
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchDashboardStats()
-})
+const totalActiveChallenges = computed(() => data.value?.totalActiveChallenges || 0)
+const totalInactiveChallenges = computed(() => data.value?.totalInactiveChallenges || 0)
+const completedChallenges = computed(() => data.value?.totalSolvedSubmissions || 0)
+const completedChallengesUniq = computed(() => data.value?.uniqueChallengesSolved || 0)
+const mostSolvedChallenges = computed(() => data.value?.mostSolvedChallenges || [])
+const topUsers = computed(() => data.value?.leaderboard || [])
+const tagsDistribution = computed(() => data.value?.tagsDistribution || [])
+const challengeSummary = computed(() => data.value?.description?.challengeSummary || 0)
+const topChallengeInfo = computed(() => data.value?.description?.topChallengeInfo || 0)
 </script>
