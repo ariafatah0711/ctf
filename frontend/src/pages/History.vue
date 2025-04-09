@@ -29,20 +29,35 @@
                 :key="`${item.challenge_id}-${item.completed_at}`"
                 class="border-b border-gray-300 dark:border-slate-600 py-2 transition-opacity"
               >
-                <span class="text-blue-600 dark:text-blue-400">{{ new Date(item.completed_at).toLocaleString() }}</span>
-                &nbsp;-&nbsp;
-                <RouterLink :to="`/profile/${item.username}`" class="font-bold text-blue-600 dark:text-blue-400 hover:underline">
-                    {{ item.username }}
-                </RouterLink>
-                <span> menyelesaikan </span>
-                <RouterLink :to="`/challenges/${item.challenge_id}`" class="text-blue-500 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-100 hover:underline">
-                  {{ item.title }}
-                </RouterLink>
+                <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-x-1">
+                  <div class="flex gap-x-1 flex-wrap">
+                    <span class="text-blue-600 dark:text-blue-400">
+                      {{ new Date(item.completed_at).toLocaleString() }}
+                    </span>
+                    <span>-</span>
+                    <RouterLink
+                      :to="`/profile/${item.username}`"
+                      class="font-bold text-blue-600 dark:text-blue-400 hover:underline break-all"
+                    >
+                      {{ item.username }}
+                    </RouterLink>
+                  </div>
+                  
+                  <div class="flex gap-x-1 flex-wrap">
+                    <span>menyelesaikan</span>
+                    <RouterLink
+                      :to="`/challenges/${item.challenge_id}`"
+                      class="text-blue-500 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-100 hover:underline break-words"
+                    >
+                      {{ item.title }}
+                    </RouterLink>
+                  </div>
+                </div>
               </div>
             </TransitionGroup>
   
             <!-- Tombol Load More -->
-            <div v-if="hasMore" class="pt-4 flex justify-center">
+            <div v-if="hasMore && !isLoadingMore" class="pt-4 flex justify-center">
               <button
                 @click="loadMore"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-300"
@@ -56,7 +71,7 @@
       </div>
     </div>
 </template>
-  
+
 <script setup lang="ts">
   import { ref, onMounted, watch, computed } from 'vue';
   import { useRoute } from 'vue-router';
@@ -116,19 +131,54 @@
     fetchHistory();
   });
   
-  const loadMore = () => {
+  const isLoadingMore = ref(false);
+
+  const loadMore = async () => {
+    isLoadingMore.value = true;
     currentPage.value++;
-    fetchHistory(true);
+    await fetchHistory(true);
+    isLoadingMore.value = false;
   };
 </script>
   
 <style scoped>
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Mobile First (default) */
+.font-mono {
+  font-size: 0.75rem; /* text-sm */
+  padding: 1rem;
+}
+
+/* Tablet */
+@media (max-width: 640px) {
+  .font-mono span,
+  .font-mono a {
+    word-break: break-word;
   }
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
+}
+
+/* Laptop */
+@media (min-width: 1024px) {
+  .font-mono {
+    font-size: 1rem; /* text-lg */
+    padding: 1.5rem;
   }
+}
+
+/* Optional: smooth scrollbar (untuk tampilan overflow di log) */
+.font-mono::-webkit-scrollbar {
+  height: 6px;
+}
+.font-mono::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 255, 0.4);
+  border-radius: 9999px;
+}
 </style>
