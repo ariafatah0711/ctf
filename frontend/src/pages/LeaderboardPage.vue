@@ -25,7 +25,7 @@
               <tr
                 v-for="user in leaderboard"
                 :key="user.user_id"
-                class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition cursor-pointer"
+                class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
                 :class="{
                   'bg-slate-200 dark:bg-slate-800': isExactUsername(user.username, highlightUsername)
                 }"

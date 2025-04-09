@@ -155,7 +155,8 @@ const solvers = ref<any[]>([]);
 const solved = ref(false);
 
 const offset = ref(0);
-const limit = 3;
+const initialLimit = 3;
+const loadMoreLimit = 6;
 const hasMore = ref(true);
 const isLoadingMore = ref(false);
 
@@ -166,14 +167,14 @@ const fetchChallenge = async (id: string) => {
   offset.value = 0;
   hasMore.value = true;
   try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}?limit=${limit}&offset=0`, {
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}?limit=${initialLimit}&offset=0`, {
       headers: { Authorization: `Bearer ${auth.user.token}` },
     });
     const data = await res.json();
     challenge.value = data.data.challenge;
     solvers.value = data.data.solvers;
     solved.value = data.data.solved;
-    if (data.data.solvers.length < limit) hasMore.value = false;
+    if (data.data.solvers.length < initialLimit) hasMore.value = false;
     offset.value = data.data.solvers.length;
   } catch (error) {
     console.error('Error loading challenge:', error);
@@ -185,14 +186,14 @@ const fetchChallenge = async (id: string) => {
 const loadMoreSolvers = async () => {
   isLoadingMore.value = true;
   try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.value.id}?limit=${limit}&offset=${offset.value}&appendOnly=true`, {
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.value.id}?limit=${loadMoreLimit}&offset=${offset.value}&appendOnly=true`, {
       headers: { Authorization: `Bearer ${auth.user.token}` },
     });
     const data = await res.json();
     if (data.solvers?.length) {
       solvers.value.push(...data.solvers);
       offset.value += data.solvers.length;
-      if (data.solvers.length < limit) hasMore.value = false;
+      if (data.solvers.length < loadMoreLimit) hasMore.value = false;
     } else {
       hasMore.value = false;
     }
