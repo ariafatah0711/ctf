@@ -84,3 +84,56 @@ export async function deleteUserById(id) {
   if (error) throw new Error(error.message);
   return true;
 }
+
+export async function updateCurrentUser(id, { name, email, password }) {
+  if (!id) return { error: "ID user wajib diisi." };
+
+  const { data: userData, error: getUserError } = await supabaseAdmin.auth.admin.getUserById(id);
+  if (getUserError || !userData?.user) return { error: "User tidak ditemukan." };
+
+  const updateFields = {};
+  const metaUpdate = {};
+  const currentUser = userData.user;
+  const currentName = currentUser.user_metadata?.display_name;
+
+  // Cek perubahan email
+  if (email && email !== currentUser.email) {
+    updateFields.email = email;
+  }
+
+  // Cek password baru
+  if (password) {
+    updateFields.password = password;
+  }
+
+  // Cek perubahan display name
+  if (name && name !== currentName) {
+    const taken = await isDisplayNameTaken(name, id);
+    if (taken) return { error: "Username sudah digunakan." };
+    metaUpdate.display_name = name;
+  }
+
+  if (Object.keys(updateFields).length === 0 && Object.keys(metaUpdate).length === 0) {
+    return { error: "Tidak ada perubahan yang dilakukan." };
+  }
+
+  // Eksekusi update
+  const { data, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(id, {
+    ...updateFields,
+    user_metadata: {
+      ...currentUser.user_metadata,
+      ...metaUpdate,
+    },
+  });
+
+  if (updateError) return { error: updateError.message };
+
+  return {
+    message: "Data profil berhasil diperbarui.",
+    user: {
+      id: data.user.id,
+      email: data.user.email,
+      display_name: data.user.user_metadata?.display_name,
+    },
+  };
+}
