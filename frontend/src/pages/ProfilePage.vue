@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { onActivated, onBeforeUnmount, watch, ref, onMounted } from 'vue';
   import { useRoute, RouterLink } from 'vue-router';
   import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue'
   import EditProfileForm from '../components/profile/EditProfileForm.vue';
@@ -99,7 +99,8 @@
   import { swalSuccess, swalError } from '../utills/swalAlert'
 
   const route = useRoute();
-  const username = route.params.username as string | undefined;
+  // const username = route.params.username as string | undefined;
+  const username = computed(() => route.params.username as string | undefined);
 
   const user = ref<any>(null);
   const loading = ref(true);
@@ -172,9 +173,34 @@
     }
   }
 
-  onMounted(async () => {
+  // onMounted(async () => {
+  //   try {
+  //     const targetUsername = username ?? auth.user.username;
+  //     const res = await fetch(`${config.BASE_URL}/api/users?username=${targetUsername}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     const result = await res.json();
+  //     console.log(result)
+  //     if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
+
+  //     user.value = result.data;
+  //   } catch (err: any) {
+  //     error.value = err.message;
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // });
+
+  const fetchUserProfile = async () => {
+    loading.value = true;
+    error.value = null;
+
     try {
-      const targetUsername = username ?? auth.user.username;
+      // const targetUsername = username ?? auth.user.username;
+      const targetUsername = username.value ?? auth.user.username;
       const res = await fetch(`${config.BASE_URL}/api/users?username=${targetUsername}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -182,7 +208,6 @@
       });
 
       const result = await res.json();
-      console.log(result)
       if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
 
       user.value = result.data;
@@ -190,6 +215,23 @@
       error.value = err.message;
     } finally {
       loading.value = false;
+      await auth.checkAuth()
     }
+  };
+
+  onMounted(fetchUserProfile);
+  // watch(() => route.params.username, fetchUserProfile);
+  watch(username, fetchUserProfile);
+
+  const handleVisibility = () => {
+    if (document.visibilityState === 'visible') {
+      fetchUserProfile();
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibility);
+
+  onBeforeUnmount(() => {
+    document.removeEventListener('visibilitychange', handleVisibility);
   });
 </script>
