@@ -26,6 +26,9 @@
                 v-for="user in leaderboard"
                 :key="user.user_id"
                 class="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition cursor-pointer"
+                :class="{
+                  'bg-slate-200 dark:bg-slate-800': isSimilarUsername(user.username, highlightUsername)
+                }"
                 @click="goToUser(user.username)"
               >
                 <td class="px-4 py-2 text-center font-medium dark:text-white">{{ user.rank }}</td>
@@ -52,12 +55,10 @@
 </template>
 
 <script setup lang="ts">
-  import Navbar from '../components/Navbar.vue';
   import { ref, onMounted, watch } from 'vue';
   import { useAuthStore } from '../stores/auth';
   import { useRouter } from 'vue-router';
   import Pagination from '../components/Pagination.vue'
-  import LeaderboardSkeleton from '../components/skelaton/LeaderboardSkeleton.vue'
   import config from "../config"
 
   const router = useRouter();
@@ -76,6 +77,11 @@
   const page = ref(1);
   const limit = 25
   const totalPages = ref(1);
+
+  const highlightUsername = auth.user.username;
+  const isSimilarUsername = (target: string, keyword: string) => {
+    return target.toLowerCase().includes(keyword.toLowerCase());
+  }
 
   const fetchLeaderboard = async () => {
     loading.value = true;
@@ -103,12 +109,7 @@
     router.push(`/profile/${username}`);
   };
 
-  const nextPage = () => {
-    if (page.value < totalPages.value) page.value++;
-  };
-  const prevPage = () => {
-    if (page.value > 1) page.value--;
-  };
+
   const setPage = (n: number) => {
     if (n !== page.value) {
       page.value = n;

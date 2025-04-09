@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onActivated, onBeforeUnmount, watch, ref, onMounted } from 'vue';
+  import { onBeforeUnmount, watch, ref, onMounted } from 'vue';
   import { useRoute, RouterLink } from 'vue-router';
   import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue'
   import EditProfileForm from '../components/profile/EditProfileForm.vue';
@@ -110,9 +110,6 @@
   const token = auth.user.token;
 
   const showForm = ref(false);
-  function openEditForm() {
-    showForm.value = true
-  }
 
   import { computed } from 'vue';
 
