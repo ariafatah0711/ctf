@@ -23,7 +23,7 @@
 
       <DashboardSkeleton v-if="loading" />
 
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
         <!-- User Stats -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-200 dark:border-slate-700 shadow-sm h-full flex flex-col gap-4">
           <!-- Judul -->
