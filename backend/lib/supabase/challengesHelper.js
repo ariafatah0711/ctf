@@ -79,6 +79,7 @@ export async function fetchChallengesWithFilters(userId, { tags, difficulty, tit
     `,
     { count: "exact" }
   );
+  query = query.order("created_at", { ascending: false });
 
   // ✅ Filter active hanya kalau bukan 'all'
   if (active !== "all") {

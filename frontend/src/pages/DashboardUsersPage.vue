@@ -64,13 +64,13 @@
       <UserForm
           :type="formType"
           :initialData="formData"
-          @submit="(data) => {
+          @submit="(data: any) => {
             if (formType === 'add') {
               handleAddUser(data)
             } else {
               handleEditUser(data)
             }
-            showForm.value = false
+            showForm = false
           }"
         />
       <button

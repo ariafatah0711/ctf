@@ -10,7 +10,8 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const { username, page = 1, limit = 25 } = req.query;
+      // const { username, page = 1, limit = 25 } = req.query;
+      const { username, page = 1, limit = 25, role, last_signin } = req.query;
 
       verifyToken(req, res, async () => {
         // query by username?
@@ -25,7 +26,8 @@ export default async function handler(req, res) {
         }
 
         await requireRole("admin")(req, res, async () => {
-          const result = await listFormattedUsers(page, limit);
+          // const result = await listFormattedUsers(page, limit);
+          const result = await listFormattedUsers(page, limit, role, last_signin);
 
           if (result.error) {
             return res.status(500).json({ message: "Gagal mengambil data pengguna.", error: result.error });
