@@ -16,13 +16,21 @@
             <h3 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ user.username }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
 
-            <button
-              v-if="isOwnProfile"
-              @click="showForm = true"
-              class="mt-2 px-4 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
-              ✏️ Edit Profile
-            </button>
+            <div class="mt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+              <button v-if="isOwnProfile"
+                @click="showForm = true"
+                class="px-4 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              >
+                ✏️ Edit Profile
+              </button>
+
+              <RouterLink
+                :to="`/history?id=${user.id}&user=${user.username}`"
+                class="px-4 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+              >
+                📜 Lihat Riwayat
+              </RouterLink>
+            </div>
           </div>
         </div>
 

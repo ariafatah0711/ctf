@@ -14,6 +14,7 @@ import DashboardPage from '../pages/DashboardPage.vue';
 import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
 import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
 import ForgotPassword from '../pages/ForgotPassword.vue';
+import History from '../pages/History.vue'
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
 const Swal = GlobalSwal
@@ -114,6 +115,12 @@ const routes = [
     path: '/profile',
     name: 'ProfilePage ME',
     component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/history',
+    name: 'History',
+    component: History,
     meta: { requiresAuth: true },
   },
 ];

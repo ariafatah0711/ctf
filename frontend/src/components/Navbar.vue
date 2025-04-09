@@ -13,6 +13,7 @@
         <div class="hidden md:flex flex-1 justify-center space-x-6">
           <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="hover:text-blue-400 transition">Challenges</RouterLink>
           <RouterLink to="/leaderboard" class="hover:text-blue-400 transition">Leaderboard</RouterLink>
+          <RouterLink v-if="auth.isAuthenticated" to="/history" class="hover:text-blue-400 transition">history</RouterLink>
           <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="hover:text-blue-400 transition">Dashboard</RouterLink>
           <RouterLink to="/about" class="hover:text-blue-400 transition">About</RouterLink>
         </div>
@@ -152,6 +153,7 @@
       <!-- Navigation -->
       <RouterLink v-if="auth.isAuthenticated" to="/challenges" class="block hover:text-blue-400 transition">Challenges</RouterLink>
       <RouterLink to="/leaderboard" class="block hover:text-blue-400 transition">Leaderboard</RouterLink>
+      <RouterLink v-if="auth.isAuthenticated" to="/history" class="block hover:text-blue-400 transition">History</RouterLink>
       <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="block hover:text-blue-400 transition">Dashboard</RouterLink>
       <RouterLink to="/about" class="block hover:text-blue-400 transition">About</RouterLink>
 

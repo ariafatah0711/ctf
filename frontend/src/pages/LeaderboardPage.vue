@@ -86,11 +86,7 @@
   const fetchLeaderboard = async () => {
     loading.value = true;
     try {
-      const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=${limit}`, {
-        headers: {
-          Authorization: `Bearer ${auth.user.token}`,
-        },
-      });
+      const res = await fetch(`${config.BASE_URL}/api/challenges/leaderboard?page=${page.value}&limit=${limit}`);
 
       const raw = await res.json();
       console.log(raw)
