@@ -11,8 +11,9 @@ export default async function handler(req, res) {
     const userId = req.user.id;
     const { name, email, password } = req.body;
 
-    // Cek apakah user yang login punya akses ke id ini (opsional)
-    if (userId !== req.user.id) return res.status(403).json({ error: "Akses ditolak" });
+    if (req.body.id && req.body.id !== userId) {
+      return res.status(403).json({ error: "Kamu tidak punya akses ke user ini." });
+    }
 
     const result = await updateCurrentUser(userId, { name, email, password });
 

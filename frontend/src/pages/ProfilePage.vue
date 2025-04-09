@@ -94,7 +94,6 @@
   import { useRoute, RouterLink } from 'vue-router';
   import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue'
   import EditProfileForm from '../components/profile/EditProfileForm.vue';
-  // import UserForm from '../components/dashboard/UserForm.vue';
   import { useAuthStore } from '../stores/auth';
   import config from '../config';
   import { swalSuccess, swalError } from '../utills/swalAlert'
@@ -114,43 +113,11 @@
     showForm.value = true
   }
 
-  // async function handleUpdateProfile(data: any) {
-  //   try {
-  //     const res = await fetch(`${config.BASE_URL}/api/users/update-profile`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${auth.user.token}`,
-  //       },
-  //       body: JSON.stringify(data),
-  //     })
-
-  //     const result = await res.json()
-  //     console.log(result)
-
-  //     if (!res.ok) {
-  //       // Kalau gagal, lempar error dari API-nya (bukan cuma HTTP error)
-  //       throw new Error(result.error || 'Gagal update profil')
-  //     }
-
-  //     // Update data lokal
-  //     user.value = {
-  //       ...user.value,
-  //       ...result.user, // pastikan struktur result.user sesuai backend
-  //     }
-
-  //     showForm.value = false
-  //     await auth.checkAuth()
-  //     swalSuccess('Profil berhasil diperbarui!')
-  //   } catch (err: any) {
-  //     swalError(err.message || 'Terjadi kesalahan saat update profil.')
-  //   }
-  // }
-
   import { computed } from 'vue';
 
   const isOwnProfile = computed(() => {
-    return !username || username === auth.user.username;
+    return route.path === '/profile';
+    // return true;  // disable security
   });
 
   async function handleUpdateProfile(data: any) {
