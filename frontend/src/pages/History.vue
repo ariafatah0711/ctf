@@ -154,6 +154,7 @@
 /* Mobile First (default) */
 .font-mono {
   font-size: 0.75rem; /* text-sm */
+  padding-top: 0.5rem !important;
   padding: 1rem;
 }
 
@@ -169,6 +170,7 @@
 @media (min-width: 1024px) {
   .font-mono {
     font-size: 1rem; /* text-lg */
+    padding-top: 0.5rem !important;
     padding: 1.5rem;
   }
 }
