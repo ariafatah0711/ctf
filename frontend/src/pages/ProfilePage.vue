@@ -17,6 +17,7 @@
             <p class="text-sm text-gray-500 dark:text-gray-300">{{ user.role }}</p>
 
             <button
+              v-if="isOwnProfile"
               @click="showForm = true"
               class="mt-2 px-4 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
             >
@@ -69,17 +70,17 @@
     </div>
   </div>
   <Teleport to="body">
-    <div v-if="showForm" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div v-if="showForm && isOwnProfile" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <EditProfileForm
-          v-if="user && user.id"
-          type="edit"
-          :initialData="{
-            id: user.id,
-            name: user.username,
-            email: user.email,
-          }"
-          @submit="handleUpdateProfile"
-        />
+        v-if="user && user.id"
+        type="edit"
+        :initialData="{
+          id: user.id,
+          name: user.username,
+          email: user.email,
+        }"
+        @submit="handleUpdateProfile"
+      />
       <button
         @click="showForm = false"
         class="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition duration-200 z-50"
@@ -145,6 +146,12 @@
   //     swalError(err.message || 'Terjadi kesalahan saat update profil.')
   //   }
   // }
+
+  import { computed } from 'vue';
+
+  const isOwnProfile = computed(() => {
+    return !username || username === auth.user.username;
+  });
 
   async function handleUpdateProfile(data: any) {
     try {
