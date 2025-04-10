@@ -20,7 +20,7 @@
 
     <!-- Table -->
     <div v-else>
-      <div v-if="challenges.length > 0" class="overflow-x-auto">
+      <div v-if="challenges.length > 0" class="overflow-x-auto mt-4">
         <PublicChallengeTable
           :rows="challenges"
           :selected="selectedIds"

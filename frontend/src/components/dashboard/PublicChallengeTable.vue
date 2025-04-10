@@ -63,7 +63,9 @@ const toggleSelectAll = () => {
       </colgroup>
       <thead class="bg-slate-100 dark:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
         <tr>
-          <th class="px-2.5 py-2 text-center">#</th>
+          <th class="px-2.5 py-2 text-center w-10">
+            <input type="checkbox" :checked="allSelected" @change="toggleSelectAll" />
+          </th>
           <th class="px-2.5 py-2 text-left">Judul</th>
           <th class="px-2.5 py-2 text-left">Username</th>
           <th class="px-2.5 py-2 text-center">Tinjau</th>
@@ -85,18 +87,18 @@ const toggleSelectAll = () => {
           <td class="p-3 text-center">
             <input type="checkbox" :checked="internalSelected.includes(row.id)" @change.stop="toggleSelect(row.id)" />
           </td>
-          <td class="p-3 text-left truncate text-xs text-slate-700 dark:text-white">
+          <td class="p-3 text-left truncate text-sm text-slate-700 dark:text-white">
             <small class="font-medium">{{ row.title }}</small>
           </td>
-          <td class="p-3 text-left truncate text-xs text-slate-700 dark:text-white">
+          <td class="p-3 text-left truncate text-sm text-slate-700 dark:text-white">
             <small class="font-medium">{{ row.username }}</small>
           </td>
-          <td class="p-3 text-center text-xs">
+          <td class="p-3 text-center text-sm">
             <span :class="row.reviewed ? 'text-green-600' : 'text-gray-500'">
               {{ row.reviewed ? '✓' : '✗' }}
             </span>
           </td>
-          <td class="p-3 text-center text-xs">
+          <td class="p-3 text-center text-sm">
             <span :class="row.accepted ? 'text-green-600' : 'text-gray-500'">
               {{ row.accepted ? '✓' : '✗' }}
             </span>
@@ -104,23 +106,23 @@ const toggleSelectAll = () => {
           <td class="p-3 text-right">
             <div class="flex justify-end items-center gap-2 flex-wrap">
               <button
-                class="text-blue-600 hover:underline dark:text-blue-400 text-xs"
+                class="text-blue-600 hover:underline dark:text-blue-400 text-sm"
                 @click.stop="$emit('view', row)"
               >Lihat</button>
               <button
-                class="text-yellow-600 hover:underline dark:text-yellow-400 text-xs"
+                class="text-yellow-600 hover:underline dark:text-yellow-400 text-sm"
                 @click.stop="$emit('toggleReview', row.id)"
               >
                 {{ row.reviewed ? 'Batal Tinjau' : 'Tinjau' }}
               </button>
               <button
-                class="text-green-600 hover:underline dark:text-green-400 text-xs"
+                class="text-green-600 hover:underline dark:text-green-400 text-sm"
                 @click.stop="$emit('toggleApprove', row.id)"
               >
                 {{ row.accepted ? 'Batal Setujui' : 'Setujui' }}
               </button>
               <button
-                class="text-red-600 hover:underline dark:text-red-400 text-xs"
+                class="text-red-600 hover:underline dark:text-red-400 text-sm"
                 @click.stop="$emit('delete', row.id)"
               >Hapus</button>
             </div>
