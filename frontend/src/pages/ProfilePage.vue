@@ -129,69 +129,66 @@
             </div>
 
             <!-- Solved Challenges -->
-            <div class="py-4 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
-              <dt class="text-sm font-medium text-gray-900 dark:text-white">Solved Challenges</dt>
-              <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:flex sm:flex-wrap sm:gap-4 sm:mt-0">
+            <div class="py-4 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:px-0">
+              <dt class="text-sm font-medium text-gray-900 dark:text-white col-span-1 sm:col-span-2">
+                Solved Challenges
+              </dt>
 
-                <!-- Easy Challenges -->
-                <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
-                  <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Easy</div>
-                  <div v-if="user.solves && user.solves.filter(c => c.difficulty === 1).length">
-                    <div class="flex flex-wrap gap-2">
-                      <routerLink
-                        v-for="challenge in user.solves.filter(c => c.difficulty === 1)"
-                        :key="challenge.id"
-                        :to="`/challenges/${challenge.id}`"
-                        class="bg-green-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-green-700 transition duration-300 transform hover:scale-105 truncate"
-                      >
-                        {{ challenge.title }}
-                      </routerLink>
-                    </div>
+              <!-- Easy Challenges (Full width on all screens) -->
+              <div class="flex flex-col space-y-2 rounded-lg truncate sm:col-span-2">
+                <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Easy</div>
+                <div v-if="user.solves && user.solves.filter(c => c.difficulty === 1).length">
+                  <div class="flex flex-wrap gap-2">
+                    <routerLink
+                      v-for="challenge in user.solves.filter(c => c.difficulty === 1)"
+                      :key="challenge.id"
+                      :to="`/challenges/${challenge.id}`"
+                      class="bg-green-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-green-700 transition duration-300 transform hover:scale-105 truncate"
+                    >
+                      {{ challenge.title }}
+                    </routerLink>
                   </div>
-                  <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge easy.</div>
                 </div>
+                <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge easy.</div>
+              </div>
 
-                <!-- Medium and Hard Challenges (Second Row) -->
-                <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:mt-4">
-                    <!-- Medium Challenges -->
-                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
-                      <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Medium</div>
-                      <div v-if="user.solves && user.solves.filter(c => c.difficulty === 2).length">
-                        <div class="flex flex-wrap gap-2">
-                          <routerLink
-                            v-for="challenge in user.solves.filter(c => c.difficulty === 2)"
-                            :key="challenge.id"
-                            :to="`/challenges/${challenge.id}`"
-                            class="bg-yellow-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-yellow-700 transition duration-300 transform hover:scale-105 truncate"
-                          >
-                            {{ challenge.title }}
-                          </routerLink>
-                        </div>
-                      </div>
-                      <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge medium.</div>
-                    </div>
-
-                    <!-- Hard Challenges -->
-                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
-                      <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Hard</div>
-                      <div v-if="user.solves && user.solves.filter(c => c.difficulty === 3).length">
-                        <div class="flex flex-wrap gap-2">
-                          <routerLink
-                            v-for="challenge in user.solves.filter(c => c.difficulty === 3)"
-                            :key="challenge.id"
-                            :to="`/challenges/${challenge.id}`"
-                            class="bg-red-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-700 transition duration-300 transform hover:scale-105 truncate"
-                          >
-                            {{ challenge.title }}
-                          </routerLink>
-                        </div>
-                      </div>
-                      <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge hard.</div>
-                    </div>
-
+              <!-- Medium Challenges -->
+              <div class="flex flex-col space-y-2 rounded-lg truncate">
+                <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Medium</div>
+                <div v-if="user.solves && user.solves.filter(c => c.difficulty === 2).length">
+                  <div class="flex flex-wrap gap-2">
+                    <routerLink
+                      v-for="challenge in user.solves.filter(c => c.difficulty === 2)"
+                      :key="challenge.id"
+                      :to="`/challenges/${challenge.id}`"
+                      class="bg-yellow-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-yellow-700 transition duration-300 transform hover:scale-105 truncate"
+                    >
+                      {{ challenge.title }}
+                    </routerLink>
+                  </div>
                 </div>
-              </dd>
+                <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge medium.</div>
+              </div>
+
+              <!-- Hard Challenges -->
+              <div class="flex flex-col space-y-2 rounded-lg truncate">
+                <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Hard</div>
+                <div v-if="user.solves && user.solves.filter(c => c.difficulty === 3).length">
+                  <div class="flex flex-wrap gap-2">
+                    <routerLink
+                      v-for="challenge in user.solves.filter(c => c.difficulty === 3)"
+                      :key="challenge.id"
+                      :to="`/challenges/${challenge.id}`"
+                      class="bg-red-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-700 transition duration-300 transform hover:scale-105 truncate"
+                    >
+                      {{ challenge.title }}
+                    </routerLink>
+                  </div>
+                </div>
+                <div v-else class="italic text-gray-400 dark:text-gray-500">Belum menyelesaikan challenge hard.</div>
+              </div>
             </div>
+
           </dl>
         </div>
       </div>
