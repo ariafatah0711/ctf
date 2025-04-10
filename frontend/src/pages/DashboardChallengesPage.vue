@@ -7,7 +7,7 @@
     </div>
 
     <div class="flex flex-wrap justify-center items-center gap-4">
-      <Breadcrumbs class="w-full sm:w-auto flex-1" />
+      <Breadcrumbs class="w-full sm:w-auto flex-1" :extra-items="[{ name: 'Upload', href: '/dashboard/upload' }]" />
       <div v-if="!loading" class="flex gap-2">
         <IconButton @click="handleActive" :icon="CheckCircleIcon" label="Status" color="gray" />
         <IconButton @click="showAddChallengeModal" :icon="PlusIcon" label="Add" color="blue" />
@@ -66,16 +66,18 @@
             </span>
           </template>
         </BaseTable>
+      </div>
 
+      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
+        Tidak ada data tantangan.
+      </div>
+
+      <div class="flex justify-center">
         <Pagination
           :current-page="page"
           :total-pages="totalPages"
           @update:page="setPage"
         />
-      </div>
-
-      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
-        Tidak ada data tantangan.
       </div>
     </div>
   </div>
@@ -159,7 +161,7 @@
   const loading = ref(true)
   
   const page = ref(1)
-  const limit = 25
+  const limit = 10
   const totalPages = ref(1)
   const selected = ref<number[]>([])
 

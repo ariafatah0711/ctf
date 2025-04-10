@@ -91,11 +91,19 @@
   import { useRoute } from 'vue-router';
   
   const props = defineProps({
-    extra: {
-      type: Array,
-      default: () => [],
-      // Format: [{ name: 'Uploads', href: '/upload' }, { name: 'Final', href: null }]
-    }
+    // extra: {
+    //   type: Array,
+    //   default: () => [],
+    //   // Format: [{ name: 'Uploads', href: '/upload' }, { name: 'Final', href: null }]
+    // },
+  extraItems: {
+    type: Array,
+    default: () => [],
+  },
+    extraPosition: {
+      type: [String, Number],
+      default: 'end', // bisa: 'start', 'end', atau number (index)
+    },
   });
 
   const route = useRoute();
@@ -117,7 +125,26 @@
   
   watch(() => route.fullPath, generateBreadcrumbs, { immediate: true });
   
+  // const fullBreadcrumbs = computed(() => {
+  //   return [...breadcrumbs.value, ...props.extra];
+  // });
   const fullBreadcrumbs = computed(() => {
-    return [...breadcrumbs.value, ...props.extra];
+    const base = [...breadcrumbs.value];
+    const extra = props.extraItems;
+
+    if (props.extraPosition === 'start') {
+      return [...extra, ...base];
+    }
+
+    if (props.extraPosition === 'end') {
+      return [...base, ...extra];
+    }
+
+    if (typeof props.extraPosition === 'number') {
+      const idx = Math.max(0, Math.min(props.extraPosition, base.length));
+      return [...base.slice(0, idx), ...extra, ...base.slice(idx)];
+    }
+
+    return base;
   });
   </script>

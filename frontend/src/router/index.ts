@@ -15,7 +15,7 @@ import DashboardChallengesPage from '../pages/DashboardChallengesPage.vue';
 import DashboardUsersPage from '../pages/DashboardUsersPage.vue';
 import ForgotPassword from '../pages/ForgotPassword.vue';
 import History from '../pages/History.vue'
-
+import DashboardClientChallengesPage from '../pages/Dashboard/DashboardClientChallengesPage.vue';
 import upload from '../pages/challenges/upload.vue';
 import { useAuthStore } from '../stores/auth';
 import GlobalSwal from '../utills/GlobalSwal';
@@ -88,6 +88,12 @@ const routes = [
     path: '/dashboard/challenges', // Halaman challenges
     name: 'DashboardChallenges',
     component: DashboardChallengesPage,
+    meta: { requiresAuth: true, requiresMaker: true },
+  },
+  {
+    path: '/dashboard/upload', // Halaman challenges
+    name: 'DashboardClientChallengesPage',
+    component: DashboardClientChallengesPage,
     meta: { requiresAuth: true, requiresMaker: true },
   },
   {

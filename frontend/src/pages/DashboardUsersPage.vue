@@ -44,16 +44,18 @@
             </div>
           </template>
         </BaseTable>
+      </div>
 
+      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
+        Tidak ada data pengguna.
+      </div>
+
+      <div class="flex justify-center">
         <Pagination
           :current-page="page"
           :total-pages="totalPages"
           @update:page="setPage"
         />
-      </div>
-
-      <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
-        Tidak ada data pengguna.
       </div>
     </div>
   </div>

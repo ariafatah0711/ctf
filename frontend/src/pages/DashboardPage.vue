@@ -18,6 +18,12 @@
           >
             Challenges
           </router-link>
+          <router-link
+            to="/dashboard/upload"
+            class="text-blue-600 dark:text-blue-400 hover:underline text-lg px-2"
+          >
+            upload
+          </router-link>
         </div>
       </div>
 

@@ -65,8 +65,8 @@ const levelMap = {
 </script>
 
 <template>
-  <div class="overflow-x-auto mt-4 rounded-lg border border-slate-200 dark:border-slate-700">
-    <table class="min-w-[800px] w-full table-fixed">
+  <div class="mt-4 w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+    <table class="min-w-[800px] w-full table-fixed border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden">
       <thead class="bg-slate-100 dark:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
         <tr>
           <th class="px-2.5 py-2 text-center w-10">
@@ -106,13 +106,13 @@ const levelMap = {
           </td>
           <td class="px-3 py-2 text-center">{{ row.tags?.join(', ') }}</td>
           <td class="px-3 py-2 text-center">
-            <span :class="row.is_reviewed ? 'text-green-600' : 'text-gray-500'">
-              {{ row.is_reviewed ? '✅ Ya' : '❌ Tidak' }}
+            <span :class="row.reviewed ? 'text-green-600' : 'text-gray-500'">
+              {{ row.reviewed ? '✅ Ya' : '❌ Tidak' }}
             </span>
           </td>
           <td class="px-3 py-2 text-center">
-            <span :class="row.is_approved ? 'text-green-600' : 'text-gray-500'">
-              {{ row.is_approved ? '✅ Ya' : '❌ Tidak' }}
+            <span :class="row.accepted ? 'text-green-600' : 'text-gray-500'">
+              {{ row.accepted ? '✅ Ya' : '❌ Tidak' }}
             </span>
           </td>
           <td class="px-3 py-2 text-right space-x-2">

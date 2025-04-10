@@ -91,8 +91,8 @@
   const usernameFromQuery = computed(() => route.query.user);
   const title = computed(() => {
   return usernameFromQuery.value
-      ? `🏆 Riwayat Tantangan ${usernameFromQuery.value}`
-      : '🏆 Riwayat Tantangan';
+      ? `🏆 Riwayat ${usernameFromQuery.value}`
+      : '🏆 Riwayat';
   });
 
   const fetchHistory = async (append = false) => {

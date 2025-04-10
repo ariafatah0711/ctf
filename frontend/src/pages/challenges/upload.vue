@@ -3,7 +3,7 @@
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left flex-1 my-4">
-          🎯 Upload Challenge Buatanmu
+          🎯 Upload
         </h1>
       </div>
   
@@ -175,13 +175,13 @@
       })
   
       const result = await res.json()
-      if (!res.ok) throw new Error(result.message)
+      if (!res.ok) throw new Error(result.error)
   
       swalSuccess('Challenge berhasil diperbarui!')
       showForm.value = false
       fetchMyPublicChallenges()
     } catch (err) {
-      swalError('Gagal memperbarui challenge', err.message)
+      swalError('Gagal memperbarui challenge', err)
     }
   }
   
