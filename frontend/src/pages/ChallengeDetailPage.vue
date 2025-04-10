@@ -36,7 +36,7 @@
       <!-- Challenge Detail -->
       <div v-else :class="['relative rounded-2xl p-6 border shadow-sm transition',
           solved ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700']">
-        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-1 truncate">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-1 truncate mr-16">
           {{ challenge.title }}
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ formattedDate(challenge.created_at) }}</p>

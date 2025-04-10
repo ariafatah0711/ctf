@@ -302,6 +302,7 @@ const handleDelete = async (index: number) => {
 
     Swal.fire('Dihapus!', 'User berhasil dihapus.', 'success')
     await fetchUsers()
+    selected.value = []
   } catch (err: any) {
     Swal.fire('Error', `Gagal hapus user: ${err.message}`, 'error')
   }

@@ -160,6 +160,29 @@
             </div>
           </div>
 
+          <!-- Public Challenges Stats -->
+          <div>
+            <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Public Challenges:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Total Public</p>
+                <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ totalPublicChallenges }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Reviewed</p>
+                <p class="text-xl font-bold text-yellow-600 dark:text-yellow-400">{{ totalPublicChallengesReviewed }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-slate-400">Accepted / Rejected</p>
+                <p class="text-xl font-bold">
+                  <span class="text-green-600 dark:text-green-400">{{ totalPublicChallengesAccepted }}</span>
+                  <span class="text-gray-500 dark:text-slate-400"> / </span>
+                  <span class="text-red-600 dark:text-red-400">{{ totalPublicChallengesRejected }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
           <!-- Difficulty Breakdown -->
           <div>
             <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Difficulty Breakdown:</p>
@@ -210,7 +233,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import useSWRV from 'swrv'
 import { useAuthStore } from '../stores/auth'
 import config from '../config'
@@ -218,19 +241,57 @@ import DashboardSkeleton from '../components/skelaton/DashboardSkeleton.vue'
 
 const auth = useAuthStore()
 
-const fetcher = (url: string) =>
-  fetch(url, {
-    headers: { Authorization: `Bearer ${auth.user.token}` },
-  }).then(res => res.json())
+// Key buat localStorage
+const CACHE_KEY = 'dashboard_stats_cache'
+const CACHE_TTL = 5 * 60 * 1000 // 5 menit
 
-const { data, error, isValidating } = useSWRV(
-  () => `${config.BASE_URL}/api/stats`, // pakai function biar reactive
+// Load dari localStorage
+const loadCachedData = () => {
+  console.log("load cache")
+  const raw = localStorage.getItem(CACHE_KEY)
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    if (Date.now() - parsed.timestamp < CACHE_TTL) {
+      return parsed.data
+    }
+  } catch (e) {
+    console.warn('Cache parsing error:', e)
+  }
+  return null
+}
+
+// Simpan ke localStorage
+const saveToCache = (data: any) => {
+  localStorage.setItem(CACHE_KEY, JSON.stringify({
+    timestamp: Date.now(),
+    data,
+  }))
+}
+
+const localCache = ref(loadCachedData())
+
+const fetcher = async (url: string) => {
+  console.log("fetch data")
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${auth.user.token}` },
+  })
+  const json = await res.json()
+  saveToCache(json)
+  return json
+}
+
+const { data: swrvData } = useSWRV(
+  () => `${config.BASE_URL}/api/stats`,
   fetcher,
   {
-    ttl: 5 * 60 * 1000, // cache 5 menit
-    dedupingInterval: 2000, // optional: minimal interval antar fetch
+    ttl: CACHE_TTL,
+    dedupingInterval: 2000,
   }
 )
+
+// Gunakan cache awal dulu, lalu update dari swrv kalau udah ada
+const data = computed(() => swrvData.value || localCache.value)
 
 const levelMap = {
   1: 'Easy 🟢',
@@ -260,4 +321,12 @@ const topUsers = computed(() => data.value?.leaderboard || [])
 const tagsDistribution = computed(() => data.value?.tagsDistribution || [])
 const challengeSummary = computed(() => data.value?.description?.challengeSummary || 0)
 const topChallengeInfo = computed(() => data.value?.description?.topChallengeInfo || 0)
+const totalPublicChallenges = computed(() => data.value?.clientChallenges.total || 0)
+const totalPublicChallengesReviewed = computed(() => data.value?.clientChallenges.reviewed || 0)
+const totalPublicChallengesAccepted = computed(() => data.value?.clientChallenges.accepted || 0)
+const totalPublicChallengesRejected = computed(() => data.value?.clientChallenges.rejected || 0)
+
+watch(data, (newData) => {
+  console.log('Data baru dari API atau cache:', newData)
+})
 </script>

@@ -216,34 +216,38 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeUnmount, watch, ref, onMounted } from 'vue';
+  import { onBeforeUnmount, watch, ref, onMounted, computed } from 'vue';
   import { useRoute, RouterLink } from 'vue-router';
   import ProfileSkeleton from '../components/skelaton/ProfileSkeleton.vue'
   import EditProfileForm from '../components/profile/EditProfileForm.vue';
   import { useAuthStore } from '../stores/auth';
   import config from '../config';
   import { swalSuccess, swalError } from '../utills/swalAlert'
+  import { useProfileData } from "../services/useProfileData.ts"
 
   const route = useRoute();
   const username = computed(() => route.params.username as string | undefined);
 
-  const user = ref<any>(null);
-  const loading = ref(true);
-  const error = ref<string | null>(null);
+  // const user = ref<any>(null);
+  // const loading = ref(true);
+  // const error = ref<string | null>(null);
 
   const auth = useAuthStore();
   const token = auth.user.token;
 
   const showForm = ref(false);
 
-  import { computed } from 'vue';
-
   const isOwnProfile = computed(() => {
-    return route.path === '/profile';
+    return route.path === '/profile' || username.value === auth.user.username;
     // return true;  // disable security
   });
-  
 
+  const usernameParam = computed(() => route.params.username as string | undefined);
+  const targetUsername = computed(() => usernameParam.value ?? auth.user.username);
+
+  // PENTING! ambil value-nya, jangan kirim computed langsung
+  const { user, isValidating, error, mutate } = useProfileData(targetUsername.value);
+  
   async function handleUpdateProfile(data: any) {
     try {
       const res = await fetch(`${config.BASE_URL}/api/users/update-profile`, {
@@ -290,47 +294,54 @@
         }
       }
 
+      await auth.checkAuth()
       swalSuccess('Profil berhasil diperbarui!');
     } catch (err: any) {
       swalError(err.message || 'Terjadi kesalahan saat update profil.');
     }
   }
 
-  const fetchUserProfile = async () => {
-    loading.value = true;
-    error.value = null;
+  // const fetchUserProfile = async () => {
+  //   loading.value = true;
+  //   error.value = null;
 
-    try {
-      // const targetUsername = username ?? auth.user.username;
-      const targetUsername = username.value ?? auth.user.username;
-      const res = await fetch(`${config.BASE_URL}/api/users?username=${targetUsername}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  //   try {
+  //     // const targetUsername = username ?? auth.user.username;
+  //     const targetUsername = username.value ?? auth.user.username;
+  //     const res = await fetch(`${config.BASE_URL}/api/users?username=${targetUsername}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
-      console.log(result.data)
+  //     const result = await res.json();
+  //     if (!res.ok) throw new Error(result.message || 'Gagal ambil data');
+  //     console.log(result.data)
 
-      user.value = result.data;
-    } catch (err: any) {
-      error.value = err.message;
-    } finally {
-      loading.value = false;
-      await auth.checkAuth()
-    }
-  };
+  //     user.value = result.data;
+  //   } catch (err: any) {
+  //     error.value = err.message;
+  //   } finally {
+  //     loading.value = false;
+  //     await auth.checkAuth()
+  //   }
+  // };
 
-  onMounted(fetchUserProfile);
-  // watch(() => route.params.username, fetchUserProfile);
-  watch(username, fetchUserProfile);
+  // onMounted(fetchUserProfile);
+  // // watch(() => route.params.username, fetchUserProfile);
+  // watch(username, fetchUserProfile);
 
   const handleVisibility = () => {
     if (document.visibilityState === 'visible') {
-      fetchUserProfile();
+      mutate(); // ini untuk re-fetch pakai SWRV
     }
   };
+
+  watch(() => route.query, () => {
+    location.reload()
+  }, { deep: true })
+
+  const loading = computed(() => isValidating.value && !user.value)
 
   document.addEventListener('visibilitychange', handleVisibility);
 
