@@ -35,7 +35,8 @@
   const format_flag = ref(config.FLAG_FORMAT);
   
   const handleSubmit = async () => {
-    if (!flag.value.trim()) {
+    const trimmedFlag = flag.value.trim();
+    if (!trimmedFlag) {
       Swal.fire({
         text: 'Flag tidak boleh kosong.',
         icon: 'warning',
@@ -46,7 +47,7 @@
     }
   
     loading.value = true;
-  
+
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/submit`, {
         method: 'POST',
@@ -54,9 +55,9 @@
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ flag: flag.value }),
+        body: JSON.stringify({ flag: trimmedFlag }),
       });
-  
+
       const data = await res.json();
   
       if (!res.ok) {
