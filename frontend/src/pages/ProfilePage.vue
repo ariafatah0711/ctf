@@ -1,6 +1,7 @@
 <template>
   <div class="w-full flex justify-center">
-    <div class="p-4 w-full max-w-screen-md mx-auto">
+    <!-- <div class="p-4 w-full max-w-screen-md mx-auto"> -->
+      <div class="py-4 w-full max-w-screen-lg mx-auto">
       <!-- Skeleton Loading -->
       <ProfileSkeleton v-if="loading" />
 
@@ -84,7 +85,7 @@
                     <!-- Difficulty Level Link -->
                     <RouterLink
                       :to="`/challenges?difficulty=${level === 'easy' ? 1 : level === 'medium' ? 2 : level === 'hard' ? 3 : level}`"
-                      class="capitalize truncate w-1/2 text-blue-500 hover:underline"
+                      class="capitalize truncate w-1/2 text-blue-500 hover:underline pt-1"
                     >
                       {{ level }}
                     </RouterLink>
@@ -112,10 +113,10 @@
                   <!-- Tag Link with Percentage -->
                   <RouterLink
                     :to="`/challenges?tags=${tag}`"
-                    class="font-medium text-gray-900 dark:text-white hover:text-blue-500 flex justify-between items-center"
+                    class="font-medium text-gray-900 dark:text-white hover:text-blue-500 flex justify-between items-center pt-1"
                   >
-                    <span>{{ tag }}</span>
-                    <span class="text-sm text-gray-700 dark:text-gray-300 truncate w-1/3 text-right">{{ percent }}%</span>
+                    <span class="truncate">{{ tag }}</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300 truncate text-right pl-1">{{ percent }}%</span>
                   </RouterLink>
                   <div class="w-full h-2 rounded bg-gray-200 dark:bg-gray-700 mt-1">
                     <div
@@ -133,15 +134,15 @@
               <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300 sm:flex sm:flex-wrap sm:gap-4 sm:mt-0">
 
                 <!-- Easy Challenges -->
-                <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg">
-                  <div class="font-medium text-gray-900 dark:text-white mb-2">Easy</div>
+                <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
+                  <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Easy</div>
                   <div v-if="user.solves && user.solves.filter(c => c.difficulty === 1).length">
                     <div class="flex flex-wrap gap-2">
                       <routerLink
                         v-for="challenge in user.solves.filter(c => c.difficulty === 1)"
                         :key="challenge.id"
                         :to="`/challenges/${challenge.id}`"
-                        class="bg-green-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-green-700 transition duration-300 transform hover:scale-105"
+                        class="bg-green-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-green-700 transition duration-300 transform hover:scale-105 truncate"
                       >
                         {{ challenge.title }}
                       </routerLink>
@@ -153,15 +154,15 @@
                 <!-- Medium and Hard Challenges (Second Row) -->
                 <div class="sm:grid sm:grid-cols-2 sm:gap-4 sm:mt-4">
                     <!-- Medium Challenges -->
-                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg">
-                      <div class="font-medium text-gray-900 dark:text-white mb-2">Medium</div>
+                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
+                      <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Medium</div>
                       <div v-if="user.solves && user.solves.filter(c => c.difficulty === 2).length">
                         <div class="flex flex-wrap gap-2">
                           <routerLink
                             v-for="challenge in user.solves.filter(c => c.difficulty === 2)"
                             :key="challenge.id"
                             :to="`/challenges/${challenge.id}`"
-                            class="bg-yellow-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-yellow-700 transition duration-300 transform hover:scale-105"
+                            class="bg-yellow-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-yellow-700 transition duration-300 transform hover:scale-105 truncate"
                           >
                             {{ challenge.title }}
                           </routerLink>
@@ -171,15 +172,15 @@
                     </div>
 
                     <!-- Hard Challenges -->
-                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg">
-                      <div class="font-medium text-gray-900 dark:text-white mb-2">Hard</div>
+                    <div class="flex-1 flex flex-col space-y-2 rounded-lg shadow-lg truncate">
+                      <div class="font-medium text-gray-900 dark:text-white mb-2 pt-2">Hard</div>
                       <div v-if="user.solves && user.solves.filter(c => c.difficulty === 3).length">
                         <div class="flex flex-wrap gap-2">
                           <routerLink
                             v-for="challenge in user.solves.filter(c => c.difficulty === 3)"
                             :key="challenge.id"
                             :to="`/challenges/${challenge.id}`"
-                            class="bg-red-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-700 transition duration-300 transform hover:scale-105"
+                            class="bg-red-600 text-white rounded-lg px-3 py-2 text-sm hover:bg-red-700 transition duration-300 transform hover:scale-105 truncate"
                           >
                             {{ challenge.title }}
                           </routerLink>

@@ -12,9 +12,9 @@
     </div>
 
     <!-- Edit Profile and View History Buttons Skeleton -->
-    <div class="mt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-      <div class="h-8 w-32 bg-gray-300 rounded mx-auto animate-pulse"></div>
-      <div class="h-8 w-32 bg-gray-300 rounded mx-auto animate-pulse"></div>
+    <div class="mt-4 flex justify-center gap-4"> <!-- Flex center and gap adjusted -->
+      <div class="h-8 w-32 bg-gray-300 rounded animate-pulse"></div>
+      <div class="h-8 w-32 bg-gray-300 rounded animate-pulse"></div>
     </div>
 
     <!-- Profile Details Skeleton -->
