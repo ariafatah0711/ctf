@@ -40,17 +40,71 @@
     <!-- Modal Detail -->
     <Teleport to="body">
       <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded-lg max-w-lg w-full shadow-lg relative">
-          <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-black dark:hover:text-white">&times;</button>
-          <h2 class="text-xl font-bold mb-4">Detail Challenge</h2>
-          <p><strong>Judul:</strong> {{ selectedChallenge?.title }}</p>
-          <p><strong>Deskripsi:</strong> {{ selectedChallenge?.description }}</p>
-          <p><strong>Hint:</strong> {{ selectedChallenge?.hint }}</p>
-          <p><strong>Kesulitan:</strong> {{ selectedChallenge?.difficulty }}</p>
-          <p><strong>URL:</strong> <a class="text-blue-600 underline" :href="selectedChallenge?.url" target="_blank">{{ selectedChallenge?.url }}</a></p>
-          <p><strong>Tag:</strong> {{ selectedChallenge?.tags.join(', ') }}</p>
-          <p><strong>Dikirim Oleh:</strong> {{ selectedChallenge?.username }}</p>
-          <p><strong>Submitted At:</strong> {{ new Date(selectedChallenge?.submitted_at).toLocaleString() }}</p>
+        <div class="w-full sm:max-w-3xl sm:min-w-[500px] min-w-full mx-auto sm:scale-100 scale-90">
+          <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-8 relative">
+            <button @click="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl">&times;</button>
+            <h2 class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">📝 Detail Challenge</h2>
+
+            <div class="space-y-4 text-base text-gray-700 dark:text-gray-200">
+              <div>
+                <label class="font-medium block mb-1">Judul Challenge</label>
+                <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl truncate">{{ selectedChallenge?.title }}</p>
+              </div>
+
+              <div>
+                <label class="font-medium block mb-1">Deskripsi</label>
+                <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl whitespace-pre-wrap max-h-40 overflow-y-auto">
+                  {{ selectedChallenge?.description }}
+                </p>
+              </div>
+
+              <div>
+                <label class="font-medium block mb-1">Hint</label>
+                <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl whitespace-pre-wrap max-h-20 overflow-y-auto">{{ selectedChallenge?.hint || '-' }}</p>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="font-medium block mb-1">Kesulitan</label>
+                  <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl">{{ selectedChallenge?.difficulty }}</p>
+                </div>
+
+                <div>
+                  <label class="font-medium block mb-1">URL</label>
+                  <a :href="selectedChallenge?.url" target="_blank"
+                    class="block bg-gray-100 dark:bg-slate-700 p-3 rounded-xl text-blue-600 underline break-words truncate">
+                    {{ selectedChallenge?.url }}
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <label class="font-medium block mb-1">Tags</label>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="(tag, i) in selectedChallenge?.tags"
+                    :key="i"
+                    class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1 rounded-full text-sm truncate"
+                  >
+                    {{ tag }}
+                  </span>
+                  <span v-if="!selectedChallenge?.tags?.length">-</span>
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="font-medium block mb-1">Dikirim Oleh</label>
+                  <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl truncate">{{ selectedChallenge?.username }}</p>
+                </div>
+
+                <div>
+                  <label class="font-medium block mb-1">Submitted At</label>
+                  <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl">{{ new Date(selectedChallenge?.submitted_at).toLocaleString() }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -67,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import config from '../../config'
 import Swal from 'sweetalert2'
@@ -84,7 +138,7 @@ const selectedIds = ref<number[]>([])
 const page = ref(1)
 const totalPages = ref(1)
 const loading = ref(false)
-const limit = 3
+const limit = 25
 
 const isAllSelected = computed(() => {
   return challenges.value.length > 0 &&
@@ -102,6 +156,14 @@ const viewDetails = (challenge: any) => {
   selectedChallenge.value = challenge
   showModal.value = true
 }
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    showModal.value = false;
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 
 const closeModal = () => {
   showModal.value = false
@@ -175,13 +237,20 @@ const toggleReview = async (id: number) => {
   }
 }
 
-// SETUJUI / BATALKAN
-const toggleApprove = async (id: number) => {
+const toggleApprove = async (id: number, action: 'setujui' | 'tolak' | 'batalkan') => {
   const challenge = challenges.value.find(c => c.id === id)
   if (!challenge) return
 
+  const actionLabels = {
+    setujui: { title: 'Setujui Challenge?', accepted: true },
+    tolak: { title: 'Tolak Challenge?', accepted: false },
+    batalkan: { title: 'Batalkan Persetujuan?', accepted: null },
+  }
+
+  const { title, accepted } = actionLabels[action]
+
   const confirm = await Swal.fire({
-    title: challenge.accepted ? 'Batalkan Persetujuan?' : 'Setujui Challenge?',
+    title,
     icon: 'question',
     showCancelButton: true,
     confirmButtonText: 'Ya',
@@ -196,9 +265,7 @@ const toggleApprove = async (id: number) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${auth.user.token}`,
       },
-      body: JSON.stringify({
-        accepted: !challenge.accepted,
-      }),
+      body: JSON.stringify({ accepted }),
     })
 
     if (!res.ok) throw new Error('Gagal update persetujuan')

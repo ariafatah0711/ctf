@@ -23,31 +23,53 @@ const emit = defineEmits<{
 }>()
 
 const internalSelected = ref<number[]>([...(props.selected ?? [])])
-watch(() => props.selected, val => {
-  internalSelected.value = [...(val ?? [])]
-})
 
-const toggleSelect = (id: number) => {
-  if (internalSelected.value.includes(id)) {
-    internalSelected.value = internalSelected.value.filter(i => i !== id)
-  } else {
-    internalSelected.value.push(id)
-  }
-  emit('update:selected', internalSelected.value)
-}
-
-const isAllSelected = computed(() =>
-  props.rows.length > 0 && props.rows.every(r => internalSelected.value.includes(r.id))
+const allSelected = computed(() =>
+  props.rows.length > 0 &&
+  props.rows.every(row => internalSelected.value.includes(row.id))
 )
 
 const toggleSelectAll = () => {
-  if (isAllSelected.value) {
+  if (allSelected.value) {
     internalSelected.value = []
   } else {
-    internalSelected.value = props.rows.map(r => r.id)
+    internalSelected.value = props.rows.map(row => row.id)
   }
   emit('update:selected', internalSelected.value)
 }
+
+const lastSelectedIndex = ref<number | null>(null)
+
+const toggleSelect = (index: number, event?: MouseEvent) => {
+  const id = props.rows[index].id
+
+  if (event?.shiftKey && lastSelectedIndex.value !== null) {
+    const [start, end] = [lastSelectedIndex.value, index].sort((a, b) => a - b)
+    const idsInRange = props.rows.slice(start, end + 1).map(r => r.id)
+    const merged = new Set([...internalSelected.value, ...idsInRange])
+    internalSelected.value = [...merged]
+  } else if (event?.ctrlKey || event?.metaKey) {
+    if (internalSelected.value.includes(id)) {
+      internalSelected.value = internalSelected.value.filter(i => i !== id)
+    } else {
+      internalSelected.value.push(id)
+    }
+  } else {
+    if (internalSelected.value.length === 1 && internalSelected.value[0] === id) {
+      internalSelected.value = []
+    } else {
+      internalSelected.value = [id]
+    }
+  }
+
+  lastSelectedIndex.value = index
+  emit('update:selected', internalSelected.value)
+}
+
+watch(() => props.rows, () => {
+  internalSelected.value = []
+  lastSelectedIndex.value = null
+})
 </script>
 
 <template>
@@ -75,9 +97,9 @@ const toggleSelectAll = () => {
       </thead>
       <tbody>
         <tr
-          v-for="row in props.rows"
+          v-for="(row, index) in props.rows"
           :key="row.id"
-          @click="toggleSelect(row.id)"
+          @click="toggleSelect(index, $event)"
           :class="[ 
             'border-t transition cursor-pointer', 
             'border-slate-200 dark:border-slate-700', 
@@ -85,7 +107,12 @@ const toggleSelectAll = () => {
           ]"
         >
           <td class="p-3 text-center">
-            <input type="checkbox" :checked="internalSelected.includes(row.id)" @change.stop="toggleSelect(row.id)" />
+            <!-- <input type="checkbox" :checked="internalSelected.includes(row.id)" @change.stop="toggleSelect(row.id)" /> -->
+            <input
+              type="checkbox"
+              :checked="internalSelected.includes(row.id)"
+              @change.stop="toggleSelect(index, $event)"
+            />
           </td>
           <td class="p-3 text-left truncate text-sm text-slate-700 dark:text-white">
             <small class="font-medium">{{ row.title }}</small>
@@ -115,12 +142,24 @@ const toggleSelectAll = () => {
               >
                 {{ row.reviewed ? 'Batal Tinjau' : 'Tinjau' }}
               </button>
-              <button
-                class="text-green-600 hover:underline dark:text-green-400 text-sm"
-                @click.stop="$emit('toggleApprove', row.id)"
-              >
-                {{ row.accepted ? 'Batal Setujui' : 'Setujui' }}
-              </button>
+              <template v-if="row.accepted === null">
+                  <button
+                    class="text-green-600 hover:underline dark:text-green-400 text-sm"
+                    @click.stop="$emit('toggleApprove', row.id, 'setujui')"
+                  >Setujui</button>
+
+                  <button
+                    class="text-red-600 hover:underline dark:text-red-400 text-sm"
+                    @click.stop="$emit('toggleApprove', row.id, 'tolak')"
+                  >Tolak</button>
+                </template>
+
+                <template v-else>
+                  <button
+                    class="text-gray-600 hover:underline dark:text-gray-400 text-sm"
+                    @click.stop="$emit('toggleApprove', row.id, 'batalkan')"
+                  >Batalkan</button>
+                </template>
               <button
                 class="text-red-600 hover:underline dark:text-red-400 text-sm"
                 @click.stop="$emit('delete', row.id)"

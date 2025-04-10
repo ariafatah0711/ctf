@@ -73,9 +73,7 @@ const levelMap = {
             <input type="checkbox" :checked="allSelected" @change="toggleSelectAll" />
           </th>
           <th class="px-3 py-2 text-left">Judul</th>
-          <th class="px-3 py-2 text-center">Tingkat</th>
           <th class="px-3 py-2 text-center">URL / File</th>
-          <th class="px-3 py-2 text-center">Tags</th>
           <th class="px-3 py-2 text-center">Reviewed</th>
           <th class="px-3 py-2 text-center">Approved</th>
           <th class="px-3 py-2 text-right w-32">Aksi</th>
@@ -99,20 +97,39 @@ const levelMap = {
           <td class="text-center px-3 py-2">
             <input type="checkbox" :checked="internalSelected.includes(i)" @change.stop="toggleSelect(i, $event)" />
           </td>
-          <td class="px-3 py-2 text-left">{{ row.title }}</td>
-          <td class="px-3 py-2 text-center">{{ levelMap[row.difficulty] }}</td>
+          <td class="px-3 py-2 text-left truncate">{{ row.title }}</td>
           <td class="px-3 py-2 text-center">
             <a :href="row.url" target="_blank" class="text-blue-500 underline">Lihat</a>
           </td>
-          <td class="px-3 py-2 text-center">{{ row.tags?.join(', ') }}</td>
+
+          <!-- DITINJAU -->
           <td class="px-3 py-2 text-center">
-            <span :class="row.reviewed ? 'text-green-600' : 'text-gray-500'">
-              {{ row.reviewed ? '✅ Ya' : '❌ Tidak' }}
+            <span
+              :class="{
+                'text-green-600 font-semibold': row.reviewed,
+                'text-gray-500': !row.reviewed
+              }"
+            >
+              {{ row.reviewed ? 'Sudah ditinjau' : 'Belum ditinjau' }}
             </span>
           </td>
+
+          <!-- STATUS PERSETUJUAN -->
           <td class="px-3 py-2 text-center">
-            <span :class="row.accepted ? 'text-green-600' : 'text-gray-500'">
-              {{ row.accepted ? '✅ Ya' : '❌ Tidak' }}
+            <span
+              :class="{
+                'text-green-600 font-semibold': row.accepted === true,
+                'text-red-600 font-semibold': row.accepted === false,
+                'text-yellow-600': row.accepted === null || row.accepted === undefined
+              }"
+            >
+              {{
+                row.accepted === true
+                  ? 'Disetujui'
+                  : row.accepted === false
+                  ? 'Ditolak'
+                  : 'Menunggu'
+              }}
             </span>
           </td>
           <td class="px-3 py-2 text-right space-x-2">

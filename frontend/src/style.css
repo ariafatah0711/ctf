@@ -75,6 +75,30 @@ body::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* overflow-y-auto */
+*::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+*::-webkit-scrollbar-thumb,
+.overflow-x-auto::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  /* background-color: rgba(100, 100, 255, 0.4); */
+  border-radius: 9999px;
+}
+
+/* Light mode */
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 255, 0.4);
+}
+
+/* Dark mode */
+.dark *::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 /* swal */
 .swal2-popup.swal2-dark {
   background: #1e1e1e !important;

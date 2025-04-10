@@ -38,7 +38,8 @@
         Selamat Datang di {{ app_name }}!
       </h1>
       <p class="text-base md:text-lg mb-8 leading-relaxed">
-        Merupakan Platform latihan dan kompetisi CTF (Capture The Flag) berbasis web. Tantang dirimu, pecahkan soal, dan naik ke puncak leaderboard!
+        Platform latihan dan kompetisi <strong>Capture The Flag (CTF)</strong> untuk semua level. Pelajari keamanan siber, uji kemampuanmu, dan raih peringkat tertinggi di leaderboard!  
+        Cocok untuk pemula yang ingin belajar maupun pro yang ingin unjuk skill.
       </p>
       <div class="flex flex-col md:flex-row justify-center gap-4">
         <router-link v-if="!auth.isAuthenticated"

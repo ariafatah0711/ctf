@@ -56,12 +56,18 @@ export async function getClientChallengesAdmin(id = null, { page = 1, limit = 25
 }
 
 // UPDATE status review / approval
-export async function updateClientChallengeStatus(id, { reviewed = null, accepted = null }) {
-  if (reviewed === null && accepted === null) return { error: "Minimal satu dari reviewed atau accepted harus diisi." };
+export async function updateClientChallengeStatus(id, payload) {
+  if (!("reviewed" in payload) && !("accepted" in payload)) {
+    return { error: "Minimal satu dari reviewed atau accepted harus diisi." };
+  }
 
   const updates = {};
-  if (reviewed !== null) updates.reviewed = reviewed;
-  if (accepted !== null) updates.accepted = accepted;
+  if (Object.prototype.hasOwnProperty.call(payload, "accepted")) {
+    updates.accepted = payload.accepted;
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, "reviewed")) {
+    updates.reviewed = payload.reviewed;
+  }
 
   const { data, error } = await supabase.from("client_challenges").update(updates).eq("id", id).select("*");
 

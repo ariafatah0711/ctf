@@ -161,7 +161,7 @@
   const loading = ref(true)
   
   const page = ref(1)
-  const limit = 10
+  const limit = 25
   const totalPages = ref(1)
   const selected = ref<number[]>([])
 
@@ -211,6 +211,7 @@
   
   watch(page, async () => {
     await fetchChallenges()
+    selected.value = []
   })
   
   const setPage = (n: number) => {

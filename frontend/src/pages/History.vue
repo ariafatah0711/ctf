@@ -174,13 +174,4 @@
     padding: 1.5rem;
   }
 }
-
-/* Optional: smooth scrollbar (untuk tampilan overflow di log) */
-.font-mono::-webkit-scrollbar {
-  height: 6px;
-}
-.font-mono::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 255, 0.4);
-  border-radius: 9999px;
-}
 </style>

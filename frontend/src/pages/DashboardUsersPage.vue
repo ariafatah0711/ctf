@@ -167,6 +167,7 @@ watch(page, async (newPage) => {
   console.log('Page changed to', newPage)
   router.replace({ query: { ...route.query, page: newPage.toString() } })
   await fetchUsers()
+  selected.value = []
 })
 
 const setPage = (n: number) => {
