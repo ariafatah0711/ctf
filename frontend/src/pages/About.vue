@@ -90,16 +90,17 @@
         >
           Kunjungi Website
         </a>
-        <a
-          href="/challenges/upload"
+        <RouterLink
+          to="/challenges/upload"
           class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg transition shadow text-center"
         >
           Upload Challenge Kamu
-        </a>
+        </RouterLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 </script>
