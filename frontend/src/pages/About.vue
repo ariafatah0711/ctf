@@ -96,6 +96,13 @@
         >
           Upload Challenge Kamu
         </RouterLink>
+        <a
+          href="https://s.id/dev-universe"
+          target="_blank"
+          class="bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg transition shadow text-center"
+        >
+          Gabung Komunitas
+        </a>
       </div>
     </div>
   </div>

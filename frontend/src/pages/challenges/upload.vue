@@ -44,7 +44,7 @@
           />
         </div>
         <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-10">
-          Tidak ada data tantangan.
+          Belum Ada Challenges Yang Di upload
         </div>
       </div>
   

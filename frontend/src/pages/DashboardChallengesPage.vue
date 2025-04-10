@@ -23,7 +23,7 @@
     <div v-else>
       <div v-if="challenges.length > 0" class="overflow-x-auto mt-4">
         <BaseTable
-          :min-width="'800px'"
+          :min-width="'700px'"
           :columns="[
             { label: 'Challenge Name', key: 'challenge', grow: true },
             { label: 'status', key: 'active', width: 'w-25' },

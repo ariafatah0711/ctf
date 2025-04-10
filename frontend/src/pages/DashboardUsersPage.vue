@@ -140,6 +140,7 @@ const fetchUsers = async () => {
       },
     })
     const data = await res.json()
+    console.log(`fetch ${config.BASE_URL}/api/users?page=${page.value}&limit=${limit}`)
     console.log(data)
     console.log('Total pages:', totalPages.value)
     console.log('Current page:', page.value)

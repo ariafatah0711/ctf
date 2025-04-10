@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex justify-center">
     <!-- <div class="p-4 w-full max-w-screen-md mx-auto"> -->
-      <div class="py-4 w-full max-w-screen-lg mx-auto">
+      <div class="p-6 w-full max-w-screen-lg mx-auto">
       <!-- Skeleton Loading -->
       <ProfileSkeleton v-if="loading" />
 

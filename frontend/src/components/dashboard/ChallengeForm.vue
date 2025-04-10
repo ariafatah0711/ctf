@@ -1,5 +1,5 @@
 <template>
-<div class="w-full sm:max-w-3xl sm:min-w-[500px] min-w-full mx-auto sm:scale-100 scale-90">
+<div class="w-full sm:max-w-3xl sm:min-w-[500px] min-w-full mx-auto sm:scale-100 scale-90 sm:max-h-none sm:overflow-visible max-h-[90vh] overflow-y-auto">
       <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-8 space-y-6">
         <h2 class="text-3xl font-bold text-blue-600 dark:text-blue-400">
           {{ type === 'add' ? '➕ Tambah Challenge Baru' : '✏️ Edit Challenge' }}
@@ -114,7 +114,7 @@
             </select>
           </div>
         </div>
-  
+
         <!-- Tombol Submit -->
         <div class="flex justify-end gap-3 pt-4">
           <button @click="onCancel" class="px-5 py-2.5 text-base bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-white rounded-xl">
