@@ -10,7 +10,9 @@
       <!-- Action Buttons -->
       <div class="flex flex-wrap justify-center items-center gap-4 mb-4">
         <Breadcrumbs class="w-full sm:w-auto flex-1" />
-        <button
+        <IconButton @click="openForm('add')" :icon="PlusIcon" label="Add" color="blue" />
+        <IconButton @click="handleBulkDelete" :icon="TrashIcon" label="Delete" color="red" />
+        <!-- <button
           class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow"
           @click="openForm('add')"
         >
@@ -21,7 +23,7 @@
           @click="handleBulkDelete"
         >
           🗑️ Hapus yang Dipilih
-        </button>
+        </button> -->
       </div>
 
       <!-- Loading Spinner -->
@@ -80,6 +82,8 @@
   import PublicChallengeTable from '../../components/table/PublicChallengeTable.vue'
   import PublicChallengeForm from '../../components/table/PublicChallengeForm.vue'
   import Breadcrumbs from '../../components/Breadcrumbs.vue'
+  import IconButton from '../../components/IconButton.vue'
+  import { PlusIcon, TrashIcon } from "@heroicons/vue/24/solid";
   
   const auth = useAuthStore()
   const challenges = ref([])
