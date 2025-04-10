@@ -34,7 +34,7 @@
       </div>
 
       <!-- Challenge Detail -->
-      <div v-else :class="['rounded-2xl p-6 border shadow-sm transition',
+      <div v-else :class="['relative rounded-2xl p-6 border shadow-sm transition',
           solved ? 'bg-green-100 dark:bg-green-700 border-green-300 dark:border-green-600' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700']">
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-1 truncate">
           {{ challenge.title }}
@@ -74,15 +74,7 @@
 
         <!-- Tombol Hint / No Hint -->
         <div class="mb-4">
-          <button
-            v-if="challenge.hint"
-            @click="showHintModal = true"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-700 dark:text-yellow-100 dark:hover:bg-yellow-600 transition"
-          >
-            <i class="fas fa-lightbulb"></i>
-            Tampilkan Hint
-          </button>
-
+          <IconButton v-if="challenge.hint" @click="showHintModal = true" :icon="LightBulbIcon" label="Tampilkan Hint" color="yellow" class="absolute top-0 right-0 mt-4 mr-4" />
           <div v-else class="text-sm text-gray-500 italic">
             Tidak ada hint untuk challenge ini.
           </div>
@@ -99,15 +91,6 @@
               class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center px-4"
             >
               <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-lg w-full relative shadow-2xl transition-all duration-300">
-                <!-- Close Button -->
-                <button
-                  @click="showHintModal = false"
-                  class="absolute top-3 right-3 text-gray-400 hover:text-red-500 hover:scale-110 transition-transform"
-                  aria-label="Close"
-                >
-                  <i class="fas fa-times fa-lg"></i>
-                </button>
-
                 <!-- Content -->
                 <h3 class="text-xl font-semibold text-yellow-700 dark:text-yellow-100 mb-3">
                   💡 Hint
@@ -120,22 +103,22 @@
 
         <div v-if="challenge.url" class="mt-8 flex flex-wrap gap-3">
           <!-- Download/Open Button -->
-          <button
-            @click="handleDownload"
-            class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition duration-200"
-          >
-            <i :class="isFile(challenge.url) ? 'fas fa-download' : 'fas fa-link'"></i>
-            <span>{{ isFile(challenge.url) ? 'Download File' : 'Open Link' }}</span>
-          </button>
+            <IconButton 
+              @click="handleDownload" 
+              :icon="isFile(challenge.url) ? ArrowDownTrayIcon : ArrowTopRightOnSquareIcon" 
+              :label="isFile(challenge.url) ? 'Download File' : 'Open Link'" 
+              color="blue" 
+              class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition duration-200"
+            />
 
-          <!-- Copy Link Button -->
-          <button
-            @click="handleCopyLink"
-            class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 active:scale-[0.98] transition duration-200 dark:text-blue-300 dark:bg-slate-700 dark:hover:bg-slate-600"
-          >
-            <i class="fas fa-copy"></i>
-            <span>Copy Link</span>
-          </button>
+            <!-- Copy Link Button -->
+            <IconButton 
+              @click="handleCopyLink" 
+              :icon="LinkIcon" 
+              label="Copy Link" 
+              color="blue" 
+              class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 active:scale-[0.98] transition duration-200 dark:text-blue-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+            />
         </div>
       </div>
 
@@ -194,6 +177,8 @@ import { useAuthStore } from '../stores/auth';
 import config from "../config"
 import { marked } from 'marked';
 import downloadFileByUrl from "../utills/downloadFile.ts"
+import IconButton from "../components/IconButton.vue"
+import {LightBulbIcon, ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, LinkIcon} from "@heroicons/vue/24/solid";
 import GlobalSwal from "../utills/GlobalSwal";
 const Swal = GlobalSwal;
 
