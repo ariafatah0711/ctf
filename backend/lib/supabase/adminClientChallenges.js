@@ -1,5 +1,6 @@
 import supabase from "@/lib/supabase";
 import supabaseAdmin from "../supabaseAdmin";
+import { decrypt } from "../encrypt";
 
 export async function getClientChallengesAdmin(id = null, { page = 1, limit = 25 } = {}) {
   const from = (page - 1) * limit;
@@ -43,6 +44,7 @@ export async function getClientChallengesAdmin(id = null, { page = 1, limit = 25
     const username = user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.email || "Unknown User";
     return {
       ...c,
+      flag: c.flag ? decrypt(c.flag) : null,
       username,
     };
   });

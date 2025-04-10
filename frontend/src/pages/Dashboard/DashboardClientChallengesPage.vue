@@ -63,6 +63,13 @@
                 <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl whitespace-pre-wrap max-h-20 overflow-y-auto">{{ selectedChallenge?.hint || '-' }}</p>
               </div>
 
+              <div>
+                <label class="font-medium block mb-1">Flag</label>
+                <p class="bg-gray-100 dark:bg-slate-700 p-3 rounded-xl whitespace-pre-wrap max-h-20 overflow-y-auto">
+                  {{ selectedChallenge?.flag || '-' }}
+                </p>
+              </div>
+
               <div class="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label class="font-medium block mb-1">Kesulitan</label>

@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   rows?: Array<any>
-  selected?: number[]
+  selected?: string[]  // UUID list
   loading?: boolean
 }>(), {
   rows: () => [],
@@ -17,32 +17,37 @@ const emit = defineEmits<{
   (e: 'update:selected', selected: number[]): void
 }>()
 
-const internalSelected = ref<number[]>([...(props.selected ?? [])])
 const lastSelectedIndex = ref<number | null>(null)
+const selected = ref<string[]>([]) 
+const internalSelected = ref<string[]>([...(props.selected ?? [])])
 
 watch(() => props.selected, (val) => {
   internalSelected.value = [...(val ?? [])]
 })
 
-const toggleSelect = (index: number, event?: MouseEvent) => {
+const toggleSelect = (row: any, event?: MouseEvent) => {
+  const id = row.id
+  const index = props.rows.findIndex(r => r.id === id)
+
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
     const [start, end] = [lastSelectedIndex.value, index].sort((a, b) => a - b)
-    const range = Array.from({ length: end - start + 1 }, (_, i) => start + i)
+    const range = props.rows.slice(start, end + 1).map(r => r.id)
     const merged = new Set([...internalSelected.value, ...range])
     internalSelected.value = [...merged]
   } else if (event?.ctrlKey || event?.metaKey) {
-    if (internalSelected.value.includes(index)) {
-      internalSelected.value = internalSelected.value.filter(i => i !== index)
+    if (internalSelected.value.includes(id)) {
+      internalSelected.value = internalSelected.value.filter(i => i !== id)
     } else {
-      internalSelected.value.push(index)
+      internalSelected.value.push(id)
     }
   } else {
-    if (internalSelected.value.length === 1 && internalSelected.value[0] === index) {
+    if (internalSelected.value.length === 1 && internalSelected.value[0] === id) {
       internalSelected.value = []
     } else {
-      internalSelected.value = [index]
+      internalSelected.value = [id]
     }
   }
+
   lastSelectedIndex.value = index
   emit('update:selected', internalSelected.value)
 }
@@ -52,7 +57,7 @@ const toggleSelectAll = () => {
   if (allSelected.value) {
     internalSelected.value = []
   } else {
-    internalSelected.value = props.rows.map((_, i) => i)
+    internalSelected.value = props.rows.map((r) => r.id)
   }
   emit('update:selected', internalSelected.value)
 }
@@ -85,17 +90,22 @@ const levelMap = {
           <td colspan="8" class="text-center py-4">Memuat data...</td>
         </tr>
         <tr
-          v-for="(row, i) in rows"
-          :key="row.id"
-          @click="toggleSelect(i, $event)"
-          :class="[
-            'border-t transition cursor-pointer',
-            'border-slate-200 dark:border-slate-700',
-            internalSelected.includes(i) ? 'bg-blue-50 dark:bg-slate-700/50' : 'hover:bg-slate-200 dark:hover:bg-slate-700'
-          ]"
-        >
+  v-for="(row, i) in rows"
+  :key="row.id"
+  @click="toggleSelect(row, $event)"
+  :class="[
+    'border-t transition cursor-pointer',
+    'border-slate-200 dark:border-slate-700',
+    internalSelected.includes(row.id) ? 'bg-blue-50 dark:bg-slate-700/50' : 'hover:bg-slate-200 dark:hover:bg-slate-700'
+  ]"
+>
           <td class="text-center px-3 py-2">
-            <input type="checkbox" :checked="internalSelected.includes(i)" @change.stop="toggleSelect(i, $event)" />
+            <!-- <input type="checkbox" :checked="internalSelected.includes(i)" @change.stop="toggleSelect(i, $event)" /> -->
+            <input
+  type="checkbox"
+  :checked="internalSelected.includes(row.id)"
+  @change.stop="toggleSelect(row, $event)"
+/>
           </td>
           <td class="px-3 py-2 text-left truncate">{{ row.title }}</td>
           <td class="px-3 py-2 text-center">

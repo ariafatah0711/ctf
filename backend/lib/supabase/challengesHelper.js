@@ -120,21 +120,6 @@ export async function fetchChallengesWithFilters(userId, { tags, difficulty, tit
   };
 }
 
-// export async function getChallengeMetadata() {
-//   const { data, error } = await supabase.from("challenges").select("tags");
-
-//   if (error) return { error: error.message };
-
-//   const allTags = Array.from(new Set(data.flatMap((challenge) => challenge.tags || []).filter(Boolean)));
-
-//   const totalCount = data.length;
-
-//   return {
-//     tags: allTags,
-//     totalCount,
-//   };
-// }
-
 export async function createChallenge({ title, description, difficulty, flag, url, tags = [], hint = null, active = true }) {
   const errorMessage = validateChallengeFields({ title, description, difficulty, flag, url, tags, hint });
   if (errorMessage) return { error: errorMessage };

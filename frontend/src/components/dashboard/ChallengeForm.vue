@@ -36,7 +36,7 @@
               <label class="font-medium text-gray-700 dark:text-gray-300 mb-1 block">Flag</label>
               <input
                 v-model="form.flag"
-                placeholder="CTF{contoh_flag}"
+                :placeholder="config.FLAG_FORMAT"
                 class="w-full px-5 py-3 border rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                 required
               />
@@ -135,6 +135,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
 import { swalError } from '../../utills/swalAlert'
+import config from '../../config'
 
 const props = defineProps({
   type: String,

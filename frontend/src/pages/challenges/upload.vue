@@ -16,6 +16,12 @@
         >
           ➕ Tambah Challenge
         </button>
+        <button
+          class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow"
+          @click="handleBulkDelete"
+        >
+          🗑️ Hapus yang Dipilih
+        </button>
       </div>
 
       <!-- Loading Spinner -->
@@ -29,6 +35,8 @@
           <PublicChallengeTable
             :rows="challenges"
             :loading="loading"
+            :selected="selected"
+             @update:selected="selected = $event"
             @edit="openForm('edit', $event)"
             @delete="confirmDelete($event)"
           />
@@ -44,11 +52,11 @@
           v-if="showForm"
           class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         >
-          <PublicChallengeForm
+          <PublicChallengeForm  
             :form-type="formType"
-            :initial-data="formData"
-            @submit="handleSubmit"
+            :initialData="formData"
             @cancel="showForm = false"
+            @submit="handleSubmit"
           />
           <button
             @click="showForm = false"
@@ -64,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted , onUnmounted} from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useAuthStore } from '../../stores/auth'
   import config from '../../config'
   import { swalSuccess, swalError } from '../../utills/swalAlert'
@@ -76,6 +84,7 @@
   const auth = useAuthStore()
   const challenges = ref([])
   const loading = ref(true)
+  const selected = ref<string[]>([]) 
   const showForm = ref(false)
   const formType = ref('add')
   const formData = ref({})
@@ -90,8 +99,8 @@
       })
       const data = await res.json()
       challenges.value = data.data || []
-    } catch (error) {
-      swalError("Gagal memuat challenge", error.message)
+    } catch (err: any) {
+      swalError("Gagal memuat challenge", err)
     } finally {
       loading.value = false
     }
@@ -99,7 +108,7 @@
 
   onMounted(fetchMyPublicChallenges)
   
-  const openForm = (type, data = {}) => {
+  const openForm = (type: any, data: any = {}) => {
     formType.value = type
     formData.value = {
       ...data,
@@ -107,30 +116,25 @@
     }
     showForm.value = true
   }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      showForm.value = false;
-    }
-    if (e.key === 'Enter') {
-      handleSubmit()
-    }
-  }
-  onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
-  onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
   
-  const handleSubmit = async (formValues) => {
+  const handleSubmit = async (formValues: any) => {
     const payload = {
       title: formValues.title?.trim(),
       description: formValues.description?.trim(),
       url: formValues.url?.trim(),
       difficulty: Number(formValues.difficulty),
-      tags: formValues.tagsInput?.split(',').map(tag => tag.trim()).filter(Boolean),
+      tags: formValues.tags,
       hint: formValues.hint?.trim() || null,
+      flag: formValues.flag?.trim(),
     }
   
-    if (!payload.title || !payload.description || !payload.url || !payload.difficulty || !payload.tags?.length) {
+    if (!payload.title || !payload.description || !payload.url || !payload.difficulty || payload.tags.length === 0) {
       swalError('Semua field wajib diisi.')
+      return
+    }
+
+    if (!config.FLAG_REGEX.test(payload.flag)) {
+      swalError(`Flag harus sesuai format: ${config.FLAG_FORMAT}`)
       return
     }
   
@@ -141,7 +145,7 @@
     }
   }
   
-  const handleAdd = async (payload) => {
+  const handleAdd = async (payload: any) => {
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/public`, {
         method: 'POST',
@@ -158,12 +162,12 @@
       swalSuccess('Challenge berhasil ditambahkan!')
       showForm.value = false
       fetchMyPublicChallenges()
-    } catch (err) {
+    } catch (err: any) {
       swalError('Gagal menambahkan challenge', err)
     }
   }
   
-  const handleEdit = async (payload) => {
+  const handleEdit = async (payload: any) => {
     try {
       const res = await fetch(`${config.BASE_URL}/api/challenges/public/${formData.value.id}`, {
         method: 'PUT',
@@ -180,12 +184,12 @@
       swalSuccess('Challenge berhasil diperbarui!')
       showForm.value = false
       fetchMyPublicChallenges()
-    } catch (err) {
+    } catch (err: any) {
       swalError('Gagal memperbarui challenge', err)
     }
   }
   
-  const confirmDelete = async (id) => {
+  const confirmDelete = async (id: any) => {
     const confirm = await GlobalSwal.fire({
       title: 'Hapus challenge ini?',
       text: 'Tindakan ini tidak dapat dibatalkan.',
@@ -204,12 +208,53 @@
         },
       })
       const result = await res.json()
-      if (!res.ok) throw new Error(result.message)
+      if (!res.ok) throw new Error(result.error)
   
       swalSuccess('Challenge berhasil dihapus!')
       fetchMyPublicChallenges()
-    } catch (err) {
-      swalError('Gagal menghapus challenge', err.message)
+    } catch (err: any) {
+      swalError('Gagal menghapus challenge', err)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selected.value.length === 0) {
+      swalError('Pilih setidaknya satu challenge untuk dihapus.')
+      return
+    }
+
+    const confirm = await GlobalSwal.fire({
+      title: `Hapus ${selected.value.length} challenge?`,
+      text: 'Tindakan ini tidak dapat dibatalkan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus',
+    })
+
+    if (!confirm.isConfirmed) return
+
+    loading.value = true
+    try {
+      await Promise.all(
+        selected.value.map(async (id) => {
+          const res = await fetch(`${config.BASE_URL}/api/challenges/public/${id}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${auth.user.token}`,
+            },
+          })
+          const result = await res.json()
+          if (!res.ok) throw new Error(result.error)
+        })
+      )
+
+      swalSuccess('Semua challenge berhasil dihapus!')
+      selected.value = []
+      fetchMyPublicChallenges()
+    } catch (err: any) {
+      swalError('Gagal menghapus beberapa challenge', err)
+    } finally {
+      loading.value = false
     }
   }
 </script>

@@ -10,17 +10,27 @@
       </div>
 
       <!-- Skeleton Loading -->
-      <div v-if="loading" class="animate-pulse rounded-2xl p-6 border shadow-sm bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 space-y-4">
-        <div class="h-6 bg-gray-200 dark:bg-slate-700 w-3/4 rounded"></div>
-        <div class="h-4 bg-gray-200 dark:bg-slate-700 w-1/3 rounded"></div>
-        <div class="h-6 bg-gray-200 dark:bg-slate-700 w-24 rounded inline-block"></div>
-        <div class="h-32 bg-gray-200 dark:bg-slate-700 w-full rounded"></div>
-        <div class="h-6 bg-yellow-100 dark:bg-yellow-700 w-1/2 rounded"></div>
+      <div v-if="loading" class="animate-pulse space-y-5 rounded-2xl p-6 border shadow-sm bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
+        <div class="h-7 bg-gray-200 dark:bg-slate-700 rounded w-1/2"></div>
+        <div class="h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/4"></div>
+
         <div class="flex gap-2">
           <div class="h-6 w-16 rounded-full bg-gray-300 dark:bg-slate-600"></div>
           <div class="h-6 w-12 rounded-full bg-gray-300 dark:bg-slate-600"></div>
         </div>
-        <div class="h-10 w-32 bg-blue-400 rounded-xl"></div>
+
+        <div class="h-32 bg-gray-200 dark:bg-slate-700 w-full rounded"></div>
+        <div class="h-6 bg-yellow-100 dark:bg-yellow-700 w-1/3 rounded"></div>
+
+        <div class="flex flex-wrap gap-2">
+          <div class="h-6 w-20 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+          <div class="h-6 w-16 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+          <div class="h-12 w-36 bg-blue-400 rounded-xl"></div>
+          <div class="h-12 w-32 bg-blue-100 dark:bg-slate-600 rounded-xl"></div>
+        </div>
       </div>
 
       <!-- Challenge Detail -->
@@ -50,17 +60,6 @@
           v-html="formatText(challenge.description)">
         </div>
 
-        <!-- Hint -->
-        <div v-if="challenge.hint" class="bg-yellow-50 dark:bg-yellow-800 p-4 rounded-lg mb-6 border-l-4 border-yellow-400 dark:border-yellow-500">
-          <h3 class="font-semibold text-yellow-700 dark:text-yellow-100 mb-1">💡 Hint</h3>
-          <p class="text-sm text-yellow-700 dark:text-yellow-50 whitespace-pre-line" v-html="formatText(challenge.hint)"></p>
-        </div>
-
-        <!-- No Hint -->
-        <div v-else class="text-sm text-gray-500 italic mb-6">
-          Tidak ada hint untuk challenge ini.
-        </div>
-
         <!-- Tags -->
         <div class="flex flex-wrap gap-2 text-xs mb-6">
           <RouterLink
@@ -73,25 +72,66 @@
           </RouterLink>
         </div>
 
+        <!-- Tombol Hint / No Hint -->
+        <div class="mb-4">
+          <button
+            v-if="challenge.hint"
+            @click="showHintModal = true"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-700 dark:text-yellow-100 dark:hover:bg-yellow-600 transition"
+          >
+            <i class="fas fa-lightbulb"></i>
+            Tampilkan Hint
+          </button>
+
+          <div v-else class="text-sm text-gray-500 italic">
+            Tidak ada hint untuk challenge ini.
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <Teleport to="body">
+          <transition name="fade-scale">
+            <div
+              v-if="showHintModal"
+              @click.self="showHintModal = false"
+              @keydown.esc="showHintModal = false"
+              tabindex="0"
+              class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+            >
+              <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-lg w-full relative shadow-2xl transition-all duration-300">
+                <!-- Close Button -->
+                <button
+                  @click="showHintModal = false"
+                  class="absolute top-3 right-3 text-gray-400 hover:text-red-500 hover:scale-110 transition-transform"
+                  aria-label="Close"
+                >
+                  <i class="fas fa-times fa-lg"></i>
+                </button>
+
+                <!-- Content -->
+                <h3 class="text-xl font-semibold text-yellow-700 dark:text-yellow-100 mb-3">
+                  💡 Hint
+                </h3>
+                <p class="text-sm text-yellow-800 dark:text-yellow-50 whitespace-pre-line" v-html="formatText(challenge.hint)"></p>
+              </div>
+            </div>
+          </transition>
+        </Teleport>
+
         <div v-if="challenge.url" class="mt-8 flex flex-wrap gap-3">
           <!-- Download/Open Button -->
           <button
             @click="handleDownload"
-            class="flex items-center justify-center gap-2 rounded-xl px-5 min-h-[48px] font-semibold shadow-sm text-white transition duration-200
-                  text-base
-                  bg-blue-600 hover:bg-blue-700"
+            class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition duration-200"
           >
             <i :class="isFile(challenge.url) ? 'fas fa-download' : 'fas fa-link'"></i>
-            <span> {{ isFile(challenge.url) ? 'Download File' : 'Open Link' }} </span>
+            <span>{{ isFile(challenge.url) ? 'Download File' : 'Open Link' }}</span>
           </button>
 
           <!-- Copy Link Button -->
           <button
             @click="handleCopyLink"
-            class="flex items-center justify-center gap-2 rounded-xl px-5 min-h-[48px] font-semibold transition duration-200 shadow-sm
-                  text-base
-                  text-blue-700 bg-blue-100 hover:bg-blue-200
-                  dark:text-blue-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+            class="flex items-center justify-center gap-2 rounded-xl px-5 py-2 font-semibold shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 active:scale-[0.98] transition duration-200 dark:text-blue-300 dark:bg-slate-700 dark:hover:bg-slate-600"
           >
             <i class="fas fa-copy"></i>
             <span>Copy Link</span>
@@ -130,7 +170,7 @@
           <button
             @click="loadMoreSolvers"
             :disabled="isLoadingMore"
-            class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50"
+            class="px-5 py-2 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50 active:scale-[0.98]"
           >
             {{ isLoadingMore ? 'Loading...' : 'Load More' }}
           </button>
@@ -148,7 +188,7 @@
 <script setup lang="ts">
 import SubmitFlag from '../components/SubmitFlag.vue';
 import Breadcrumbs from "../components/Breadcrumbs.vue"
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import config from "../config"
@@ -170,6 +210,7 @@ const initialLimit = 3;
 const loadMoreLimit = 6;
 const hasMore = ref(true);
 const isLoadingMore = ref(false);
+const showHintModal = ref(false);
 
 const formatText = (text: string) => marked.parse(text || '');
 
@@ -307,4 +348,27 @@ const handleCopyLink = async () => {
 const isFile = (url: string): boolean => {
   return /\.(pdf|zip|txt|png|jpg|jpeg|mp4|mp3|docx)$/i.test(url);
 };
+
+// enter and escape
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    showHintModal.value = false;
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
+
 </script>
+
+<!-- Transition Styles -->
+<style scoped>
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.25s ease;
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+</style>

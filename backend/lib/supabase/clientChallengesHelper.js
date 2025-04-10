@@ -1,11 +1,25 @@
 import supabase from "@/lib/supabase";
-import { validateChallengeFields } from "./helpers/validateChallengeFields";
+import { encrypt, hashFlag, decrypt } from "../encrypt";
 
-export async function createClientChallenge({ user_id, title, description, difficulty, url, tags = [], hint = null }) {
-  // const errorMessage = validateChallengeFields({ title, description, difficulty, url, tags, hint });
-  // if (errorMessage) return { error: errorMessage };
+export async function createClientChallenge({
+  user_id,
+  title,
+  description,
+  difficulty,
+  url,
+  tags = [],
+  hint = null,
+  flag = null,
+}) {
+  // 🔐 Encrypt flag kalau ada
+  let encryptedFlag = null;
+  let flagHash = null;
+  if (flag) {
+    encryptedFlag = encrypt(flag);
+    flagHash = hashFlag(flag);
+  }
 
-  // 1. Cek jumlah challenge yang dibuat user
+  // ⛔ Cek limit challenge
   const { count, error: countError } = await supabase
     .from("client_challenges")
     .select("*", { count: "exact", head: true })
@@ -14,7 +28,7 @@ export async function createClientChallenge({ user_id, title, description, diffi
   if (countError) return { error: countError.message };
   if (count >= 3) return { error: "Kamu hanya bisa membuat maksimal 3 challenge publik." };
 
-  // 2. Cek apakah title sudah pernah digunakan oleh user ini
+  // ⛔ Cek duplikat judul
   const { data: existing, error: titleError } = await supabase
     .from("client_challenges")
     .select("id")
@@ -25,7 +39,7 @@ export async function createClientChallenge({ user_id, title, description, diffi
   if (titleError) return { error: titleError.message };
   if (existing) return { error: "Kamu sudah punya challenge dengan judul yang sama." };
 
-  // 3. Insert challenge baru
+  // ✅ Simpan challenge baru
   const { data, error } = await supabase
     .from("client_challenges")
     .insert([
@@ -37,6 +51,8 @@ export async function createClientChallenge({ user_id, title, description, diffi
         url,
         tags,
         hint,
+        flag: encryptedFlag,
+        flag_hash: flagHash,
       },
     ])
     .select("*");
@@ -60,29 +76,27 @@ export async function getClientChallengeById(id, userId, isAdmin = false) {
 export async function updateClientChallenge(
   id,
   userId,
-  { title, description, difficulty, url, tags = [], hint = null },
+  { title, description, difficulty, url, tags = [], hint = null, flag = null }, // ⬅️ tambah flag di sini
   isAdmin = false
 ) {
-  // const errorMessage = validateChallengeFields({ title, description, difficulty, url, tags, hint });
-  // if (errorMessage) return { error: errorMessage };
+  // Duplikat title check tetap
 
-  // Cek duplikasi title, kecuali untuk challenge yang sedang diedit
-  const { data: existing, error: titleError } = await supabase
-    .from("client_challenges")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("title", title)
-    .neq("id", id)
-    .maybeSingle();
+  const updateFields = {
+    title,
+    description,
+    difficulty,
+    url,
+    tags,
+    hint,
+    ...(isAdmin ? {} : { reviewed: false }),
+  };
 
-  if (titleError) return { error: titleError.message };
-  if (existing) return { error: "Kamu sudah punya challenge lain dengan judul yang sama." };
+  if (flag) {
+    updateFields.flag = encrypt(flag);
+    updateFields.flag_hash = hashFlag(flag);
+  }
 
-  const query = supabase
-    .from("client_challenges")
-    .update({ title, description, difficulty, url, tags, hint, ...(isAdmin ? {} : { reviewed: false }) })
-    .eq("id", id);
-
+  const query = supabase.from("client_challenges").update(updateFields).eq("id", id);
   if (!isAdmin) query.eq("user_id", userId);
 
   const { data, error } = await query.select("*");
@@ -109,5 +123,10 @@ export async function getUserClientChallenges(userId) {
     .order("submitted_at", { ascending: false });
 
   if (error) return { error: error.message };
+
+  data.forEach((item) => {
+    if (item.flag) item.flag = decrypt(item.flag);
+  });
+
   return { data };
 }

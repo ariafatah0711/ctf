@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import config from "../config";
 
 const GlobalSwal = Swal.mixin({
   inputAttributes: {
@@ -8,9 +9,10 @@ const GlobalSwal = Swal.mixin({
   didOpen: () => {
     document.body.style.overflow = "hidden";
 
-    const theme = localStorage.getItem("theme")
+    // Cek theme di localStorage, jika tidak ada, set default ke "dark"
+    const theme = localStorage.getItem("theme_") || config.DEFAULT_THEME; // Pakai nilai dari config atau dark kalau nggak ada
     if (theme === "dark") {
-      document.querySelector(".swal2-popup")?.classList.add("swal2-dark")
+      document.querySelector(".swal2-popup")?.classList.add("swal2-dark");
     }
   },
   willClose: () => {
