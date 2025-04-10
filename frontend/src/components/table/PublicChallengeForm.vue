@@ -22,7 +22,7 @@
             <label class="font-medium text-gray-700 dark:text-gray-300 mb-1 block">Deskripsi</label>
             <textarea
               v-model="localForm.description"
-              placeholder="Deskripsi singkat tentang challenge ini..."
+              placeholder="Deskripsi singkat tentang challenge ini..&#10;Flag taruh disini dulu aja ya."
               class="w-full px-5 py-3 text-base border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
               rows="5"
             ></textarea>

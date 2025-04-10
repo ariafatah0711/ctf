@@ -73,17 +73,28 @@
           </RouterLink>
         </div>
 
-        <!-- URL / Download -->
-        <div v-if="challenge.url" class="mt-8">
+        <div v-if="challenge.url" class="mt-8 flex flex-wrap gap-3">
+          <!-- Download/Open Button -->
           <button
             @click="handleDownload"
-            class="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold text-white transition duration-200 shadow-sm"
-            :class="isFile(challenge.url)
-              ? 'bg-blue-600 hover:bg-blue-700'
-              : 'bg-green-600 hover:bg-green-700'"
+            class="flex items-center justify-center gap-2 rounded-xl px-5 min-h-[48px] font-semibold shadow-sm text-white transition duration-200
+                  text-base
+                  bg-blue-600 hover:bg-blue-700"
           >
             <i :class="isFile(challenge.url) ? 'fas fa-download' : 'fas fa-link'"></i>
-            <span>{{ isFile(challenge.url) ? 'Download File' : 'Open Link' }}</span>
+            <span> {{ isFile(challenge.url) ? 'Download File' : 'Open Link' }} </span>
+          </button>
+
+          <!-- Copy Link Button -->
+          <button
+            @click="handleCopyLink"
+            class="flex items-center justify-center gap-2 rounded-xl px-5 min-h-[48px] font-semibold transition duration-200 shadow-sm
+                  text-base
+                  text-blue-700 bg-blue-100 hover:bg-blue-200
+                  dark:text-blue-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+          >
+            <i class="fas fa-copy"></i>
+            <span>Copy Link</span>
           </button>
         </div>
       </div>
@@ -266,6 +277,29 @@ const handleDownload = async () => {
       console.error("❌ URL tidak valid:", e);
       await Swal.fire({icon: "error", title: "URL tidak valid", text: "Tautan yang diberikan tidak sesuai format URL."});
     }
+  }
+};
+
+const handleCopyLink = async () => {
+  const url = challenge.value?.url;
+  if (!url) return;
+
+  try {
+    await navigator.clipboard.writeText(url);
+    await Swal.fire({
+      icon: "success",
+      title: "Link berhasil disalin!",
+      text: "URL challenge sudah ada di clipboard.",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  } catch (e) {
+    console.error("❌ Gagal menyalin link:", e);
+    await Swal.fire({
+      icon: "error",
+      title: "Gagal menyalin",
+      text: "Terjadi kesalahan saat menyalin link.",
+    });
   }
 };
 
