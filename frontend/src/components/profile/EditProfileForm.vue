@@ -42,10 +42,13 @@
             />
           </div>
         </div>
-  
+
         <!-- Tombol Submit -->
-        <div class="flex justify-end pt-4">
-          <button @click="onCancel" class="px-5 py-2.5 text-base bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-white rounded-xl">
+        <div class="flex justify-end gap-3 pt-4">
+          <button
+            @click="onCancel"
+            class="px-5 py-2.5 text-base bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-white rounded-xl"
+          >
             Batal
           </button>
           <button
