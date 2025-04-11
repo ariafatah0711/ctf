@@ -13,7 +13,7 @@ import Setup from '@/pages/Setup.vue';
 
 // pages feature
 import HomePage from '@/pages/index.vue';
-import About from '@/pages/about.vue';
+import About from '@/pages/About.vue';
 import ProfilePage from '@/pages/profile.vue';
 import History from '@/pages/History.vue';
 import LeaderboardPage from '@/pages/leaderboard.vue';
