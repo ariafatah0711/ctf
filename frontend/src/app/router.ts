@@ -15,7 +15,7 @@ import Setup from '@/pages/Setup.vue';
 import HomePage from '@/pages/index.vue';
 import About from '@/pages/about.vue';
 import ProfilePage from '@/pages/profile.vue';
-import History from '@/pages/history.vue';
+import History from '@/pages/History.vue';
 import LeaderboardPage from '@/pages/leaderboard.vue';
 import ChallengePage from '@/pages/challenges/index.vue';
 import ChallengeDetailPage from '@/pages/challenges/detail.vue';
