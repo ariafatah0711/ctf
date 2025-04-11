@@ -1,6 +1,6 @@
 // src/services/authService.ts
-import config from '../config';
-import { swalSuccess } from '../utills/swalAlert';
+import config from '../config/env';
+import { swalSuccess, swalError } from '../utils/swalAlert';
 
 export interface LoginPayload {
   email: string;
@@ -13,57 +13,122 @@ export interface RegisterPayload {
   password: string;
 }
 
-export async function login(payload: LoginPayload) {
-  const res = await fetch(`${config.BASE_URL}/api/auth/login`, {
+export async function checkSetupStatus() {
+  const res = await fetch(`${config.BASE_URL}/api/setup`)
+  if (!res.ok) throw new Error('Gagal memeriksa status setup')
+  return res.json()
+}
+
+export async function setupAdmin({ email, password }: { email: string, password: string }) {
+  const res = await fetch(`${config.BASE_URL}/api/setup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
-  });
+    body: JSON.stringify({ email, password }),
+  })
 
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || 'Login gagal');
-  } else {
-    await swalSuccess("Login Berhasil");
+    const errorRes = await res.json()
+    throw new Error(errorRes.message || 'Setup gagal')
   }
 
-  return res.json(); // { message, token }
+  return res.json()
+}
+
+
+export async function login(payload: LoginPayload) {
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      swalError(data.message || 'Login gagal');
+      return null;
+    }
+
+    swalSuccess('Login Berhasil');
+    return data; // { message, token }
+
+  } catch (err) {
+    swalError('Terjadi kesalahan saat login');
+    return null;
+  }
 }
 
 export async function register(payload: RegisterPayload) {
-  const res = await fetch(`${config.BASE_URL}/api/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || 'Registrasi gagal');
-  } else {
-    await swalSuccess("Register Berhasil");
+    const data = await res.json();
+
+    if (!res.ok) {
+      swalError(data.message || 'Registrasi gagal');
+      return null;
+    }
+
+    swalSuccess('Register Berhasil');
+    return data;
+
+  } catch (err) {
+    swalError('Terjadi kesalahan saat registrasi');
+    return null;
   }
-
-  return res.json(); // { message }
 }
 
 export async function forgotPassword(email: string) {
-  const res = await fetch(`${config.BASE_URL}/api/auth/forgot-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || 'Gagal mengirim email reset password');
-  } else {
-    await swalSuccess("Berhasil Mengirim Email");
+    const data = await res.json();
+
+    if (!res.ok) {
+      swalError(data.message || 'Gagal mengirim email reset password');
+      return null;
+    }
+
+    swalSuccess('Berhasil Mengirim Email');
+    return data;
+
+  } catch (err) {
+    swalError('Terjadi kesalahan saat mengirim email');
+    return null;
   }
+}
 
-  return res.json(); // { message }
+export async function resetPassword(token: string, newPassword: string) {
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      swalError(data.message || 'Reset password gagal');
+      return null;
+    }
+
+    swalSuccess('Reset password berhasil');
+    return data;
+
+  } catch (err) {
+    swalError('Terjadi kesalahan saat reset password');
+    return null;
+  }
 }

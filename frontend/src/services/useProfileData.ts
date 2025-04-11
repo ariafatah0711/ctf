@@ -2,9 +2,9 @@
 import { reactive, computed, watch } from 'vue'
 import useSWRV from 'swrv'
 import { useAuthStore } from '../stores/auth'
-import config from '../config'
+import config from '../config/env'
 
-const CACHE_TTL = 5 * 60 * 1000 // 5 menit
+const CACHE_TTL = config.CACHE_TTL
 const PREFIX = 'profile_cache_' // prefix untuk localStorage
 
 const data_profile = reactive<Record<string, any>>({})

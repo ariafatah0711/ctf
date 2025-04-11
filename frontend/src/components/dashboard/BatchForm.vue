@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { swalError } from '../../utills/swalAlert'
+import { swalError } from '../../utils/swalAlert'
 
 const props = defineProps({
   visible: Boolean,

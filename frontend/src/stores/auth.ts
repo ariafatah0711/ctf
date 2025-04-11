@@ -1,8 +1,8 @@
-import GlobalSwal from '../utills/GlobalSwal';
+import GlobalSwal from '../utils/GlobalSwal';
 import { defineStore } from 'pinia';
-import config from "../config";
-import router from '../router';
-import { encryptUserData, decryptUserData } from '../utills/crypto';
+import config from "../config/env";
+import router from '../app/router';
+import { encryptUserData, decryptUserData } from '../utils/crypto';
 
 const Swal = GlobalSwal;
 

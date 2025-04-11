@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* drag */
+input,
+textarea,
+[draggable="true"] {
+  user-select: text;
+}
+
+#preview-teks,
+pre {
+  user-select: text;
+}
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* app */
+#app,
+main,
+.container {
+  max-width: 100%;
+  min-height: 100vh !important;
+  overflow-x: hidden;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+button,
+a {
+  cursor: pointer;
+}

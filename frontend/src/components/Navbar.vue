@@ -5,7 +5,7 @@
         <!-- Logo -->
         <div class="flex-shrink-0">
           <RouterLink to="/" class="text-xl font-bold tracking-tight hover:text-gray-300 transition">
-            {{ app_name }}
+            {{ config.APP_NAME }}
           </RouterLink>
         </div>
 
@@ -192,13 +192,12 @@
   import { useRouter } from 'vue-router';
   import { onMounted, onUnmounted, ref } from 'vue';
   import DarkModeToggle from "../components/DarkModeToggle.vue"
-  import GlobalSwal from '../utills/GlobalSwal';
-  import packageInfo from "../../package.json";
+  import GlobalSwal from '../utils/GlobalSwal';
+  import config from "../config/env";
 
   const Swal = GlobalSwal;
   const auth = useAuthStore();
   const router = useRouter();
-  const app_name = packageInfo.name;
 
   // onMounted(async () => {
   //   if (auth.user.token && !auth.isAuthChecked) {

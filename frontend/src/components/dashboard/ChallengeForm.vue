@@ -134,8 +134,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
-import { swalError } from '../../utills/swalAlert'
-import config from '../../config'
+import { swalError } from '../../utils/swalAlert'
+import config from '../../config/env'
 
 const props = defineProps({
   type: String,

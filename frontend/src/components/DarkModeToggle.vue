@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { Moon, Sun } from 'lucide-vue-next'
-  import config from '../config.ts'
+  import config from '../config/env.ts'
   
   const isDark = ref(false)
   

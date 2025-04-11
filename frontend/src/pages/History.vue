@@ -73,76 +73,47 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, watch, computed } from 'vue';
-  import { useRoute } from 'vue-router';
-  import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue';
-  import config from '../config';
-  import { useAuthStore } from '../stores/auth';
-  
-  const route = useRoute();
-  const userIdFromQuery = computed(() => route.query.id);
-  const auth = useAuthStore();
-  
-  const loading = ref(true);
-  const error = ref<string | null>(null);
-  const history = ref<any[]>([]);
-  const currentPage = ref(1);
-  const limit = 15;
-  const hasMore = ref(true);
+import { ref, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue'
+import { useHistoryData } from '../services/useHistoryData'
+import { useAuthStore } from '../stores/auth'
 
-  const usernameFromQuery = computed(() => route.query.user);
-  const title = computed(() => {
+const route = useRoute()
+const userIdFromQuery = computed(() => route.query.id as string)
+const usernameFromQuery = computed(() => route.query.user)
+
+const title = computed(() => {
   return usernameFromQuery.value
-      ? `🏆 Riwayat ${usernameFromQuery.value}`
-      : '🏆 Riwayat';
-  });
+    ? `🏆 Riwayat ${usernameFromQuery.value}`
+    : '🏆 Riwayat'
+})
 
-  const fetchHistory = async (append = false) => {
-    try {
-      loading.value = true;
-      let url = `${config.BASE_URL}/api/challenges/history?page=${currentPage.value}&limit=${limit}`;
-      if (userIdFromQuery.value) {
-        url += `&userId=${userIdFromQuery.value}`;
-      }
-  
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${auth.user.token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal memuat riwayat tantangan');
-  
-      const items = data.data || data;
-  
-      if (append) {
-        history.value = [...history.value, ...items];
+const currentPage = ref(1)
+const history = ref<any[]>([])
+const limit = 15
+const hasMore = ref(true)
+
+const { data, error, isValidating, mutate } = useHistoryData(currentPage.value, userIdFromQuery.value)
+
+watch(
+  () => [data.value, currentPage.value],
+  () => {
+    if (data.value) {
+      if (currentPage.value === 1) {
+        history.value = data.value
       } else {
-        history.value = items;
+        history.value.push(...data.value)
       }
-  
-      hasMore.value = items.length === limit;
-    } catch (err: any) {
-      error.value = err.message || 'Terjadi kesalahan saat mengambil riwayat';
-    } finally {
-      loading.value = false;
+      hasMore.value = data.value.length === limit
     }
-  };
+  },
+  { immediate: true }
+)
 
-  watch(() => route.fullPath, () => {
-        fetchHistory();
-  });
-  
-  onMounted(() => {
-    fetchHistory();
-  });
-  
-  const isLoadingMore = ref(false);
-
-  const loadMore = async () => {
-    isLoadingMore.value = true;
-    currentPage.value++;
-    await fetchHistory(true);
-    isLoadingMore.value = false;
-  };
+const loadMore = () => {
+  currentPage.value++
+}
 </script>
   
 <style scoped>

@@ -21,9 +21,9 @@
 <script setup lang="ts">
   import { ref } from 'vue';  
   import { useAuthStore } from '../stores/auth';
-  import config from "../config"
+  import config from "../config/env"
   import { useRouter, useRoute } from 'vue-router'
-  import GlobalSwal from '../utills/GlobalSwal';
+  import GlobalSwal from '../utils/GlobalSwal';
   const Swal = GlobalSwal;
 
   const router = useRouter()

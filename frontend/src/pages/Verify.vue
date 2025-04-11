@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import config from '../config'
+import config from '../config/env'
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 

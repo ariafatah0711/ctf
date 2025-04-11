@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
-import config from "../../config"
+import config from "../../config/env"
 
 const props = defineProps({
   formType: String,
