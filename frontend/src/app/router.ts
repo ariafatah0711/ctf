@@ -7,9 +7,9 @@ import { swalError, swalAlert } from '../utils/swalAlert';
 // Pages auth
 import RegisterPage from '@/pages/register.vue';
 import LoginPage from '@/pages/login.vue';
-import Verify from '@/pages/verify.vue';
+import Verify from '@/pages/Verify.vue';
 import ForgotPassword from '@/pages/forgot-password.vue';
-import Setup from '@/pages/Setup.vue';
+import Setup from '@/pages/setup.vue';
 
 // pages feature
 import HomePage from '@/pages/index.vue';
