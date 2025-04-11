@@ -9,7 +9,7 @@ import RegisterPage from '@/pages/register.vue';
 import LoginPage from '@/pages/login.vue';
 import Verify from '@/pages/Verify.vue';
 import ForgotPassword from '@/pages/forgot-password.vue';
-import Setup from '@/pages/setup.vue';
+import Setup from '@/pages/Setup.vue';
 
 // pages feature
 import HomePage from '@/pages/index.vue';
