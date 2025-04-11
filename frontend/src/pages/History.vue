@@ -77,9 +77,11 @@
   import { useRoute } from 'vue-router';
   import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue';
   import config from '../config';
+  import { useAuthStore } from '../stores/auth';
   
   const route = useRoute();
   const userIdFromQuery = computed(() => route.query.id);
+  const auth = useAuthStore();
   
   const loading = ref(true);
   const error = ref<string | null>(null);
@@ -103,7 +105,9 @@
         url += `&userId=${userIdFromQuery.value}`;
       }
   
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${auth.user.token}` },
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Gagal memuat riwayat tantangan');
   

@@ -28,7 +28,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { forgotPassword } from '../services/authService'
-import GlobalSwal from '../utills/GlobalSwal'
 import AuthForm from '../components/AuthForm.vue'
 
 const form = reactive({ email: '' })
