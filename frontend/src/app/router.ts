@@ -19,11 +19,11 @@ import History from '@/pages/History.vue';
 import LeaderboardPage from '@/pages/leaderboard.vue';
 import ChallengePage from '@/pages/challenges/index.vue';
 import ChallengeDetailPage from '@/pages/challenges/detail.vue';
-import UploadChallengePage from '@/_pages/challenges/upload.vue';
+import UploadChallengePage from '@/pages/challenges/upload.vue';
 import DashboardPage from '@/pages/dashboard/index.vue';
-import DashboardChallengesPage from '@/_pages/DashboardChallengesPage.vue';
-import DashboardUsersPage from '@/_pages/DashboardUsersPage.vue';
-import DashboardClientChallengesPage from '@/_pages/Dashboard/DashboardClientChallengesPage.vue';
+import DashboardChallengesPage from '@/pages/dashboard/challenges.vue';
+import DashboardUsersPage from '@/pages/dashboard/users.vue';
+import DashboardClientChallengesPage from '@/pages/dashboard/clientChallenges.vue';
 
 const routes = [
   // Public Routes

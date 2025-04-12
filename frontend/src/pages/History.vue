@@ -73,51 +73,49 @@
 </template>
 
 <script setup lang="ts">
+/* ─── Imports ─────────────────────────────────────────────── */
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue';
-import config from '@/config/env';
+import { getChallengeHistory } from '@/services/useHistoryData';
 import { useAuthStore } from '../stores/auth';
 
+/* ─── State & Store ───────────────────────────────────────── */
 const route = useRoute();
-const userIdFromQuery = computed(() => route.query.id);
 const auth = useAuthStore();
 
-const loading = ref(true);
-const error = ref<string | null>(null);
 const history = ref<any[]>([]);
 const currentPage = ref(1);
 const limit = 15;
 const hasMore = ref(true);
+const loading = ref(true);
+const isLoadingMore = ref(false);
+const error = ref<string | null>(null);
 
+/* ─── Computed ────────────────────────────────────────────── */
+const userIdFromQuery = computed(() => route.query.id);
 const usernameFromQuery = computed(() => route.query.user);
-const title = computed(() => {
-return usernameFromQuery.value
+const title = computed(() =>
+  usernameFromQuery.value
     ? `🏆 Riwayat ${usernameFromQuery.value}`
-    : '🏆 Riwayat';
-});
+    : '🏆 Riwayat'
+);
 
+/* ─── Methods ─────────────────────────────────────────────── */
 const fetchHistory = async (append = false) => {
   try {
     loading.value = true;
-    let url = `${config.BASE_URL}/api/challenges/history?page=${currentPage.value}&limit=${limit}`;
-    if (userIdFromQuery.value) {
-      url += `&userId=${userIdFromQuery.value}`;
-    }
 
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${auth.user.token}` },
+    const items = await getChallengeHistory({
+      token: auth.user.token,
+      page: currentPage.value,
+      limit,
+      userId: userIdFromQuery.value,
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Gagal memuat riwayat tantangan');
 
-    const items = data.data || data;
-
-    if (append) {
-      history.value = [...history.value, ...items];
-    } else {
-      history.value = items;
-    }
+    history.value = append
+      ? [...history.value, ...items]
+      : items;
 
     hasMore.value = items.length === limit;
   } catch (err: any) {
@@ -127,22 +125,21 @@ const fetchHistory = async (append = false) => {
   }
 };
 
-watch(() => route.fullPath, () => {
-      fetchHistory();
-});
-
-onMounted(() => {
-  fetchHistory();
-});
-
-const isLoadingMore = ref(false);
-
 const loadMore = async () => {
   isLoadingMore.value = true;
   currentPage.value++;
   await fetchHistory(true);
   isLoadingMore.value = false;
 };
+
+/* ─── Watchers & Lifecycle ───────────────────────────────── */
+watch(() => route.fullPath, () => {
+  fetchHistory();
+});
+
+onMounted(() => {
+  fetchHistory();
+});
 </script>
   
 <style scoped>

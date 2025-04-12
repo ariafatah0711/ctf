@@ -129,13 +129,13 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
-import { useAuthStore } from '../../stores/auth'
-import config from '../../config/env'
+import { useAuthStore } from '@/stores/auth'
+import config from '@/config/env'
 import Swal from 'sweetalert2'
-import Pagination from "../../components/Pagination.vue"
-import PublicChallengeTable from "../../components/dashboard/PublicChallengeTable.vue"
-import Breadcrumbs from "../../components/Breadcrumbs.vue"
-import IconButton from "../../components/IconButton.vue"
+import Pagination from "@/components/Pagination.vue"
+import PublicChallengeTable from "@/components/dashboard/PublicChallengeTable.vue"
+import Breadcrumbs from "@/components/Breadcrumbs.vue"
+import IconButton from "@/components/IconButton.vue"
 import { TrashIcon } from "@heroicons/vue/24/solid";
 
 const auth = useAuthStore()

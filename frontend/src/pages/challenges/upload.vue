@@ -12,18 +12,6 @@
         <Breadcrumbs class="w-full sm:w-auto flex-1" />
         <IconButton @click="openForm('add')" :icon="PlusIcon" label="Add" color="blue" />
         <IconButton @click="handleBulkDelete" :icon="TrashIcon" label="Delete" color="red" />
-        <!-- <button
-          class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow"
-          @click="openForm('add')"
-        >
-          ➕ Tambah Challenge
-        </button>
-        <button
-          class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow"
-          @click="handleBulkDelete"
-        >
-          🗑️ Hapus yang Dipilih
-        </button> -->
       </div>
 
       <!-- Loading Spinner -->
@@ -38,7 +26,7 @@
             :rows="challenges"
             :loading="loading"
             :selected="selected"
-             @update:selected="selected = $event"
+            @update:selected="selected = $event"
             @edit="openForm('edit', $event)"
             @delete="confirmDelete($event)"
           />
@@ -74,6 +62,111 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { swal } from '@/utils/swalUtils'  // Import swal from the utils file
+import PublicChallengeTable from '@/components/table/PublicChallengeTable.vue'
+import PublicChallengeForm from '@/components/table/PublicChallengeForm.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import IconButton from '@/components/IconButton.vue'
+import { PlusIcon, TrashIcon } from "@heroicons/vue/24/solid";
+import config from '@/config/env'
+import {
+  fetchPublicChallenges,
+  addChallenge,
+  updateChallenge,
+  deleteChallenge
+} from '@/services/challengeClientService'
+
+const auth = useAuthStore()
+const challenges = ref([])
+const loading = ref(true)
+const selected = ref<string[]>([])
+const showForm = ref(false)
+const formType = ref('add')
+const formData = ref({})
+
+const loadChallenges = async () => {
+  loading.value = true
+  challenges.value = await fetchPublicChallenges()
+  loading.value = false
+}
+
+onMounted(loadChallenges)
+
+const openForm = (type: any, data: any = {}) => {
+  formType.value = type
+  formData.value = {
+    ...data,
+    tagsInput: Array.isArray(data.tags) ? data.tags.join(', ') : ''
+  }
+  showForm.value = true
+}
+
+const handleSubmit = async (formValues: any) => {
+  const payload = {
+    title: formValues.title?.trim(),
+    description: formValues.description?.trim(),
+    url: formValues.url?.trim(),
+    difficulty: Number(formValues.difficulty),
+    tags: formValues.tags,
+    hint: formValues.hint?.trim() || null,
+    flag: formValues.flag?.trim(),
+  }
+
+  if (!payload.title || !payload.description || !payload.url || !payload.difficulty || payload.tags.length === 0) {
+    return swal.error('Semua field wajib diisi.')
+  }
+
+  if (!config.FLAG_REGEX.test(payload.flag)) {
+    return swal.error(`Flag harus sesuai format: ${config.FLAG_FORMAT}`)
+  }
+
+  try {
+    if (formType.value === 'add') {
+      await addChallenge(payload)
+    } else {
+      await updateChallenge(formData.value.id, payload)
+    }
+    showForm.value = false
+    await loadChallenges()
+  } catch {}
+}
+
+const confirmDelete = async (id: string) => {
+  const confirm = await swal.confirm('Hapus challenge ini?', 'Tindakan ini tidak dapat dibatalkan.', 'Ya, hapus')
+
+  if (!confirm.isConfirmed) return
+  try {
+    await deleteChallenge(id)
+    await loadChallenges()
+  } catch {}
+}
+
+const handleBulkDelete = async () => {
+  if (selected.value.length === 0) {
+    return swal.error('Pilih setidaknya satu challenge untuk dihapus.')
+  }
+
+  const confirm = await swal.confirm(`Hapus ${selected.value.length} challenge?`, 'Tindakan ini tidak dapat dibatalkan.', 'Ya, hapus')
+
+  if (!confirm.isConfirmed) return
+
+  loading.value = true
+  try {
+    await Promise.all(selected.value.map(deleteChallenge))
+    swal.success('Semua challenge berhasil dihapus!')
+    selected.value = []
+    await loadChallenges()
+  } catch {
+    swal.error('Gagal menghapus beberapa challenge')
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
+<!-- <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { useAuthStore } from '../../stores/auth'
   import config from '../../config/env'
@@ -92,6 +185,15 @@
   const showForm = ref(false)
   const formType = ref('add')
   const formData = ref({})
+
+  const openForm = (type: any, data: any = {}) => {
+    formType.value = type
+    formData.value = {
+      ...data,
+      tagsInput: Array.isArray(data.tags) ? data.tags.join(', ') : ''
+    }
+    showForm.value = true
+  }
   
   const fetchMyPublicChallenges = async () => {
     loading.value = true
@@ -111,15 +213,6 @@
   }
 
   onMounted(fetchMyPublicChallenges)
-  
-  const openForm = (type: any, data: any = {}) => {
-    formType.value = type
-    formData.value = {
-      ...data,
-      tagsInput: Array.isArray(data.tags) ? data.tags.join(', ') : ''
-    }
-    showForm.value = true
-  }
   
   const handleSubmit = async (formValues: any) => {
     const payload = {
@@ -261,4 +354,4 @@
       loading.value = false
     }
   }
-</script>
+</script> -->

@@ -102,17 +102,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import config from '../config/env'
-import IconButton from "../components/IconButton.vue"
-import Breadcrumbs from "../components/Breadcrumbs.vue"
-import BaseTable  from "../components/BaseTable.vue"
+import { useAuthStore } from '@/stores/auth'
+import config from '@/config/env'
+import IconButton from "@/components/IconButton.vue"
+import Breadcrumbs from "@/components/Breadcrumbs.vue"
+import BaseTable  from "@/components/BaseTable.vue"
 import { UserPlusIcon, UserGroupIcon, UserMinusIcon } from "@heroicons/vue/24/solid";
-import GlobalSwal from '../utils/GlobalSwal'
-import Pagination from '../components/Pagination.vue'
-import UserForm from "../components/dashboard/UserForm.vue"
-import BatchForm from '../components/dashboard/BatchForm.vue'
-import { swalSuccess, swalError } from '../utils/swalAlert'
+import GlobalSwal from '@/utils/GlobalSwal'
+import Pagination from '@/components/Pagination.vue'
+import UserForm from "@/components/dashboard/UserForm.vue"
+import BatchForm from '@/components/dashboard/BatchForm.vue'
+import { swalSuccess, swalError } from '@/utils/swalAlert'
 
 const Swal = GlobalSwal
 const users = ref<any[]>([])

@@ -189,6 +189,7 @@ import { marked } from 'marked';
 import downloadFileByUrl from "../../utils/downloadFile.ts"
 import IconButton from "../../components/IconButton.vue"
 import {LightBulbIcon, ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, LinkIcon} from "@heroicons/vue/24/solid";
+import { fetchChallengeDetail, fetchMoreSolvers } from "@/services/useChallengeDetail"
 import GlobalSwal from "../../utils/GlobalSwal";
 const Swal = GlobalSwal;
 
@@ -202,7 +203,7 @@ const solved = ref(false);
 
 const offset = ref(0);
 const initialLimit = 3;
-const loadMoreLimit = 10;
+const loadMoreLimit = 6;
 const hasMore = ref(true);
 const isLoadingMore = ref(false);
 const showHintModal = ref(false);
@@ -210,23 +211,29 @@ const showHintModal = ref(false);
 const formatText = (text: string) => marked.parse(text || '');
 
 const fetchChallenge = async (id: string) => {
-  console.log("fetch")
   loading.value = true;
   offset.value = 0;
   hasMore.value = true;
+
   try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}?limit=${initialLimit}&offset=0`, {
-      headers: { Authorization: `Bearer ${auth.user.token}` },
+    const result = await fetchChallengeDetail({
+      id,
+      token: auth.user.token,
+      limit: initialLimit,
+      offset: 0,
     });
-    const data = await res.json();
-    console.log(data)
-    challenge.value = data.data.challenge;
-    solvers.value = data.data.solvers;
-    solved.value = data.data.solved;
-    if (data.data.solvers.length < initialLimit) hasMore.value = false;
-    offset.value = data.data.solvers.length;
+
+    challenge.value = result.challenge;
+    solvers.value = result.solvers;
+    solved.value = result.solved;
+
+    if (result.solvers.length < initialLimit) {
+      hasMore.value = false;
+    }
+
+    offset.value = result.solvers.length;
   } catch (error) {
-    console.error('Error loading challenge:', error);
+    console.error('❌ Error loading challenge:', error);
   } finally {
     loading.value = false;
   }
@@ -234,15 +241,22 @@ const fetchChallenge = async (id: string) => {
 
 const loadMoreSolvers = async () => {
   isLoadingMore.value = true;
+
   try {
-    const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.value.id}?limit=${loadMoreLimit}&offset=${offset.value}&appendOnly=true`, {
-      headers: { Authorization: `Bearer ${auth.user.token}` },
+    const newSolvers = await fetchMoreSolvers({
+      id: challenge.value.id,
+      token: auth.user.token,
+      limit: loadMoreLimit,
+      offset: offset.value,
     });
-    const data = await res.json();
-    if (data.solvers?.length) {
-      solvers.value.push(...data.solvers);
-      offset.value += data.solvers.length;
-      if (data.solvers.length < loadMoreLimit) hasMore.value = false;
+
+    if (newSolvers.length) {
+      solvers.value.push(...newSolvers);
+      offset.value += newSolvers.length;
+
+      if (newSolvers.length < loadMoreLimit) {
+        hasMore.value = false;
+      }
     } else {
       hasMore.value = false;
     }

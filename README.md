@@ -144,33 +144,46 @@ vercel --prod -t <VERCEL_TOKEN>
 
 ---
 
-# Cara Push Db lokal ke supabase cloud
-```bash
-supabase db diff --local --file v1.5
-supabase db push
-```
+## 🗖️ Backup & Restore Supabase
 
-## 📆 Backup & Restore Supabase
-
-### Backup & Restore Skema
+### 📄 Backup & Restore Skema
 ```bash
-# Backup
+# Backup skema
 supabase db dump --file backup/backup_v1.sql
 
-# Restore
+# Restore skema
 supabase db restore backup/backup_v1.sql
 ```
 
-### Backup & Restore Data Manual
+### 📄 Backup & Restore Data Manual
 ```bash
-# Backup
+# Backup seluruh data dengan pg_dump
 pg_dump -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -F c -f full_backup.dump
 
-# Restore
+# Restore data dengan pg_restore
 pg_restore -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -c full_backup.dump
 ```
 
-> Gunakan Pooler jika pakai Supabase Free Tier
+> ⚠️ Gunakan **Connection Pooler** jika menggunakan Supabase Free Tier
+
+---
+
+### ✨ Backup Otomatis
+
+- Gunakan tool berikut untuk backup otomatis:
+  - [sesto-dev/supabase-database-backup](https://github.com/sesto-dev/supabase-database-backup)
+  - [travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention) ➔ untuk menambahkan cronjob dan mencegah project tertidur
+
+---
+
+### ⬆️ Push Database Lokal ke Supabase Cloud
+```bash
+# Cek perbedaan skema
+supabase db diff --local --file v1.5
+
+# Push ke Supabase
+supabase db push
+```
 
 ---
 
