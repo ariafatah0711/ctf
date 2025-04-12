@@ -103,13 +103,18 @@
   const selectedTag = ref('');
   const availableTags = ref<string[]>([]);
 
-
   const fetchChallenges = async () => {
-    const result = await useChallengeList(page.value, selectedDifficulty.value, selectedTag.value)
-    challenges.value = result.challenges.value
-    totalPages.value = result.totalPages.value
-    availableTags.value = result.availableTags.value
-    loading.value = result.loading.value
+    loading.value = true
+    try {
+      const result = await useChallengeList(page.value, selectedDifficulty.value, selectedTag.value)
+      challenges.value = result.challenges.value
+      totalPages.value = result.totalPages.value
+      availableTags.value = result.availableTags.value
+    } catch (err) {
+      console.error('Failed to fetch challenges:', err)
+    } finally {
+      loading.value = false
+    }
   }
 
   const onFilterChange = () => {
