@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "setup": "npm --prefix frontend install && npm --prefix backend install",
     "dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\"",
     "start": "concurrently \"npm --prefix frontend start\" \"npm --prefix backend start\"",
     "prepare": "husky install"

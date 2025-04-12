@@ -1,154 +1,194 @@
-## ✅ Panduan Lengkap Setup & Instalasi Project CTF Platform
+# ✅ Panduan Lengkap Setup & Deploy Platform CTF Web_ARIA
 
-### 1. Buat Akun Supabase & Vercel
-- Daftar di https://supabase.com
-- Daftar di https://vercel.com
+Platform CTF Web_ARIA adalah aplikasi latihan dan kompetisi Capture The Flag (CTF) berbasis **Vue.js**, **Next.js**, dan **Supabase**, lengkap dengan fitur manajemen challenge, leaderboard, serta autentikasi user.
 
 ---
 
-### 2. Setup Supabase (Migrasi DB ke Supabase)
+## ✨ Langkah Cepat Setup & Deployment
+
+### 1. Buat Akun Supabase & Vercel
+- [🔗 Supabase](https://supabase.com) – untuk database dan autentikasi
+- [🔗 Vercel](https://vercel.com) – untuk hosting frontend & backend
+
+---
+
+### 2. Setup Supabase (Migrasi DB ke Cloud)
+
 ```bash
 supabase login
 supabase link --project-ref <PROJECT_REF>
 supabase db push
 ```
-> 💡 Ambil `<PROJECT_REF>` di dashboard Supabase > Settings > General
+
+> 💡 Dapatkan `<PROJECT_REF>` dari Supabase Dashboard > Settings > General
 
 ---
 
-### 3. Setup & Deploy Frontend dan Backend ke Vercel
-```bash
-# Deploy Frontend
-cd frontend
-vercel -t <VERCEL_TOKEN>
-
-# Deploy Backend
-cd ../backend
-vercel -t <VERCEL_TOKEN>
-```
-> 💡 Token bisa dibuat di dashboard Vercel > Account Settings > Tokens
-
----
-
-### 4. Generate ENCRYPTION_KEY
+### 3. Generate ENCRYPTION_KEY (untuk enkripsi flag)
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
-> Simpan hasilnya di `.env` **backend**
+> 🔐 Simpan ke `.env` backend
 
 ---
 
-## ⚙️ Environment Variable Setup
+### 4. Setup Environment Variable
 
-### 📁 Backend (`/backend/.env`)
-```
+#### 📁 Backend (`/backend/.env`)
+```env
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 
-ENCRYPTION_KEY=<hasil-dari-crypto-randomBytes>
-BASE_URL=<your-base-url-frontentend>
+ENCRYPTION_KEY=<generated-random-key>
+BASE_URL=<url-frontend-anda>
 ```
 
-### 📁 Frontend (`/frontend/.env`)
-```
-VITE_API_BASE_URL=<your-base-url-backend>
-VITE_FLAG_FORMAT=<yout-format-flag>
-VITE_PASSWORD_REMEMBER_ME_LOGIN=<your_secret_key_for_remeber_password_form_login>
+#### 📁 Frontend (`/frontend/.env`)
+```env
+VITE_API_BASE_URL=<url-backend-anda>
+VITE_FLAG_FORMAT=CWA{FLAG}
+VITE_PASSWORD_REMEMBER_ME_LOGIN=<secret-key-login>
 ```
 
 ---
 
-## 💻 Install & Run (Development Mode) 1
+## 📂 Struktur Config Frontend (`/frontend/src/config/env`)
 
-### 📦 Install dependencies
-```bash
-cd frontend
-npm install
+Tersedia konfigurasi seperti:
+- Nama & Deskripsi App
+- Gambar Halaman (icon)
+- Format & Regex Flag
+- Konfigurasi theme, caching, dsb
 
-cd ../backend
-npm install
+### 📂 Example Config
+```ts
+// src/config.ts
+
+// ==============================
+// 🔐 Secrets / Environment Variables
+// ==============================
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const PASSWORD_REMEMBER_ME_LOGIN = import.meta.env.VITE_PASSWORD_REMEMBER_ME_LOGIN || "secret123";
+
+// ==============================
+// ⚙️ App Configuration
+// ==============================
+const APP_NAME = "CTF WEB_ARIA"
+const DEFAULT_THEME = "dark";
+const VERIV_EMAIL = false;
+const UPLOAD_CLIENT = true;
+const CACHE_TTL =  5 * 60 * 1000; // 5 menit
+const IMG_HOMEPAGE = "/icon.png" // frontend/public
+const IMG_LOGINPAGE = "/icon_login.png"
+const IMG_REGISPAGE = "/icon_regis.png"
+const APP_DESCRIPTION = `
+  Platform latihan dan kompetisi <strong>Capture The Flag (CTF)</strong> untuk semua level. 
+  Pelajari keamanan siber, uji kemampuanmu, dan raih peringkat tertinggi di leaderboard!<br/>
+  Cocok untuk pemula yang ingin belajar maupun pro yang ingin unjuk skill.
+`;
+const ABOUT_PAGE = `
+<p class="text-lg mb-4 leading-relaxed">
+  <strong>CTF WEB_ARIA</strong> adalah platform latihan dan kompetisi <strong>Capture The Flag (CTF)</strong> berbasis <strong>Vue.js</strong>, <strong>Supabase</strong>, dan <strong>TailwindCSS</strong>. Dibuat untuk semua level: pemula hingga pro.
+</p>
+`;
+
+// ==============================
+// 🏁 Flag Settings
+// ==============================a
+const FLAG_FORMAT = "CWA{FLAG}";
+const FLAG_REGEX = /^CWA\{.*\}$/;
 ```
 
-### 🚀 Jalankan Dev Mode
+---
+
+## 💻 Install & Jalankan di Development Mode
+
+### Opsi 1 (Jalankan terpisah frontend & backend)
 ```bash
-# Jalankan backend
-cd backend
+# Install dependencies
+cd frontend && npm install
+cd ../backend && npm install
+
+# Jalankan
+cd ../backend && npm run dev
+cd ../frontend && npm run dev
+```
+
+### Opsi 2 (Pakai Concurrently di root)
+```bash
+# Di folder root
+npm install
+npm run setup
 npm run dev
-
-# Jalankan frontend
-cd ../frontend
-npm run dev
-```
-
-## 💻 Install & Run (Development Mode) 2
-
-### 📦 Install dependencies
-```bash
-cd frontend
-npm install
-
-cd ../backend
-npm install
-```
-
-### 🚀 Jalankan Dev Mode
-```bash
-cd ..
-npm install
-npm run dev # use concurently
 ```
 
 ---
 
 ## 🚢 Deploy ke Production
+
+### 1. Deploy Frontend
 ```bash
 cd frontend
-vercel --prod -t <token>
-
-cd ../backend
-vercel --prod -t <token>
+vercel --prod -t <VERCEL_TOKEN>
 ```
+
+### 2. Deploy Backend
+```bash
+cd ../backend
+vercel --prod -t <VERCEL_TOKEN>
+```
+
+> 💡 Token bisa dibuat di Vercel > Account Settings > Tokens
 
 ---
 
-## Cara Push Db lokal ke supabase cloud
+## 📆 Backup & Restore Supabase
+
+### Backup & Restore Skema
 ```bash
-supabase db diff --local --file v1.5
-supabase db push
+# Backup
+supabase db dump --file backup/backup_v1.sql
+
+# Restore
+supabase db restore backup/backup_v1.sql
 ```
 
-## cara backup dan restore scheme
+### Backup & Restore Data Manual
 ```bash
-# backup
-supabase db dump --file backup/backup_v1.1.sql
-
-# restore
-supabase db restore backup/backup_v1.1.sql
-```
-
-## cara backup dan restore data
-### manual
-```bash
-# gunakan
+# Backup
 pg_dump -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -F c -f full_backup.dump
+
+# Restore
 pg_restore -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -c full_backup.dump
-
-# gunakan pooler
-pg_dump -h aws-0-ap-southeast-1.pooler.supabase.com -U postgres.<refid> -d postgres -p 5432 -F c -f full_backup.dump
-# jika ada error triger gitu
-pg_restore --disable-triggers -h <host> -U <user> -d <dbname> -p 5432 -c full_backup.dump
-
-# gunakan
-pg_dump "postgresql://postgres.xxxxxxxxxxxx:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres" > backup_$(date +%Y%m%d_%H%M%S).sql
 ```
-### automatic
-- [https://github.com/sesto-dev/supabase-database-backup](https://github.com/sesto-dev/supabase-database-backup)
 
-## add cronjob
-- [https://github.com/travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention)
+> Gunakan Pooler jika pakai Supabase Free Tier
 
-## 🔐 Catatan Penting
-- Tambahkan `.env` ke Vercel Environment Variables secara manual via Dashboard.
-- `ENCRYPTION_KEY` harus unik dan aman.
-- Gunakan `https` di production.
+---
+
+## 🔒 Catatan Penting
+- Tambahkan semua `.env` ke **Environment Variables di Vercel** secara manual
+- Gunakan `https` di production
+- `ENCRYPTION_KEY` harus **unik & rahasia**
+- Backup database secara berkala
+
+---
+
+## 🌐 Tentang CTF Web_ARIA
+
+> Platform latihan dan kompetisi **Capture The Flag (CTF)** untuk semua level. Belajar keamanan siber, uji kemampuanmu, dan capai posisi tertinggi di leaderboard!
+
+**Fitur Utama:**
+- 🔐 Login & manajemen user
+- 🧩 CRUD challenge publik & admin
+- 🏁 Submit flag + Leaderboard
+- 👤 Profil + Riwayat Submit
+- 🎯 Filter berdasarkan kategori
+- 🌓 Dark & Light Mode
+- ⚡ Ringan & Responsif
+
+Open-source, aktif dikembangkan bersama komunitas.
+
+[🌐 GitHub Repo](https://github.com/ariafatah0711/ctf) | [📖 Blog](https://ariaf.my.id/blog/ctf_web) | [⬆️ Upload Challenge](/#/challenges/upload) | [💬 Komunitas](https://s.id/dev-universe)
+
