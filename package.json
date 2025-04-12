@@ -5,16 +5,14 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "setup": "npm --prefix frontend install && npm --prefix backend install",
     "dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\"",
     "start": "concurrently \"npm --prefix frontend start\" \"npm --prefix backend start\"",
-    "prepare": "husky install"
+    "prepare": "echo 'husky prepare di masing-masing project'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "husky": "^9.1.7"
+    "concurrently": "^9.1.2"
   }
 }

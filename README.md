@@ -119,7 +119,8 @@ cd ../frontend && npm run dev
 ```bash
 # Di folder root
 npm install
-npm run setup
+cd frontend && npm install
+cd ../backend && npm run dev && cd ..
 npm run dev
 ```
 
