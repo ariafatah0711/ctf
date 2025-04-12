@@ -11,9 +11,11 @@
           id="difficulty"
           v-model="selectedDifficulty"
           @change="onFilterChange"
-          class="w-full p-2.5 rounded-xl text-sm bg-white border border-gray-300 
-                 text-gray-900 dark:bg-slate-700 dark:border-slate-600 dark:text-white 
-                 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          :class="{
+            'bg-white dark:bg-slate-700 text-gray-900 dark:text-white': !selectedDifficulty,
+            'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white': selectedTag
+          }"
+          class="w-full p-2.5 rounded-xl text-sm border border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 transition duration-200 ease-in-out"
         >
           <option value="">All Difficulties</option>
           <option value="1">Easy</option>
@@ -31,9 +33,11 @@
           id="tags"
           v-model="selectedTag"
           @change="onFilterChange"
-          class="w-full p-2.5 rounded-xl text-sm bg-white border border-gray-300 
-                 text-gray-900 dark:bg-slate-700 dark:border-slate-600 dark:text-white 
-                 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          :class="{
+            'bg-white dark:bg-slate-700 text-gray-900 dark:text-white': !selectedTag,
+            'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white': selectedTag
+          }"
+          class="w-full p-2.5 rounded-xl text-sm border border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 transition duration-200 ease-in-out"
         >
           <option value="">All Tags</option>
           <option v-for="tag in availableTags" :key="tag" :value="tag">
@@ -76,14 +80,11 @@
   import ChallengeCard from './ChallengeCard.vue';
   import ChallengeCardSkeleton from '../skelaton/ChallengeCardSkeleton.vue';
   import Pagination from "../Pagination.vue"
-  import { useAuthStore } from '../../stores/auth';
   import { useChallengeList } from '../../services/useChallengeList'
-  import config from '../../config/env';
 
   const route = useRoute();
   const router = useRouter();
 
-  const auth = useAuthStore();
   const loading = ref(false);
 
   interface Challenge {
@@ -147,14 +148,6 @@
     router.replace({ query: { ...route.query, page: newPage.toString() } });
     fetchChallenges(); // fetch data tiap kali page berubah
   });
-
-  const nextPage = () => {
-    if (page.value < totalPages.value) page.value++;
-  };
-
-  const prevPage = () => {
-    if (page.value > 1) page.value--;
-  };
 
   const setPage = (n: number) => {
     if (n !== page.value) {

@@ -5,7 +5,12 @@
 
       <!-- Breadcrumb & Submit -->
       <div class="flex flex-col md:flex-row items-start justify-between gap-4 mb-8">
-        <Breadcrumbs />
+        <!-- <Breadcrumbs /> -->
+        <Breadcrumbs
+          :extra-items="[{ name: 'Challenges', href: '__back__' }]"
+          extra-position="start"
+          :remove-index="0"
+        />
         <SubmitFlag class="w-full md:w-auto" />
       </div>
 
@@ -177,8 +182,6 @@ import SubmitFlag from '../../components/SubmitFlag.vue';
 import Breadcrumbs from "../../components/Breadcrumbs.vue"
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore } from '../../stores/auth';
-import config from "../../config/env.ts"
 import { marked } from 'marked';
 import downloadFileByUrl from "../../utils/downloadFile.ts"
 import { useChallengeDetail, loadMoreChallengeSolvers } from '../../services/useChallengeDetail'
@@ -188,13 +191,13 @@ import GlobalSwal from "../../utils/GlobalSwal.ts";
 const Swal = GlobalSwal;
 
 const route = useRoute();
-const auth = useAuthStore();
 
 const id = computed(() => route.params.id as string)
 const initialLimit = 3
 const loadMoreLimit = 6
 
 const { data, isValidating, mutate, error } = useChallengeDetail(id.value, initialLimit)
+const loading = computed(() => isValidating.value);
 
 const challenge = computed(() => data.value?.challenge)
 const solvers = ref<any[]>([])
