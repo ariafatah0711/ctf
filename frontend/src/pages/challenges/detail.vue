@@ -202,7 +202,7 @@ const solved = ref(false);
 
 const offset = ref(0);
 const initialLimit = 3;
-const loadMoreLimit = 6;
+const loadMoreLimit = 10;
 const hasMore = ref(true);
 const isLoadingMore = ref(false);
 const showHintModal = ref(false);
@@ -210,6 +210,7 @@ const showHintModal = ref(false);
 const formatText = (text: string) => marked.parse(text || '');
 
 const fetchChallenge = async (id: string) => {
+  console.log("fetch")
   loading.value = true;
   offset.value = 0;
   hasMore.value = true;
@@ -218,6 +219,7 @@ const fetchChallenge = async (id: string) => {
       headers: { Authorization: `Bearer ${auth.user.token}` },
     });
     const data = await res.json();
+    console.log(data)
     challenge.value = data.data.challenge;
     solvers.value = data.data.solvers;
     solved.value = data.data.solved;

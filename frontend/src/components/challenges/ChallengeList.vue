@@ -11,10 +11,10 @@
           id="difficulty"
           v-model="selectedDifficulty"
           @change="onFilterChange"
-          :class="{
-            'bg-white dark:bg-slate-700 text-gray-900 dark:text-white': !selectedDifficulty,
-            'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white': selectedTag
-          }"
+          :class="[
+            selectedDifficulty ? 'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white' : 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white',
+            'focus:bg-white focus:text-gray-900 dark:focus:bg-slate-700 dark:focus:text-white'
+          ]"
           class="w-full p-2.5 rounded-xl text-sm border border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 transition duration-200 ease-in-out"
         >
           <option value="">All Difficulties</option>
@@ -33,10 +33,10 @@
           id="tags"
           v-model="selectedTag"
           @change="onFilterChange"
-          :class="{
-            'bg-white dark:bg-slate-700 text-gray-900 dark:text-white': !selectedTag,
-            'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white': selectedTag
-          }"
+          :class="[
+            selectedTag ? 'bg-emerald-100 dark:bg-emerald-600 text-emerald-900 dark:text-white' : 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white',
+            'focus:bg-white focus:text-gray-900 dark:focus:bg-slate-700 dark:focus:text-white'
+          ]"
           class="w-full p-2.5 rounded-xl text-sm border border-gray-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 transition duration-200 ease-in-out"
         >
           <option value="">All Tags</option>

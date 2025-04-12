@@ -21,6 +21,7 @@ export async function getChallengeDetailWithSolvers(id, userId, limit = 10, offs
     .from("user_challenges")
     .select("user_id, completed_at")
     .eq("challenge_id", id)
+    .not("completed_at", "is", null) // pastikan cuma yg solved beneran
     .order("completed_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -39,7 +40,24 @@ export async function getChallengeDetailWithSolvers(id, userId, limit = 10, offs
     });
   }
 
-  const solved = userId ? solversData.some((solver) => solver.user_id === userId) : false;
+  // ⛳️ Cek solved terpisah, biar gak terpengaruh pagination
+  let solved = false;
+  if (userId) {
+    const { data: userSolvedData, error: userSolvedError } = await supabase
+      .from("user_challenges")
+      .select("user_id")
+      .eq("challenge_id", id)
+      .eq("user_id", userId)
+      .not("completed_at", "is", null)
+      .maybeSingle(); // boleh null kalau belum pernah solve
 
-  return appendOnly ? { solvers } : { data: { challenge: challengeData, solvers, solved } };
+    solved = !!userSolvedData && !userSolvedError;
+
+    console.log("userSolvedData:", userSolvedData);
+    console.log("userSolvedError:", userSolvedError);
+  }
+
+  return appendOnly
+    ? { solvers }
+    : { data: { challenge: challengeData, solvers, solved } };
 }

@@ -144,6 +144,12 @@ vercel --prod -t <VERCEL_TOKEN>
 
 ---
 
+# Cara Push Db lokal ke supabase cloud
+```bash
+supabase db diff --local --file v1.5
+supabase db push
+```
+
 ## 📆 Backup & Restore Supabase
 
 ### Backup & Restore Skema
