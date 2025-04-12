@@ -1,93 +1,103 @@
-import { reactive, computed, watch } from 'vue';
-import useSWRV from 'swrv';
-import config from '../config/env';
-import { useAuthStore } from '../stores/auth';
+import { ref, computed, watchEffect } from 'vue'
+import useSWRV from 'swrv'
+import config from '../config/env'
+import { useAuthStore } from '../stores/auth'
+import { useRoute } from 'vue-router'
 
-// const CACHE_TTL = 5 * 60 * 1000; // 5 menit
-const CACHE_TTL = config.CACHE_TTL
-const PREFIX = 'history_cache_';
-const data_history = reactive<Record<string, any>>({});
+const CACHE_KEY_PREFIX = 'challenge_history_cache'
+const CACHE_TTL = config.CACHE_TTL || 1000 * 60 * 5 // default 5 menit
 
-export function useHistoryData(page = 1, userId?: string) {
-  const auth = useAuthStore();
-  const cacheKey = `${PREFIX}page=${page}${userId ? `&userId=${userId}` : ''}`;
+const getCacheKey = (userId: string | undefined) =>
+  `${CACHE_KEY_PREFIX}_${userId || 'me'}`
 
-  const loadCache = () => {
-    const raw = localStorage.getItem(cacheKey);
-    if (!raw) return null;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Date.now() - parsed.timestamp < CACHE_TTL) {
-        return parsed.data;
+const loadCachedData = (key: string) => {
+  const raw = localStorage.getItem(key)
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    if (Date.now() - parsed.timestamp < CACHE_TTL) {
+      return parsed.data
+    }
+  } catch (e) {
+    console.warn('Cache parsing error:', e)
+  }
+  return null
+}
+
+const saveToCache = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify({
+    timestamp: Date.now(),
+    data,
+  }))
+}
+
+export const useChallengeHistory = () => {
+  const route = useRoute()
+  const auth = useAuthStore()
+  const userId = computed(() => route.query.id as string | undefined)
+  const page = ref(1)
+  const limit = 15
+
+  const cacheKey = computed(() => getCacheKey(userId.value))
+  const localCache = ref(loadCachedData(cacheKey.value))
+  const allData = ref<any[]>([])
+
+  const currentKey = computed(() => {
+    const base = `${config.BASE_URL}/api/challenges/history`
+    const query = `?page=${page.value}&limit=${limit}`
+    const user = userId.value ? `&userId=${userId.value}` : ''
+    return `${base}${query}${user}`
+  })
+
+  const fetcher = async (url: string) => {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${auth.user.token}`
       }
-    } catch (e) {
-      console.warn('Gagal parse cache history:', e);
+    })
+    const json = await res.json()
+    saveToCache(cacheKey.value, json)
+    return json
+  }
+
+  const { data: swrvData, isValidating } = useSWRV(currentKey, fetcher, {
+    ttl: CACHE_TTL,
+    dedupingInterval: 2000,
+  })
+
+  // Gabungkan data baru saat data berubah
+  watchEffect(() => {
+    const newItems = swrvData.value?.data
+    if (newItems && newItems.length) {
+      const unique = newItems.filter(
+        (item: any) =>
+          !allData.value.some(
+            (existing: any) =>
+              existing.challenge_id === item.challenge_id &&
+              existing.completed_at === item.completed_at
+          )
+      )
+      allData.value.push(...unique)
     }
-    return null;
-  };
+  })
 
-  const saveCache = (data: any) => {
-    const item = {
-      timestamp: Date.now(),
-      data,
-    };
-    localStorage.setItem(cacheKey, JSON.stringify(item));
+  const data = computed(() =>
+    allData.value.length ? allData.value : localCache.value?.data || []
+  )
 
-    // Optional: bersihkan cache lama (max 10 item)
-    const keys = Object.keys(localStorage)
-      .filter(k => k.startsWith(PREFIX))
-      .map(k => ({
-        key: k,
-        timestamp: (() => {
-          try {
-            const val = JSON.parse(localStorage.getItem(k) || '{}');
-            return val.timestamp || 0;
-          } catch {
-            return 0;
-          }
-        })(),
-      }))
-      .sort((a, b) => a.timestamp - b.timestamp);
+  const hasMore = computed(() => (swrvData.value?.data?.length ?? 0) === limit)
+  const error = computed(() => swrvData.value?.error || null)
 
-    const maxCache = 10;
-    if (keys.length > maxCache) {
-      keys.slice(0, keys.length - maxCache).forEach(item => {
-        localStorage.removeItem(item.key);
-      });
-    }
-  };
-
-  const { data, error, isValidating, mutate } = useSWRV(
-    cacheKey,
-    async () => {
-      const url = `${config.BASE_URL}/api/challenges/history?page=${page}&limit=15${userId ? `&userId=${userId}` : ''}`;
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${auth.user.token}`,
-        },
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Gagal ambil history');
-      saveCache(json.data || json);
-      return json.data || json;
-    },
-    {
-      ttl: CACHE_TTL,
-      dedupingInterval: 2000,
-      initialData: loadCache(),
-    }
-  );
-
-  watch(data, (newData) => {
-    if (newData) {
-      data_history[cacheKey] = newData;
-    }
-  }, { immediate: true });
+  const loadNextPage = () => {
+    page.value++
+  }
 
   return {
-    data: computed(() => data_history[cacheKey]),
+    data,
+    hasMore,
     error,
-    isValidating,
-    mutate,
-  };
+    page,
+    loadNextPage,
+    isLoading: isValidating,
+  }
 }

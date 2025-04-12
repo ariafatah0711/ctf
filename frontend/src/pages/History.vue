@@ -14,7 +14,7 @@
         </div>
 
         <!-- Loading / Error -->
-        <SkeletonHistory v-if="loading && currentPage === 1" />
+        <SkeletonHistory v-if="isLoading" />
         <div v-else-if="error" class="text-red-500 text-center">Gagal memuat riwayat: {{ error }}</div>
   
         <!-- Log Section -->
@@ -55,16 +55,17 @@
                 </div>
               </div>
             </TransitionGroup>
-  
-            <!-- Tombol Load More -->
-            <div v-if="hasMore" class="pt-4 flex justify-center">
-              <button
-                @click="loadMore"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-300"
-              >
-                {{ isLoadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak' }}
-              </button>
-            </div>
+            
+          <!-- Tombol Load More -->
+          <div v-if="hasMore" class="pt-4 flex justify-center">
+            <button
+              @click="loadNextPage"
+              :disabled="isLoading"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-300 disabled:opacity-50"
+            >
+              {{ isLoading ? 'Memuat...' : 'Tampilkan Lebih Banyak' }}
+            </button>
+          </div>
           </div>
           <div v-else class="italic text-gray-500 dark:text-gray-400">Belum ada riwayat tantangan.</div>
         </div>
@@ -73,47 +74,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { useChallengeHistory } from '../services/useHistoryData'
+import SkeletonHistory from '@/components/skelaton/SkeletonHistory.vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import SkeletonHistory from '../components/skelaton/SkeletonHistory.vue'
-import { useHistoryData } from '../services/useHistoryData'
-import { useAuthStore } from '../stores/auth'
 
 const route = useRoute()
-const userIdFromQuery = computed(() => route.query.id as string)
-const usernameFromQuery = computed(() => route.query.user)
+const username = computed(() => route.query.user)
 
-const title = computed(() => {
-  return usernameFromQuery.value
-    ? `🏆 Riwayat ${usernameFromQuery.value}`
-    : '🏆 Riwayat'
-})
+const {
+  data: history,
+  hasMore,
+  loadNextPage,
+  isLoading,
+  error,
+} = useChallengeHistory()
 
-const currentPage = ref(1)
-const history = ref<any[]>([])
-const limit = 15
-const hasMore = ref(true)
-
-const { data, error, isValidating, mutate } = useHistoryData(currentPage.value, userIdFromQuery.value)
-
-watch(
-  () => [data.value, currentPage.value],
-  () => {
-    if (data.value) {
-      if (currentPage.value === 1) {
-        history.value = data.value
-      } else {
-        history.value.push(...data.value)
-      }
-      hasMore.value = data.value.length === limit
-    }
-  },
-  { immediate: true }
-)
-
-const loadMore = () => {
-  currentPage.value++
-}
+const title = computed(() => username.value
+  ? `🏆 Riwayat ${username.value}`
+  : '🏆 Riwayat')
 </script>
   
 <style scoped>

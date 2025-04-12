@@ -236,7 +236,11 @@ import { computed, watch } from 'vue'
 import { useDashboardData } from '@/services/useDashboardData'
 import DashboardSkeleton from '@/components/skelaton/DashboardSkeleton.vue'
 
+// const { data } = useDashboardData()
 const { data } = useDashboardData()
+
+// Mendapatkan status loading
+const loading = computed(() => !data.value)
 
 const levelMap = {
   1: 'Easy 🟢',
@@ -265,7 +269,6 @@ const mostSolvedChallenges = computed(() => data.value?.mostSolvedChallenges || 
 const topUsers = computed(() => data.value?.leaderboard || [])
 const tagsDistribution = computed(() => data.value?.tagsDistribution || [])
 const challengeSummary = computed(() => data.value?.description?.challengeSummary || 0)
-const topChallengeInfo = computed(() => data.value?.description?.topChallengeInfo || 0)
 const totalPublicChallenges = computed(() => data.value?.clientChallenges.total || 0)
 const totalPublicChallengesReviewed = computed(() => data.value?.clientChallenges.reviewed || 0)
 const totalPublicChallengesAccepted = computed(() => data.value?.clientChallenges.accepted || 0)
