@@ -177,7 +177,184 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
+import SubmitFlag from '../../components/SubmitFlag.vue';
+import Breadcrumbs from "../../components/Breadcrumbs.vue"
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useAuthStore } from '../../stores/auth';
+import config from "../../config/env"
+import { marked } from 'marked';
+import downloadFileByUrl from "../../utils/downloadFile.ts"
+import IconButton from "../../components/IconButton.vue"
+import {LightBulbIcon, ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, LinkIcon} from "@heroicons/vue/24/solid";
+import GlobalSwal from "../../utils/GlobalSwal";
+const Swal = GlobalSwal;
+
+const auth = useAuthStore();
+const loading = ref(true);
+
+const route = useRoute();
+const challenge = ref<any>(null);
+const solvers = ref<any[]>([]);
+const solved = ref(false);
+
+const offset = ref(0);
+const initialLimit = 3;
+const loadMoreLimit = 6;
+const hasMore = ref(true);
+const isLoadingMore = ref(false);
+const showHintModal = ref(false);
+
+const formatText = (text: string) => marked.parse(text || '');
+
+const fetchChallenge = async (id: string) => {
+  loading.value = true;
+  offset.value = 0;
+  hasMore.value = true;
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${id}?limit=${initialLimit}&offset=0`, {
+      headers: { Authorization: `Bearer ${auth.user.token}` },
+    });
+    const data = await res.json();
+    challenge.value = data.data.challenge;
+    solvers.value = data.data.solvers;
+    solved.value = data.data.solved;
+    if (data.data.solvers.length < initialLimit) hasMore.value = false;
+    offset.value = data.data.solvers.length;
+  } catch (error) {
+    console.error('Error loading challenge:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadMoreSolvers = async () => {
+  isLoadingMore.value = true;
+  try {
+    const res = await fetch(`${config.BASE_URL}/api/challenges/${challenge.value.id}?limit=${loadMoreLimit}&offset=${offset.value}&appendOnly=true`, {
+      headers: { Authorization: `Bearer ${auth.user.token}` },
+    });
+    const data = await res.json();
+    if (data.solvers?.length) {
+      solvers.value.push(...data.solvers);
+      offset.value += data.solvers.length;
+      if (data.solvers.length < loadMoreLimit) hasMore.value = false;
+    } else {
+      hasMore.value = false;
+    }
+  } catch (error) {
+    console.error("❌ Error loading more solvers:", error);
+  } finally {
+    isLoadingMore.value = false;
+  }
+};
+
+// Pantau perubahan route param `id`
+watch(
+  () => route.params.id,
+  (id) => {
+    if (id && typeof id === 'string') {
+      fetchChallenge(id);
+    }
+  },
+  { immediate: true }
+);
+
+// Utilitas styling
+const badgeColor = (difficulty: number) => {
+  switch (difficulty) {
+    case 1:
+      return 'bg-green-200 text-green-800';
+    case 2:
+      return 'bg-yellow-200 text-yellow-800';
+    case 3:
+      return 'bg-red-200 text-red-800';
+    default:
+      return 'bg-gray-300 text-gray-700';
+  }
+};
+
+const difficultyLabel = (difficulty: number) => {
+  if (!difficulty || difficulty < 1 || difficulty > 3) return 'Unknown';
+  return ['Easy', 'Medium', 'Hard'][difficulty - 1];
+};
+
+const formattedDate = (raw: string) => {
+  if (!raw) return 'Unknown date';
+  const date = new Date(raw);
+  return isNaN(date.getTime()) 
+      ? 'Invalid date' 
+      : date.toLocaleDateString('id-ID', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+};
+
+const handleDownload = async () => {
+  const url = challenge.value?.url;
+  if (!url) return;
+
+  if (isFile(url)) {
+    // const url = "dfasfsadafsa"
+    await downloadFileByUrl(url);
+  } else {
+    // const url = "https:dancok.id"
+    try {
+      new URL(url);
+      const newWindow = window.open(url, '_blank');
+
+      if (!newWindow) {
+        console.warn("⚠️ Window gagal dibuka. Mungkin diblokir oleh popup blocker.");
+        await Swal.fire({icon: "warning", title: "Popup diblokir", text: "Silakan izinkan popup untuk membuka file."});}
+    } catch (e) {
+      console.error("❌ URL tidak valid:", e);
+      await Swal.fire({icon: "error", title: "URL tidak valid", text: "Tautan yang diberikan tidak sesuai format URL."});
+    }
+  }
+};
+
+const handleCopyLink = async () => {
+  const url = challenge.value?.url;
+  if (!url) return;
+
+  try {
+    await navigator.clipboard.writeText(url);
+    await Swal.fire({
+      icon: "success",
+      title: "Link berhasil disalin!",
+      text: "URL challenge sudah ada di clipboard.",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  } catch (e) {
+    console.error("❌ Gagal menyalin link:", e);
+    await Swal.fire({
+      icon: "error",
+      title: "Gagal menyalin",
+      text: "Terjadi kesalahan saat menyalin link.",
+    });
+  }
+};
+
+// Function to check if the URL points to a file
+const isFile = (url: string): boolean => {
+  return /\.(pdf|zip|txt|png|jpg|jpeg|mp4|mp3|docx)$/i.test(url);
+};
+
+// enter and escape
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    showHintModal.value = false;
+  }
+}
+onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
+onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
+</script>
+
+<!-- <script setup lang="ts">
 import SubmitFlag from '../../components/SubmitFlag.vue';
 import Breadcrumbs from "../../components/Breadcrumbs.vue"
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
@@ -322,7 +499,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 onMounted(() => {window.addEventListener('keydown', handleKeyDown)})
 onUnmounted(() => {window.removeEventListener('keydown', handleKeyDown)})
 
-</script>
+</script> -->
 
 <!-- Transition Styles -->
 <style scoped>

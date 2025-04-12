@@ -80,6 +80,114 @@
   import ChallengeCard from './ChallengeCard.vue';
   import ChallengeCardSkeleton from '../skelaton/ChallengeCardSkeleton.vue';
   import Pagination from "../Pagination.vue"
+  import { useAuthStore } from '@/stores/auth';
+  import config from '@/config/env';
+
+  const route = useRoute();
+  const router = useRouter();
+
+  const auth = useAuthStore();
+  const loading = ref(false);
+
+  interface Challenge {
+    id: string;
+    title: string;
+    description: string;
+    difficulty: number;
+    tags: string[];
+    created_at: string;
+    solved?: boolean;
+  }
+
+  const challenges = ref<Challenge[]>([]);
+  const page = ref(1);
+  const totalPages = ref(1);
+  const selectedDifficulty = ref('');
+  const selectedTag = ref('');
+  const availableTags = ref<string[]>([]);
+
+  const fetchChallenges = async () => {
+    loading.value = true
+    try {
+      const params = new URLSearchParams();
+      params.set("page", page.value.toString());
+      if (selectedDifficulty.value) params.set("difficulty", selectedDifficulty.value);
+      if (selectedTag.value) params.set("tags", selectedTag.value);
+
+      const res = await fetch(`${config.BASE_URL}/api/challenges?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Gagal ambil challenge");
+      const json = await res.json();
+      console.log(json)
+
+      challenges.value = json.data;
+      totalPages.value = json.totalPages;
+      availableTags.value = json.tags || [];
+      challenges.value = json.data;
+      totalPages.value = json.totalPages;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const onFilterChange = () => {
+    page.value = 1; // reset ke page 1 saat filter berubah
+      router.replace({
+        query: {
+          ...route.query,
+          page: '1',
+          difficulty: selectedDifficulty.value || undefined,
+          tags: selectedTag.value || undefined, // ✅ tambahin
+        },
+      });
+    fetchChallenges();
+  };
+
+  // onMounted(fetchChallenges);
+  onMounted(() => {
+    const queryPage = parseInt(route.query.page as string);
+    const queryDifficulty = route.query.difficulty as string;
+    const queryTag = route.query.tags as string;
+
+    if (!isNaN(queryPage) && queryPage > 0) page.value = queryPage;
+    if (queryDifficulty) selectedDifficulty.value = queryDifficulty;
+    if (queryTag) selectedTag.value = queryTag;
+    fetchChallenges();
+  });
+
+  // watch(page, fetchChallenges);
+  watch(page, (newPage) => {
+    router.replace({ query: { ...route.query, page: newPage.toString() } });
+    fetchChallenges(); // fetch data tiap kali page berubah
+  });
+
+  const nextPage = () => {
+    if (page.value < totalPages.value) page.value++;
+  };
+
+  const prevPage = () => {
+    if (page.value > 1) page.value--;
+  };
+
+  const setPage = (n: number) => {
+    if (n !== page.value) {
+      page.value = n;
+    }
+  };
+</script>
+
+<!-- <script setup lang="ts">
+  import { ref, onMounted, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import ChallengeCard from './ChallengeCard.vue';
+  import ChallengeCardSkeleton from '../skelaton/ChallengeCardSkeleton.vue';
+  import Pagination from "../Pagination.vue"
   import { useChallengeList } from '../../services/useChallengeList'
 
   const route = useRoute();
@@ -154,4 +262,4 @@
       page.value = n;
     }
   };
-</script>
+</script> -->
