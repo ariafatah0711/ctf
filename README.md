@@ -82,6 +82,7 @@ const CACHE_TTL =  5 * 60 * 1000; // 5 menit
 const IMG_HOMEPAGE = "/icon.png" // frontend/public
 const IMG_LOGINPAGE = "/icon_login.png"
 const IMG_REGISPAGE = "/icon_regis.png"
+
 const APP_DESCRIPTION = `
   Platform latihan dan kompetisi <strong>Capture The Flag (CTF)</strong> untuk semua level. 
   Pelajari keamanan siber, uji kemampuanmu, dan raih peringkat tertinggi di leaderboard!<br/>
@@ -95,7 +96,7 @@ const ABOUT_PAGE = `
 
 // ==============================
 // 🏁 Flag Settings
-// ==============================a
+// ==============================
 const FLAG_FORMAT = "CWA{FLAG}";
 const FLAG_REGEX = /^CWA\{.*\}$/;
 ```
@@ -125,8 +126,7 @@ npm run dev
 ```
 
 ---
-
-## 🚢 Deploy ke Production
+## 🚀 Deploy ke Production
 
 ### 1. Deploy Frontend
 ```bash
@@ -140,13 +140,29 @@ cd ../backend
 vercel --prod -t <VERCEL_TOKEN>
 ```
 
-> 💡 Token bisa dibuat di Vercel > Account Settings > Tokens
+> 💡 **Catatan:** Token dapat dibuat di **Vercel > Account Settings > Tokens**
 
 ---
 
-## 🗖️ Backup & Restore Supabase
+## ⚙️ Setup Akun (Initial Setup)
 
-### 📄 Backup & Restore Skema
+Setelah proses deployment selesai, buka aplikasi di browser dan akses endpoint berikut untuk melakukan setup awal:
+
+```
+https://<your-domain>/setup
+```
+
+Di halaman `/setup`, Anda dapat membuat akun root/admin pertama untuk mengelola aplikasi.
+
+---
+
+✅ Selesai! Aplikasi Anda sudah siap digunakan di lingkungan production.
+
+---
+
+## 🗄️ Backup & Restore Supabase
+
+### 📦 Backup & Restore Skema
 ```bash
 # Backup skema
 supabase db dump --file backup/backup_v1.sql
@@ -155,7 +171,7 @@ supabase db dump --file backup/backup_v1.sql
 supabase db restore backup/backup_v1.sql
 ```
 
-### 📄 Backup & Restore Data Manual
+### 🧾 Backup & Restore Data Manual
 ```bash
 # Backup seluruh data dengan pg_dump
 pg_dump -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -F c -f full_backup.dump
@@ -164,24 +180,24 @@ pg_dump -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -F c -f 
 pg_restore -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -c full_backup.dump
 ```
 
-> ⚠️ Gunakan **Connection Pooler** jika menggunakan Supabase Free Tier
+> ⚠️ **Gunakan Connection Pooler** jika Anda menggunakan Supabase Free Tier untuk menghindari batas koneksi.
 
 ---
 
-### ✨ Backup Otomatis
+### 🔄 Backup Otomatis
+- [sesto-dev/supabase-database-backup](https://github.com/sesto-dev/supabase-database-backup)
 
-- Gunakan tool berikut untuk backup otomatis:
-  - [sesto-dev/supabase-database-backup](https://github.com/sesto-dev/supabase-database-backup)
-  - [travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention) ➔ untuk menambahkan cronjob dan mencegah project tertidur
+### 🌙 Supabase Tetap Aktif (Keep Alive)
+- [travisvn/supabase-pause-prevention](https://github.com/travisvn/supabase-pause-prevention) — Tambahkan cronjob untuk mencegah project tertidur
 
 ---
 
 ### ⬆️ Push Database Lokal ke Supabase Cloud
 ```bash
-# Cek perbedaan skema
+# Cek perbedaan skema lokal dengan cloud
 supabase db diff --local --file v1.5
 
-# Push ke Supabase
+# Push perubahan ke Supabase
 supabase db push
 ```
 
