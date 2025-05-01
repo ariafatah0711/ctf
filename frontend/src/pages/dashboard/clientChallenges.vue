@@ -40,7 +40,7 @@
     <!-- Modal Detail -->
     <Teleport to="body">
       <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="w-full sm:max-w-3xl sm:min-w-[500px] min-w-full mx-auto sm:scale-100 scale-90">
+        <div class="w-full sm:max-w-3xl sm:min-w-[500px] min-w-full mx-auto sm:scale-100 scale-90 sm:max-h-none sm:overflow-visible max-h-[90vh] overflow-y-auto">
           <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-lg p-8 relative">
             <button @click="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl">&times;</button>
             <h2 class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">📝 Detail Challenge</h2>

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:prod": "NODE_ENV=production next dev",
     "dev_host": "next dev -H 192.168.1.7",
     "build": "next build",
     "start": "next start",
