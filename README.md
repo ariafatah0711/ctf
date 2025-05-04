@@ -114,6 +114,9 @@ cd ../backend && npm install
 # Jalankan
 cd ../backend && npm run dev
 cd ../frontend && npm run dev
+
+# mode dev:prod
+cd ../backend && npm run dev:prod
 ```
 
 ### Opsi 2 (Pakai Concurrently di root)
@@ -195,7 +198,7 @@ pg_restore -h db.<project-ref>.supabase.co -U postgres -d postgres -p 5432 -c fu
 ### ⬆️ Push Database Lokal ke Supabase Cloud
 ```bash
 # Cek perbedaan skema lokal dengan cloud
-supabase db diff --local --file v1.5
+supabase db diff --local --file v2.3
 
 # Push perubahan ke Supabase
 supabase db push

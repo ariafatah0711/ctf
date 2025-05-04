@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:prod": "NODE_ENV=production next dev",
+    "dev": "npx cross-env NODE_ENV=development next dev",
+    "dev:prod": "npx cross-env NODE_ENV=production next dev",
     "dev_host": "next dev -H 192.168.1.7",
     "build": "next build",
     "start": "next start",
-    "start:prod": "NODE_ENV=production next start",
+    "start:prod": "npx cross-env NODE_ENV=production next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/react": "19.1.0",
-    "typescript": "^5.8.3"
+    "cross-env": "^7.0.3",
+    "typescript": "5.8.3"
   }
 }
